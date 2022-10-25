@@ -4,3 +4,8 @@ project(Projet C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(Projet main.c sources/test.c includes/test.h)
+
+add_subdirectory("raylib")
+include_directories("raylib")
+
+target_link_libraries(Projet raylib)
