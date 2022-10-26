@@ -9,3 +9,4 @@ add_subdirectory("raylib")
 include_directories("raylib")
 
 target_link_libraries(Projet raylib)
+
