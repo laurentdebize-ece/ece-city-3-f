@@ -3,3 +3,7 @@
 //
 
 #include "../includes/test.h"
+
+void test() {
+
+}

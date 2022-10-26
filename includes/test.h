@@ -5,6 +5,13 @@
 #ifndef PROJET_TEST_H
 #define PROJET_TEST_H
 
-//yo les gens
+#define WIDTH 1024
+#define HEIGHT 768
+#define TITLE "ECE City"
+#define FPS 120.0
+
+#include <raylib.h>
+
+void test (void);
 
 #endif //PROJET_TEST_H
