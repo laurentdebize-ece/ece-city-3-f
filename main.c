@@ -4,9 +4,9 @@
 
 #include <stdio.h>
 #include <raylib.h>
+#include "includes/test.h"
 
 int main (void){
-
-    printf("Hello World");
+    test();
     return 0;
 }
