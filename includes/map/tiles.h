@@ -10,12 +10,8 @@
 enum TileType {
     TILE_GRASS,
     TILE_ROAD,
-    TILE_TREE,
     TILE_HOUSE,
     TILE_BUILDING,
-    TILE_WATER,
-    TILE_SAND,
-    TILE_ROCK,
     TILE_COUNT
 }TileType;
 
@@ -36,5 +32,13 @@ enum RoadType {
     ROAD_NSEW,
     ROAD_COUNT
 }RoadType;
+
+typedef struct {
+    int tile_type;
+    union {
+        int road_type;
+        int building_type;
+    };
+};
 
 #endif //PROJET_TILES_H
