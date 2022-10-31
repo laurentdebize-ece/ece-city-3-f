@@ -40,14 +40,14 @@ typedef enum{
     Immeuble,
     Gratte_Ciel,
     Nb_Variantes_Maisons
-}HOUSE_VARIENT;
+}HouseVariant;
 
 typedef enum {
     City_Center,
     Chateau_D_Eau,
     Centrale_Electrique,
     Nb_Variantes_Batiments
-}BUILDING_VARIENT;
+}BuildingVariant;
 
 typedef struct {
     int type;

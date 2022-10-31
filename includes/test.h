@@ -5,10 +5,8 @@
 #ifndef PROJET_TEST_H
 #define PROJET_TEST_H
 
-#include <raylib.h>
 #include "../includes/basics/camera.h"
-#include "foncftions_affichage.h"
-#include "map/map.h"
+#include "build.h"
 
 void test (void);
 

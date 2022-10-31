@@ -7,6 +7,7 @@
 
 #include "interface utilisateur.h"
 #include "maths.h"
+#include "../map/map_draw.h"
 
 #define CAMERA_MOUSE_SCROLL_SENSITIVITY 1.5f
 #define CAMERA_FREE_MOUSE_SENSITIVITY 0.01f

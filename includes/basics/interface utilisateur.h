@@ -10,10 +10,6 @@
 #define TITLE "ECE City"
 #define FPS 60.0f
 
-#define DECALAGE_MAP_X 50.0f
-#define DECALAGE_MAP_Y 0.0f
-#define DECALAGE_MAP_Z 50.0f
-
 typedef enum {
     Mouse_Button_Left,       // Mouse button left
     Mouse_Button_Right,       // Mouse button right
