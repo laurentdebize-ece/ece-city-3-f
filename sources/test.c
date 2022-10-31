@@ -2,25 +2,14 @@
 // Created by eleuc on 25/10/2022.
 //
 
-#include "../includes/basics/camera.h"
 #include "../includes/test.h"
 
 void test() {
-// Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 1024;
-    const int screenHeight = 768;
 
     //SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera free");
+    InitWindow(WIDTH, HEIGHT, TITLE);
 
-    // Define the camera to look into our 3d world
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 50.0f + DECALAGE_MAP_X, 50.0f + DECALAGE_MAP_Y, 100.0f + DECALAGE_MAP_Z}; // Camera position
-    camera.target = (Vector3){ 0.0f + DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
-    camera.fovy = 45.0f;                                // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
+    Camera3D camera = camera_new();
 
     Vector3 cubePosition = { 0.0f + DECALAGE_MAP_X, 1.5f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};
     Vector2 mouse_pos = {0,0};
@@ -30,14 +19,18 @@ void test() {
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         // Update
         //----------------------------------------------------------------------------------
         mouse_pos = GetMousePosition();
-        move_camera_with_mouse(&camera, mouse_pos);
-        UpdateCamera(&camera);
+
+        //move_camera_with_mouse(&camera, mouse_pos);
+        //camera_update(&camera);  ma version petee
+
+        UpdateCamera(&camera);          // Update camera
 
         if (IsKeyDown('Z')) camera.target = (Vector3){ 0.0f + DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};
         //----------------------------------------------------------------------------------
@@ -57,8 +50,9 @@ void test() {
         DrawCube(cubePosition, 3.0f, 3.0f, 3.0f, YELLOW);
         DrawCubeWires(cubePosition, 3.0f, 3.0f, 3.0f, BLACK);
 
+
         DrawPlane((Vector3){0.0f + DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z}, (Vector2){100, 100}, GREEN);
-        DrawGrid2(100, 1.0f, (Vector3){DECALAGE_MAP_X, DECALAGE_MAP_Y + 0.01, DECALAGE_MAP_Z});
+        DrawGrid2(10, 1.0f, (Vector3){DECALAGE_MAP_X, DECALAGE_MAP_Y + 0.01, DECALAGE_MAP_Z});
 
         EndMode3D();
 
@@ -83,4 +77,10 @@ void test() {
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
+}
+
+void test_chargement_map(){
+    Map_t *map = load_map("../assets/map/map.txt");
+    print_map_console(map);
+    map_destroy(&map);
 }

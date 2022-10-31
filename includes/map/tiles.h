@@ -7,7 +7,7 @@
 
 #define TILE_SIZE 20
 
-enum TileType {
+typedef enum {
     TILE_GRASS,
     TILE_ROAD,
     TILE_HOUSE,
@@ -15,7 +15,7 @@ enum TileType {
     TILE_COUNT
 }TileType;
 
-enum RoadType {
+typedef enum {
     ROAD_N,
     ROAD_S,
     ROAD_E,
@@ -33,12 +33,30 @@ enum RoadType {
     ROAD_COUNT
 }RoadType;
 
+typedef enum{
+    Terrain_nu,
+    Cabane,
+    Maison,
+    Immeuble,
+    Gratte_Ciel,
+    Nb_Variantes_Maisons
+}HOUSE_VARIENT;
+
+typedef enum {
+    City_Center,
+    Chateau_D_Eau,
+    Centrale_Electrique,
+    Nb_Variantes_Batiments
+}BUILDING_VARIENT;
+
 typedef struct {
-    int tile_type;
+    int type;
+    int varient;
     union {
-        int road_type;
-        int building_type;
+
     };
-};
+}Tile_t;
+
+Tile_t tile_init_default(void);
 
 #endif //PROJET_TILES_H

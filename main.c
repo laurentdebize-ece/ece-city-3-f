@@ -7,6 +7,6 @@
 #include "includes/test.h"
 
 int main (void){
-    test();
+    test_chargement_map();
     return 0;
 }

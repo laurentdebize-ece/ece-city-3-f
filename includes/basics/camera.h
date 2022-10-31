@@ -5,10 +5,20 @@
 #ifndef PROJET_CAMERA_H
 #define PROJET_CAMERA_H
 
+#include "interface utilisateur.h"
 #include "maths.h"
 
+#define CAMERA_MOUSE_SCROLL_SENSITIVITY 1.5f
+#define CAMERA_FREE_MOUSE_SENSITIVITY 0.01f
+#define CAMERA_FREE_DISTANCE_MIN_CLAMP 0.3f
+#define CAMERA_FREE_DISTANCE_MAX_CLAMP 120.0f
+#define CAMERA_FREE_MIN_CLAMP 85.0f
+#define CAMERA_FREE_MAX_CLAMP -85.0f
+#define CAMERA_FREE_SMOOTH_ZOOM_SENSITIVITY 0.05f
+#define CAMERA_FREE_PANNING_DIVIDER 5.1f
+
 #define MOVING_ZONE_WIDTH_RATIO 1.0f/8.0f
-#define MAX_CAMERA_SPEED 10.0f/60.0f
+#define MAX_CAMERA_SPEED 20.0f/FPS
 
 typedef enum {
     MOVE_FRONT = 0,
@@ -19,7 +29,6 @@ typedef enum {
     MOVE_DOWN
 } CameraMove;
 
-// Camera global state context data [56 bytes]
 typedef struct {
     unsigned int mode;              // Current camera mode
     float targetDistance;           // Camera distance from position to target
@@ -33,9 +42,6 @@ typedef struct {
     int panControl;                 // Pan view control key
 } CameraData;
 
-//----------------------------------------------------------------------------------
-// Global Variables Definition
-//----------------------------------------------------------------------------------
 static CameraData CAMERA = {        // Global CAMERA state context
         .mode = 0,
         .targetDistance = 0,
@@ -44,8 +50,12 @@ static CameraData CAMERA = {        // Global CAMERA state context
         .moveControl = { 'W', 'S', 'D', 'A', 'E', 'Q' },
         .smoothZoomControl = 341,       // raylib: KEY_LEFT_CONTROL
         .altControl = 342,              // raylib: KEY_LEFT_ALT
-        .panControl = 2                 // raylib: MOUSE_BUTTON_MIDDLE
+        .panControl = Mouse_Button_Right
 };
+
+Camera camera_new();
+
+void camera_update(Camera *camera);
 
 void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos);
 
