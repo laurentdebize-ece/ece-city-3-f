@@ -8,11 +8,11 @@
 #define TILE_SIZE 20
 
 typedef enum {
-    TILE_GRASS,
-    TILE_ROAD,
-    TILE_HOUSE,
-    TILE_BUILDING,
-    TILE_COUNT
+    Tile_Type_Grass,
+    Tile_Type_Road,
+    Tile_Type_House,
+    Tile_Type_Builing,
+    Tile_Type_Count
 }TileType;
 
 typedef enum {
@@ -28,12 +28,14 @@ typedef enum {
     ROAD_EW,
     ROAD_NSE,
     ROAD_NSW,
+    ROAD_NEW,
     ROAD_SEW,
     ROAD_NSEW,
     ROAD_COUNT
 }RoadType;
 
 typedef enum{
+    Ruins,
     Terrain_nu,
     Cabane,
     Maison,

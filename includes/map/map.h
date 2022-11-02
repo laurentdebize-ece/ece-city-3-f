@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include "tiles.h"
 
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 20
+#define MAP_WIDTH 40
+#define MAP_HEIGHT 40
 #define MAP_SIZE MAP_WIDTH * MAP_HEIGHT
 #define MAP_FILE_PATH "../map.txt"
 

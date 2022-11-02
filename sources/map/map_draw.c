@@ -5,7 +5,7 @@
 #include "../../includes/map/map_draw.h"
 
 void map_draw(Map_t *map, float tile_size) {
-    Color colors[3] = {RED, GREEN, BLUE};
+    Color colors[Tile_Type_Count] = {DARKGREEN, GRAY, SKYBLUE, YELLOW};
     for (int y = 0; y < map->height; ++y) {
         for (int x = 0; x < map->width; ++x) {
             int tile = map->tiles[y * map->width + x]->type;

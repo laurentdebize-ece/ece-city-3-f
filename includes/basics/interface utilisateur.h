@@ -5,8 +5,8 @@
 #ifndef PROJET_INTERFACE_UTILISATEUR_H
 #define PROJET_INTERFACE_UTILISATEUR_H
 
-#define WIDTH 1024
-#define HEIGHT 768
+#define WIDTH 1920
+#define HEIGHT 1080
 #define TITLE "ECE City"
 #define FPS 60.0f
 

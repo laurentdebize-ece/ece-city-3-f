@@ -6,7 +6,11 @@
 #define PROJET_TEST_H
 
 #include "../includes/basics/camera.h"
-#include "build.h"
+#include "buildings/build.h"
+#include "../includes/basics/time.h"
+#include "../includes/buildings/house.h"
+
+void draw_cube_on_map(Map_t *map, Vector2 building_core_position);
 
 void test (void);
 
