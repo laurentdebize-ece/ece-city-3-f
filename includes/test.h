@@ -5,13 +5,15 @@
 #ifndef PROJET_TEST_H
 #define PROJET_TEST_H
 
-#define WIDTH 1024
-#define HEIGHT 768
-#define TITLE "ECE City"
-#define FPS 120.0
+#include "../includes/basics/camera.h"
+#include "buildings/build.h"
+#include "../includes/basics/time.h"
+#include "../includes/buildings/house.h"
 
-#include <raylib.h>
+void draw_cube_on_map(Map_t *map, Vector2 building_core_position);
 
 void test (void);
+
+void test_chargement_map();
 
 #endif //PROJET_TEST_H
