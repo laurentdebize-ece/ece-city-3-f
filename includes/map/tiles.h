@@ -52,7 +52,7 @@ typedef enum {
 }BuildingVariant;
 
 typedef struct {
-    int type;
+    TileType type;
     int varient;
     union {
 

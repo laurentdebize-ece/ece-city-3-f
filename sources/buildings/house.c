@@ -42,7 +42,7 @@ void house_update(House_t *house) {
     House_t *current_house = house;
     do {
         current_house->counter += 1;
-        if (current_house->counter == HOUSE_LEVEL_UPDATE && current_house->level < Nb_Variantes_Maisons) {
+        if (current_house->counter == HOUSE_LEVEL_UPDATE && current_house->level < Gratte_Ciel) {
             current_house->counter = 0;
             current_house->level += 1;
         }

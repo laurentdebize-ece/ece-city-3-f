@@ -26,7 +26,6 @@ void test() {
 
     Camera3D camera = camera_new();
 
-    Vector3 cubePosition = { 0.0f + DECALAGE_MAP_X, 1.5f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};
     Vector2 mouse_pos = {0,0};
 
     Vector2 first_road_coord = {0,0}, second_road_coord = first_road_coord, last_road_coord = first_road_coord;
@@ -43,7 +42,7 @@ void test() {
 
     int counter = 0, secs = 0, mins = 0, hours = 0;
 
-    SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
+    SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
 
@@ -91,10 +90,7 @@ void test() {
             }
         }
 
-
-        if (IsKeyDown('Z')) camera.target = (Vector3){ 0.0f + DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};
         //----------------------------------------------------------------------------------
-
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -123,7 +119,6 @@ void test() {
         DrawText(TextFormat("Camera coords : X = %f, Y = %f, Z = %f", camera.position.x, camera.position.y, camera.position.z), 40, 200, 20, BLACK);
         DrawText(TextFormat("Camera angle = %f pi", getRadianAngleBetween2Vec2D(new_vec2D(camera.target.x, camera.target.z), new_vec2D(camera.position.x, camera.position.z))), 40, 240, 20, BLACK);
         DrawText(TextFormat("Mouse collision coords : X = %f, Y = %f, Z = %f, hit = %d", mouse_ground_collision.point.x, mouse_ground_collision.point.y, mouse_ground_collision.point.z, mouse_ground_collision.hit), 40, 280, 20, BLACK);
-        DrawText(TextFormat("Time : %d:%d:%d", hours, mins, secs), 40, 320, 20, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -134,6 +129,7 @@ void test() {
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
     map_destroy(&map);
+
 }
 
 void test_chargement_map(){
