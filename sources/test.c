@@ -26,7 +26,7 @@ void test() {
     Camera3D camera = camera_new(map);
 
     /// Création de la position de la souris
-    Vector2 mouse_pos = {0,0};
+    Vector2 mouse_pos = {0,0}, mouse_pos_world = {0,0};
 
     /// Création des positions de construction de routes
     Vector2 first_road_coord = {0,0}, second_road_coord = first_road_coord, last_road_coord = first_road_coord;
@@ -69,21 +69,23 @@ void test() {
 
         mouse_ray = GetMouseRay(mouse_pos, camera);
         RayCollision mouse_ground_collision = GetRayCollisionQuad(mouse_ray, g0, g1, g2, g3);
+        mouse_pos_world = (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)};
 
         update_time(&time);
 
         house_update(house, map, &money);
 
         if(IsMouseButtonPressed(Mouse_Button_Left)){
-            if(mouse_ground_collision.hit && is_possible_to_build(map, (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)}, Tile_Type_House, money)){
-                add_house(map, &house, (Vector2) {(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)});
+            if(mouse_ground_collision.hit && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
+                add_house(map, &house, mouse_pos_world);
                 money -= 1000;
             }
         }
 
+        //if (IsMouseButtonPressed(Mouse_Button_Side_Front) && )
 
         if(IsMouseButtonPressed(Mouse_Button_Right)){
-            first_road_coord = (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)};
+            first_road_coord = mouse_pos_world;
             second_road_coord = (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)};
             last_road_coord = (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)};
         } else if(IsMouseButtonDown(Mouse_Button_Right)) {
