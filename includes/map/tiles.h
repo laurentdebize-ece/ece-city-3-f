@@ -16,6 +16,7 @@ typedef enum {
 }TileType;
 
 typedef enum {
+    ROAD_ALONE,
     ROAD_N,
     ROAD_S,
     ROAD_E,

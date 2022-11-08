@@ -9,11 +9,8 @@
 #include "buildings/build.h"
 #include "../includes/basics/time.h"
 #include "../includes/buildings/house.h"
-
-void draw_cube_on_map(Map_t *map, Vector2 building_core_position);
+#include "../includes/hud.h"
 
 void test (void);
-
-void test_chargement_map();
 
 #endif //PROJET_TEST_H

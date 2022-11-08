@@ -12,9 +12,9 @@
 
 #define TILES_WIDTH 2.0f
 
-#define DECALAGE_MAP_X (MAP_WIDTH*TILES_WIDTH/2.0f)
+#define DECALAGE_MAP_X (TILES_WIDTH/2.0f)
 #define DECALAGE_MAP_Y 0.0f
-#define DECALAGE_MAP_Z (MAP_HEIGHT*TILES_WIDTH/2.0f)
+#define DECALAGE_MAP_Z (TILES_WIDTH/2.0f)
 
 void map_draw(Map_t *map, float tile_size);
 
