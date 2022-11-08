@@ -104,14 +104,12 @@ void test() {
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(Fade(SKYBLUE, 0.5f)); // Clear background to sky blue
+        ClearBackground(SKYBLUE); // Clear background to sky blue
 
         BeginMode3D(camera);
 
         map_draw(map, TILES_WIDTH);
-        for (int i = 0; i < nbModels; ++i) {
-            DrawModel(house_model, (Vector3){0,0,0}, 1, GRAY);
-        }
+
         house_draw(house);
 
         EndMode3D();
@@ -125,10 +123,10 @@ void test() {
 
         print_time((Vector2){WIDTH - 310, 10}, &time);
 
-        DrawText(TextFormat("Camera coords : X = %f, Y = %f, Z = %f", camera.position.x, camera.position.y, camera.position.z), 40, 200, 20, BLACK);
-        DrawText(TextFormat("Camera angle = %f pi", getRadianAngleBetween2Vec2D(new_vec2D(camera.target.x, camera.target.z), new_vec2D(camera.position.x, camera.position.z))), 40, 240, 20, BLACK);
-        DrawText(TextFormat("Mouse collision coords : X = %f, Y = %f, Z = %f, hit = %d", mouse_ground_collision.point.x, mouse_ground_collision.point.y, mouse_ground_collision.point.z, mouse_ground_collision.hit), 40, 280, 20, BLACK);
-        DrawText(TextFormat("FPS : %d", GetFPS()), 10, 100, 20, BLACK);
+        //DrawText(TextFormat("Camera coords : X = %f, Y = %f, Z = %f", camera.position.x, camera.position.y, camera.position.z), 40, 200, 20, BLACK);
+        //DrawText(TextFormat("Camera angle = %f pi", getRadianAngleBetween2Vec2D(new_vec2D(camera.target.x, camera.target.z), new_vec2D(camera.position.x, camera.position.z))), 40, 240, 20, BLACK);
+        //DrawText(TextFormat("Mouse collision coords : X = %f, Y = %f, Z = %f, hit = %d", mouse_ground_collision.point.x, mouse_ground_collision.point.y, mouse_ground_collision.point.z, mouse_ground_collision.hit), 40, 280, 20, BLACK);
+        //DrawText(TextFormat("FPS : %d", GetFPS()), 10, 100, 20, BLACK);
 
         DrawTextureRec(hud_icons, (Rectangle){0, 0, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {build_icon_rec.x, build_icon_rec.y}, WHITE);
 
