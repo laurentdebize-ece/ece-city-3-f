@@ -18,7 +18,7 @@
 #define CAMERA_FREE_SMOOTH_ZOOM_SENSITIVITY 0.05f
 #define CAMERA_FREE_PANNING_DIVIDER 5.1f
 
-#define MOVING_ZONE_WIDTH_RATIO 1.0f/16.0f
+#define MOVING_ZONE_WIDTH_RATIO 1.0f/24.0f
 #define MAX_CAMERA_SPEED 30.0f/FPS
 
 typedef enum {
@@ -54,7 +54,7 @@ static CameraData CAMERA = {        // Global CAMERA state context
         .panControl = Mouse_Button_Right
 };
 
-Camera camera_new();
+Camera camera_new(Map_t *map);
 
 void camera_update(Camera *camera);
 

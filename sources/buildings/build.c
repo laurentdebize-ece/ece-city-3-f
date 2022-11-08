@@ -4,25 +4,16 @@
 
 #include "../../includes/buildings/build.h"
 
-bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient){
+bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money){
     switch (building_varient) {
         case Tile_Type_Road:
-            if ((int)building_core_position.x-1-1 > 0 && map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x-1]->type == Tile_Type_Road){
-                return true;
+            if(money < ROAD_PRICE || building_core_position.x < 0 || building_core_position.x > map->width || building_core_position.y < 0 || building_core_position.y > map->height || map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->type != Tile_Type_Grass){
+                return false;
             }
-            if ((int)building_core_position.x+1 < map->width && map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x+1]->type == Tile_Type_Road){
-                return true;
-            }
-            if ((int)building_core_position.y-1 >= 0 && map->tiles[((int)building_core_position.y-1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
-                return true;
-            }
-            if ((int)building_core_position.y+1 < map->height && map->tiles[((int)building_core_position.y+1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
-                return true;
-            }
-            return false;
+            return true;
         case Tile_Type_House:
 
-            if (building_core_position.x - 1 < 0 || building_core_position.x + 1 > map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 > map->height){
+            if (money < HOUSE_PRICE || building_core_position.x - 1 < 0 || building_core_position.x + 1 > map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 > map->height){
                 return false;
             }
             bool is_there_road = false;
@@ -72,6 +63,8 @@ void build_one_road(Map_t *map, Vector2 building_core_position){
     bool south = false;
     bool east = false;
     bool west = false;
+    map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->type = Tile_Type_Road;
+    map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->varient = ROAD_ALONE;
     if (building_core_position.x - 1 >= 0){
         if (map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->type == Tile_Type_Road)
             west = true;
@@ -143,29 +136,17 @@ int build_line_of_road(Map_t *map, Vector2 start, Vector2 end){
     Vector2 direction = Vector2Subtract(end, start);
     direction = Vector2Normalize(direction);
     int nb_roads_built = 0;
-    bool can_build = false;
-    while (Vector2Distance(current, end) >= 1){
-        if(!can_build && is_possible_to_build(map, current, Tile_Type_Road)){
-            can_build = true;
-        }
-        if (map->tiles[(int)current.y * map->width + (int)current.x]->type == Tile_Type_Road){
-            current = Vector2Add(current, direction);
-        }
-        if(map->tiles[(int)current.y * map->width + (int)current.x]->type != Tile_Type_Grass) {
-            return 0;
-        }
-        else {
-            current = Vector2Add(current, direction);
+
+    do {
+        if(is_possible_to_build(map, current, Tile_Type_Road, ROAD_PRICE)){
+            build_one_road(map, current);
             nb_roads_built++;
         }
-    }
-    current = start;
-    direction = Vector2Subtract(end, start);
-    direction = Vector2Normalize(direction);
-    build_one_road(map, current);
-    while (Vector2Distance(current, end) >= 1){
         current = Vector2Add(current, direction);
+    } while (Vector2Distance(current, end) >= 1);
+    if(is_possible_to_build(map, current, Tile_Type_Road, ROAD_PRICE)){
         build_one_road(map, current);
+        nb_roads_built++;
     }
     return nb_roads_built;
 }
