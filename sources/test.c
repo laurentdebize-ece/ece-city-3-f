@@ -6,31 +6,38 @@
 
 void test() {
 
+    /// Création de la map
     Map_t *map = load_map(DEFAULT_MAP_FILE_PATH);
     House_t *house = NULL;
+
+    /// Affichage de la map en console
     print_map_console(map);
+
+    /// Ouverture de la fenêtre
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(WIDTH, HEIGHT, TITLE);
 
+    /// Chargement des modèles 3D et de leur texture
     Model house_model = LoadModel("../assets/map/models/house.obj");
     Texture2D texture = LoadTexture("../assets/map/models/house.mtl");
     house_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
-    Vector2 tabModels[10];
-    int nbModels = 0;
-
+    /// Création de la caméra
     Camera3D camera = camera_new(map);
 
+    /// Création de la position de la souris
     Vector2 mouse_pos = {0,0};
 
+    /// Création des positions de construction de routes
     Vector2 first_road_coord = {0,0}, second_road_coord = first_road_coord, last_road_coord = first_road_coord;
 
-    // terrain du sol
+    /// Création des positions des points composant le plan de la map
     Vector3 g0 = (Vector3){ -map->width*(TILES_WIDTH/2.0f + DECALAGE_MAP_X), 0.0f + DECALAGE_MAP_Y, -map->height*(TILES_WIDTH/2.0f + DECALAGE_MAP_Z)};
     Vector3 g1 = (Vector3){ map->width*(TILES_WIDTH/2.0f + DECALAGE_MAP_X), 0.0f + DECALAGE_MAP_Y,  -map->height*(TILES_WIDTH/2.0f + DECALAGE_MAP_Z)};
     Vector3 g2 = (Vector3){  map->width*(TILES_WIDTH/2.0f + DECALAGE_MAP_X), 0.0f + DECALAGE_MAP_Y,  map->height*(TILES_WIDTH/2.0f + DECALAGE_MAP_Z)};
     Vector3 g3 = (Vector3){  -map->width*(TILES_WIDTH/2.0f + DECALAGE_MAP_X), 0.0f + DECALAGE_MAP_Y, map->height*(TILES_WIDTH/2.0f + DECALAGE_MAP_Z)};
 
+    /// Création de la position de la souris dans l'espace 3D
     Ray mouse_ray;
 
     SetCameraMode(camera, CAMERA_FREE); // Set a free camera mode
@@ -54,9 +61,11 @@ void test() {
         mouse_pos = GetMousePosition();
 
         move_camera_with_mouse(&camera, mouse_pos);
-        //camera_update(&camera);  ma version petee
+        //camera_update(&camera);  // ma version petee
 
         UpdateCamera(&camera);          // Update camera
+
+
 
         mouse_ray = GetMouseRay(mouse_pos, camera);
         RayCollision mouse_ground_collision = GetRayCollisionQuad(mouse_ray, g0, g1, g2, g3);
@@ -68,7 +77,6 @@ void test() {
         if(IsMouseButtonPressed(Mouse_Button_Left)){
             if(mouse_ground_collision.hit && is_possible_to_build(map, (Vector2){(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)}, Tile_Type_House, money)){
                 add_house(map, &house, (Vector2) {(int)(mouse_ground_collision.point.x/TILES_WIDTH), (int)(mouse_ground_collision.point.z/TILES_WIDTH)});
-                nbModels++;
                 money -= 1000;
             }
         }
@@ -96,7 +104,6 @@ void test() {
                 }
             }
         }
-
 
 
         //----------------------------------------------------------------------------------
@@ -128,7 +135,7 @@ void test() {
         //DrawText(TextFormat("Mouse collision coords : X = %f, Y = %f, Z = %f, hit = %d", mouse_ground_collision.point.x, mouse_ground_collision.point.y, mouse_ground_collision.point.z, mouse_ground_collision.hit), 40, 280, 20, BLACK);
         //DrawText(TextFormat("FPS : %d", GetFPS()), 10, 100, 20, BLACK);
 
-        DrawTextureRec(hud_icons, (Rectangle){0, 0, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {build_icon_rec.x, build_icon_rec.y}, WHITE);
+        DrawTextureRec(hud_icons, (Rectangle){0, 0, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {build_icon_rec.x, build_icon_rec.y}, (CheckCollisionPointRec(mouse_pos, build_icon_rec) ? Fade(WHITE, 0.5f) : WHITE));
 
 
         EndDrawing();

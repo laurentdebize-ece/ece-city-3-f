@@ -55,9 +55,7 @@ typedef enum {
 typedef struct {
     TileType type;
     int varient;
-    union {
-
-    };
+    //union {};
 }Tile_t;
 
 Tile_t tile_init_default(void);

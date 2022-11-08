@@ -9,11 +9,12 @@
 #include <stdlib.h>
 #include "tiles.h"
 
-#define DEFAULT_MAP_FILE_PATH "../assets/map/map.txt"
+#define DEFAULT_MAP_FILE_PATH "../assets/map/default_map.txt"
 
 typedef struct {
-
+    /// Largeur de la map
     int width;
+    /// Hauteur de la map
     int height;
     /// Tableau de pointeurs de Tile_t (tuiles)
     Tile_t **tiles;
