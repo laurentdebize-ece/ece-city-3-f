@@ -19,7 +19,7 @@
 #define CAMERA_FREE_PANNING_DIVIDER 5.1f
 
 #define MOVING_ZONE_WIDTH_RATIO 1.0f/24.0f
-#define MAX_CAMERA_SPEED 30.0f/FPS
+#define MAX_CAMERA_SPEED 40.0f/FPS
 
 typedef enum {
     MOVE_FRONT = 0,
