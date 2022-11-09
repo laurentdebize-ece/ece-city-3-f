@@ -4,10 +4,10 @@
 
 #include "../../includes/basics/camera.h"
 
-Camera camera_new(){
+Camera camera_new(Map_t *map){
     Camera camera = { 0 };
-    camera.position = (Vector3){ 50.0f + DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + DECALAGE_MAP_Z}; // Camera position
-    camera.target = (Vector3){ 0.0f + DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + DECALAGE_MAP_Z};      // Camera looking at point
+    camera.position = (Vector3){ 50.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
+    camera.target = (Vector3){ 0.0f + map->width*DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + map->height*DECALAGE_MAP_Z};      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
@@ -123,9 +123,9 @@ void camera_update(Camera *camera){
 
 void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
 
-    // Update camera position with mouse coordinates
+    /// Update camera position with mouse coordinates
 
-    if (mouse_pos.x < WIDTH*MOVING_ZONE_WIDTH_RATIO){    // Aller à gauche
+    if (mouse_pos.x < WIDTH*MOVING_ZONE_WIDTH_RATIO){    /// Aller à gauche
         float tauxX = 1 - mouse_pos.x / (WIDTH*MOVING_ZONE_WIDTH_RATIO);
         if(mouse_pos.y < HEIGHT*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut à gauche
             float tauxY = 1 - mouse_pos.y / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
@@ -184,6 +184,7 @@ void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
         }
     }
 
+    /// On met à jour la position de la caméra
     camera->position.x =
             -sinf(CAMERA.angle.x) * CAMERA.targetDistance * cosf(CAMERA.angle.y) + camera->target.x;
     camera->position.y = -sinf(CAMERA.angle.y) * CAMERA.targetDistance + camera->target.y;
