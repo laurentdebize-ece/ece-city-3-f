@@ -18,9 +18,9 @@ void test() {
     InitWindow(WIDTH, HEIGHT, TITLE);
 
     /// Chargement des modèles 3D et de leur texture
-    Model house_model = LoadModel("../assets/map/models/house.obj");
-    Texture2D texture = LoadTexture("../assets/map/models/house.mtl");
-    house_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    //Model cabane_model = LoadModel("../assets/map/models/cabane.obj");
+    //Texture2D texture = LoadTexture("../assets/map/models/cabane.png");
+    //cabane_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     /// Création de la caméra
     Camera3D camera = camera_new(map);
@@ -44,7 +44,10 @@ void test() {
 
     Texture2D hud_icons = LoadTexture("../assets/bitmaps/hud/hud_icons.png");
 
-    Rectangle build_icon_rec = {WIDTH/20.0f,  HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/2)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
+    Rectangle build_icon_rec = {WIDTH/20.0f,  HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
+    Rectangle destroy_icon_rec = {WIDTH*2/20.f, HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
+    Rectangle vew_icon_rec = {WIDTH*3/20.f, HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
+    int vew_mode = 0;
 
     Time_t time = {0,0,0,0,3,2069};
     int money = 500000;
@@ -65,7 +68,7 @@ void test() {
 
         UpdateCamera(&camera);          // Update camera
 
-
+        if(IsMouseButtonPressed(Mouse_Button_Left) && CheckCollisionPointRec(mouse_pos, vew_icon_rec)) vew_mode = (vew_mode + 1) % 3;
 
         mouse_ray = GetMouseRay(mouse_pos, camera);
         RayCollision mouse_ground_collision = GetRayCollisionQuad(mouse_ray, g0, g1, g2, g3);
@@ -82,7 +85,7 @@ void test() {
             }
         }
 
-        //if (IsMouseButtonPressed(Mouse_Button_Side_Front) && )
+        //if (IsMouseButtonPressed(Mouse_Button_Side_Front) && map->tiles[])
 
         if(IsMouseButtonPressed(Mouse_Button_Right)){
             first_road_coord = mouse_pos_world;
@@ -117,9 +120,9 @@ void test() {
 
         BeginMode3D(camera);
 
-        map_draw(map, TILES_WIDTH);
+            map_draw(map, TILES_WIDTH, vew_mode);
 
-        house_draw(house);
+            if(!vew_mode) house_draw(house);
 
         EndMode3D();
 
@@ -138,7 +141,8 @@ void test() {
         //DrawText(TextFormat("FPS : %d", GetFPS()), 10, 100, 20, BLACK);
 
         DrawTextureRec(hud_icons, (Rectangle){0, 0, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {build_icon_rec.x, build_icon_rec.y}, (CheckCollisionPointRec(mouse_pos, build_icon_rec) ? Fade(WHITE, 0.5f) : WHITE));
-
+        DrawTextureRec(hud_icons, (Rectangle){0, hud_icons.height/Nb_Hud_Buttons, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {destroy_icon_rec.x, destroy_icon_rec.y}, (CheckCollisionPointRec(mouse_pos, destroy_icon_rec) ? Fade(WHITE, 0.5f) : WHITE));
+        DrawTextureRec(hud_icons, (Rectangle){0, (2+vew_mode)*hud_icons.height/Nb_Hud_Buttons, hud_icons.width, hud_icons.height/Nb_Hud_Buttons}, (Vector2) {vew_icon_rec.x, vew_icon_rec.y}, (CheckCollisionPointRec(mouse_pos, vew_icon_rec) ? Fade(WHITE, 0.5f) : WHITE));
 
         EndDrawing();
         //----------------------------------------------------------------------------------

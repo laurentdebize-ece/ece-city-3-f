@@ -10,6 +10,9 @@
 typedef enum {
     Button_Build,
     Button_Destroy,
+    Button_City_Vew,
+    Button_Water_vew,
+    Button_Electricity_vew,
     Nb_Hud_Buttons
 }HUD_BUTTONS;
 
