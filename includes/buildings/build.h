@@ -5,12 +5,11 @@
 #ifndef PROJET_BUILD_H
 #define PROJET_BUILD_H
 
-#include "src/raylib.h"
+#include <raylib.h>
 #include "../map/map_draw.h"
 
 #define ROAD_PRICE 10
 #define HOUSE_PRICE 1000
-
 
 bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money);
 

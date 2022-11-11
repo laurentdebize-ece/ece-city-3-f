@@ -35,14 +35,14 @@ void add_house(Map_t *map, House_t **house, Vector2 position) {
     new_house->next = *house;
 }
 
-void house_update(House_t *house, Map_t *map, int *money) {
+void house_update(House_t *house, Map_t *map, int *money, int speed) {
     if(!house){
         return;
     }
     House_t *current_house = house;
     do {
-        current_house->counter += 1;
-        if (current_house->counter == HOUSE_LEVEL_UPDATE) {
+        current_house->counter += speed;
+        if (current_house->counter >= HOUSE_LEVEL_UPDATE) {
             switch (current_house->level) {
                 case Cabane:
                     *money += 10*TAX_PER_PERSON;
@@ -59,7 +59,7 @@ void house_update(House_t *house, Map_t *map, int *money) {
                 default:
                     break;
             }
-            current_house->counter = 0;
+            current_house->counter = current_house->counter % (int)HOUSE_LEVEL_UPDATE;
 
             if (current_house->level < Gratte_Ciel) {
                 current_house->level += 1;

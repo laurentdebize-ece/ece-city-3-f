@@ -19,16 +19,16 @@ typedef enum {
     ROAD_ALONE,
     ROAD_N,
     ROAD_S,
-    ROAD_E,
-    ROAD_W,
-    ROAD_NE,
-    ROAD_NW,
-    ROAD_SE,
-    ROAD_SW,
     ROAD_NS,
-    ROAD_EW,
+    ROAD_E,
+    ROAD_NE,
+    ROAD_SE,
     ROAD_NSE,
+    ROAD_W,
+    ROAD_NW,
+    ROAD_SW,
     ROAD_NSW,
+    ROAD_EW,
     ROAD_NEW,
     ROAD_SEW,
     ROAD_NSEW,
@@ -55,7 +55,7 @@ typedef enum {
 typedef struct {
     TileType type;
     int varient;
-    //union {};
+    void *building;
 }Tile_t;
 
 Tile_t tile_init_default(void);

@@ -58,76 +58,40 @@ void test_build_house(Map_t *map, Vector2 building_core_position){
     }
 }
 
+void add_side_to_road(Tile_t *tile, RoadType side){
+
+}
+
 void build_one_road(Map_t *map, Vector2 building_core_position){
-    bool north = false;
-    bool south = false;
-    bool east = false;
-    bool west = false;
+    /// On ajoute une route sur la case
     map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->type = Tile_Type_Road;
-    map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->varient = ROAD_ALONE;
-    if (building_core_position.x - 1 >= 0){
-        if (map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->type == Tile_Type_Road)
-            west = true;
+    /// On ajoute les côtés de la route
+    if (building_core_position.x - 1 >= 0){ /// Si on n'est pas sur le bord gauche
+        /// Si la case à gauche est une route
+        if (map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->type == Tile_Type_Road){
+            /// On ajoute le côté gauche
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient += ROAD_W;
+            /// On ajoute le côté droit à la case à gauche
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->varient += ROAD_E;
+        }
     }
-    if (building_core_position.x + 1 < map->width){
-        if (map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x + 1]->type == Tile_Type_Road)
-            east = true;
+    if (building_core_position.x + 1 < map->width) {
+        if (map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x + 1]->type ==Tile_Type_Road){
+            map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x]->varient += ROAD_E;
+            map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x + 1]->varient += ROAD_W;
+        }
     }
     if (building_core_position.y - 1 >= 0){
-        if (map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road)
-            north = true;
+        if (map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient += ROAD_N;
+            map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->varient += ROAD_S;
+        }
     }
     if (building_core_position.y + 1 < map->height){
-        if (map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road)
-            south = true;
-    }
-    if(!north && !south && !east && !west)
-        return;
-    else if (north && south && east && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NSEW;
-    } else if (north && south && east){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NSE;
-    } else if (north && south && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NSW;
-    } else if (north && east && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NEW;
-    } else if (south && east && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_SEW;
-    } else if (north && south){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NS;
-    } else if (east && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_EW;
-    } else if (north && east){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NE;
-    } else if (north && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_NW;
-    } else if (south && east){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_SE;
-    } else if (south && west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_SW;
-    } else if (north){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_N;
-    } else if (south){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_S;
-    } else if (east){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_E;
-    } else if (west){
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Road;
-        map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = ROAD_W;
+        if (map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient += ROAD_S;
+            map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->varient += ROAD_N;
+        }
     }
 }
 
