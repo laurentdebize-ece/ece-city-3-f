@@ -158,7 +158,7 @@ void change_time_speed(Time_t *time) {
             time->speed = 2;
             break;
         case 2:
-            time->speed = 4;
+            time->speed = 5;
             break;
         case 5:
             time->speed = 10;

@@ -39,7 +39,7 @@ void change_view_mode(int *view_mode){
 }
 
 bool is_mouse_on_hud(Vector2 mouse_position){
-    if (mouse_position.x > GetScreenWidth() * (1.0f - HUD_WIDTH_RATIO)){
+    if (mouse_position.y > (float)GetScreenHeight() * (1.0f - HUD_HEIGHT_RATIO)){
         return true;
     }
     return false;

@@ -12,3 +12,10 @@ int get_button_hovered(Rectangle *buttons, int buttons_count, Vector2 mouse_pos)
     }
     return -1;
 }
+
+bool should_window_be_closed(){
+    if (IsKeyDown(KEY_ESCAPE) && (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))){
+        return true;
+    }
+    return false;
+}

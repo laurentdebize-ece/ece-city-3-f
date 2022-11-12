@@ -14,7 +14,8 @@ void test() {
     print_map_console(map);
 
     /// Ouverture de la fenêtre
-    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
+    //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(WIDTH, HEIGHT, TITLE);
 
     /// Chargement des modèles 3D et de leur texture
@@ -66,11 +67,17 @@ void test() {
     bool is_on_pause = false;
     int pause_counter = 0;
 
+    int screen_width = GetScreenWidth();
+    int screen_height = GetScreenHeight();
+
     // Main game loop
-    while (!WindowShouldClose())        // Detect window close button or ESC key
+    while (!should_window_be_closed())        /// Est-ce qu'on ferme la fenêtre ?
     {
+
+        /*---------------------------------------COMMANDES CLAVIER---------------------------------------*/
         /// Commandes clavier
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
+
             if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
                 //save_map(map, DEFAULT_MAP_FILE_PATH);
             }
@@ -87,13 +94,18 @@ void test() {
         }
 
 
+        /*---------------------------------------UPDATE---------------------------------------*/
 
+        if (IsWindowResized()){ /// Ca pue la merde
+            screen_width = GetScreenWidth();
+            screen_height = GetScreenHeight();
+            for (int i = 0; i < 5; ++i) {
+                tab_button_icon_rec[i].y = screen_height*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_height*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f;
+            }
+        }
 
-        // Update
-        //----------------------------------------------------------------------------------
+        /// Mise à jour de la souris
         mouse_pos = GetMousePosition();
-        if (button_pressed==-1) button_hovered = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
-        else if (button_pressed == Button_Build) button_hovered = get_button_hovered(tab_button_icon_rec, 3, mouse_pos);
 
         move_camera_with_mouse(&camera, mouse_pos);
         //camera_update(&camera);  // ma version petee
@@ -110,111 +122,98 @@ void test() {
             house_update(house, map, &money, time.speed);
         }
 
-        //if(button_pressed == )
+        /*---------------------------------------CLICK EVENT REACTION---------------------------------------*/
 
-        //if (IsMouseButtonPressed(Mouse_Button_Side_Front) && map->tiles[])
+        if(button_pressed == Button_Road || button_pressed == Button_House){
+            if (IsMouseButtonPressed(Mouse_Button_Right)) button_pressed = Button_Build;
+            else {
+                switch (button_pressed) {
+                    case Button_Road:
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && mouse_pos_world.x >= 0 && mouse_pos_world.x < map->width && mouse_pos_world.y >= 0 && mouse_pos_world.y < map->height) {
+                            first_road_coord = mouse_pos_world;
+                            second_road_coord = mouse_pos_world;
+                            last_road_coord = mouse_pos_world;
+                        }
+                        else if (IsMouseButtonDown(Mouse_Button_Left)) {
+                            if (vec2D_sub(first_road_coord, second_road_coord).x == 0 &&
+                                vec2D_sub(first_road_coord, second_road_coord).y == 0) {
+                                second_road_coord = mouse_pos_world;
+                            } else if (vec2D_sub(first_road_coord, second_road_coord).x) last_road_coord.x = mouse_pos_world.x;
+                            else last_road_coord.y = mouse_pos_world.y;
+                        } else if (IsMouseButtonReleased(Mouse_Button_Left)) {
+                            if (mouse_ground_collision.hit && (vec2D_sub(first_road_coord, second_road_coord).x != 0 ||
+                                                               vec2D_sub(first_road_coord, second_road_coord).y != 0)) {
+                                money -= 10 * build_line_of_road(map, first_road_coord, last_road_coord);
+                            }
+                        } else if (IsMouseButtonReleased(Mouse_Button_Left) && first_road_coord.x == last_road_coord.x && first_road_coord.y == last_road_coord.y) {
+                            if (is_possible_to_build(map, first_road_coord, Tile_Type_Road, money)) {
+                                build_one_road(map, first_road_coord);
+                                money -= 10;
+                            }
+                        }
+                        break;
+                    case Button_House:    /// House mode on
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)) {
+                            add_house(map, &house, mouse_pos_world);
+                            money -= HOUSE_PRICE;
+                            if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
+                                button_pressed = Button_Build;
 
-        if (IsMouseButtonPressed(Mouse_Button_Left)) {
-            switch (button_pressed) {
-                case Button_Build:    /// Build mode on
-                    button_pressed = get_button_hovered(tab_button_icon_rec, 3, mouse_pos);
-                    if (button_pressed == Button_1) {    /// Return button pressed
-                        button_pressed = -1;    /// Build mode off
-                    } else if (button_pressed == Button_2) {    /// Road button pressed
-                        button_pressed = Button_Road;    /// Road mode on
-                    } else if (button_pressed == Button_3) {    /// House button pressed
-                        button_pressed = Button_House;    /// House mode on
-                    } else button_pressed = Button_Build;    /// Build mode stays on
-                    break;
-                case Button_Destroy:    /// Destroy mode on
-                    button_pressed = get_button_hovered(tab_button_icon_rec, 3, mouse_pos);
-                    if (button_pressed == Button_2) {    /// Destroy button pressed
-                        button_pressed = -1;    /// Destroy mode off
-                    } else if (button_pressed == Button_1) {  /// Build button pressed
-                        button_pressed = Button_Build;    /// Destroy mode off
-                    } else if (button_pressed == Button_3) {  /// House button pressed
-                        view_mode = (view_mode + 1) % 3;    /// House mode on
-                        button_pressed = Button_Destroy;    /// Destroy mode stays on
-                    } else button_pressed = Button_Destroy;    /// Destroy mode stays on
-                    break;
-                case Button_Road:   /// Road mode on
-                    if (!is_mouse_on_hud(mouse_pos)) {
-                        first_road_coord = mouse_pos_world;
-                        second_road_coord = mouse_pos_world;
-                        last_road_coord = mouse_pos_world;
-                    } else {
-                        button_pressed = get_button_hovered(tab_button_icon_rec, 3, mouse_pos);
-                        if (button_pressed == Button_1) { /// Return button pressed
+                        }
+                        break;
+                }
+            }
+        }
+        else if (is_mouse_on_hud(mouse_pos)){
+            if (button_pressed==-1) button_hovered = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
+            else if (button_pressed == Button_Build) button_hovered = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
+            if (IsMouseButtonPressed(Mouse_Button_Left)) {
+                switch (button_pressed) {
+                    case Button_Build:    /// Build mode on
+                        button_pressed = button_hovered;
+                        if (button_pressed == Button_1) {    /// Return button pressed
                             button_pressed = -1;    /// Build mode off
-                        } else if (button_pressed == Button_2) {  /// Road button pressed
-                            button_pressed = Button_Build;   /// Road mode off & Build mode on
+                        } else if (button_pressed == Button_2) {    /// Road button pressed
+                            button_pressed = Button_Road;    /// Road mode on
+                            first_road_coord = (Vector2) {-1, -1};
+                            second_road_coord = (Vector2) {-1, -1};
+                            last_road_coord = (Vector2) {-1, -1};
+                        } else if (button_pressed == Button_3) {    /// House button pressed
+                            button_pressed = Button_House;    /// House mode on
+                        } else button_pressed = Button_Build;    /// Build mode stays on
+                        break;
+                    case Button_Destroy:    /// Destroy mode on
+                        button_pressed = button_hovered;
+                        if (button_pressed == Button_2) {    /// Destroy button pressed
+                            button_pressed = -1;    /// Destroy mode off
+                        } else if (button_pressed == Button_1) {  /// Build button pressed
+                            button_pressed = Button_Build;    /// Destroy mode off
                         } else if (button_pressed == Button_3) {  /// House button pressed
-                            button_pressed = Button_House;   /// House mode on
-                        } else button_pressed = Button_Road; /// Road mode stays on
-                    }
-                    break;
-                case Button_House:    /// House mode on
-                    if (mouse_pos.y < HEIGHT * (1.0f - HUD_HEIGHT_RATIO) &&
-                        is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)) {
-                        add_house(map, &house, mouse_pos_world);
-                        money -= HOUSE_PRICE;
-                        if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT)) {    /// Shift not pressed
+                            view_mode = (view_mode + 1) % 3;    /// House mode on
+                            button_pressed = Button_Destroy;    /// Destroy mode stays on
+                        } else button_pressed = Button_Destroy;    /// Destroy mode stays on
+                        break;
+
+                    default:    /// No mode on, default menu mode
+                        button_pressed = button_hovered;
+                        if (button_pressed == Button_3) {   /// View button pressed
+                            change_view_mode(&view_mode);
+                            button_pressed = -1;
+                        } else if (button_pressed == Button_4) {  /// Pause button pressed
+                            is_on_pause = !is_on_pause;
+                            pause_counter = 0;
+                            button_pressed = -1;
+                        } else if (button_pressed == Button_5) {  /// Speed button pressed
+                            change_time_speed(&time);
                             button_pressed = -1;
                         }
-                    } else {
-                        button_pressed = get_button_hovered(tab_button_icon_rec, 3, mouse_pos);
-                        if (button_pressed == Button_Build) { /// Return button pressed
-                            button_pressed = -1;    /// Build mode off
-                        } else if (button_pressed == Button_Destroy) {  /// Road button pressed
-                            button_pressed = Button_Road;   /// Road mode off & Build mode on
-                        } else if (button_pressed == Button_View_Normal) {  /// House button pressed
-                            button_pressed = Button_Build;   /// House mode on
-                        } else button_pressed = Button_House; /// House mode stays on
-                    }
-                    break;
-                default:    /// No mode on, default menu mode
-                    button_pressed = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
-                    if (button_pressed == Button_3) {   /// View button pressed
-                        change_view_mode(&view_mode);
-                        button_pressed = -1;
-                    }
-                    else if (button_pressed == Button_4){  /// Pause button pressed
-                        is_on_pause = !is_on_pause;
-                        pause_counter = 0;
-                    }
-                    else if (button_pressed == Button_5) {  /// Speed button pressed
-                        change_time_speed(&time);
                         break;
-                    }
-                    break;
-
-
-            }
-        }
-
-        if (button_pressed == Button_Road && !is_mouse_on_hud(mouse_pos)) {
-            if (IsMouseButtonDown(Mouse_Button_Left)) {
-                if (vec2D_sub(first_road_coord, second_road_coord).x == 0 &&
-                    vec2D_sub(first_road_coord, second_road_coord).y == 0) {
-                    second_road_coord = mouse_pos_world;
-                } else if (vec2D_sub(first_road_coord, second_road_coord).x) last_road_coord.x = mouse_pos_world.x;
-                else last_road_coord.y = mouse_pos_world.y;
-            } else if (IsMouseButtonReleased(Mouse_Button_Left)) {
-                if (mouse_ground_collision.hit && (vec2D_sub(first_road_coord, second_road_coord).x != 0 ||
-                                                   vec2D_sub(first_road_coord, second_road_coord).y != 0)) {
-                    money -= 10 * build_line_of_road(map, first_road_coord, last_road_coord);
-                }
-            } else if (first_road_coord.x == last_road_coord.x && first_road_coord.y == last_road_coord.y) {
-                if (is_possible_to_build(map, first_road_coord, Tile_Type_Road, money)) {
-                    build_one_road(map, first_road_coord);
-                    money -= 10;
                 }
             }
         }
 
-        //----------------------------------------------------------------------------------
-        // Draw
-        //----------------------------------------------------------------------------------
+        /*---------------------------------------DRAWING---------------------------------------*/
+
         BeginDrawing();
 
         ClearBackground(SKYBLUE); // Clear background to sky blue
@@ -227,16 +226,93 @@ void test() {
 
         EndMode3D();
 
-
         DrawRectangle(10, 10, 350, 50, Fade(GREEN, 0.5f));
         DrawRectangleLines(10, 10, 350, 50, GREEN);
         DrawText(TextFormat("Money : $%d", money), 20, 20, 30, BLACK);
 
         print_time((Vector2) {WIDTH - 310, 10}, &time);
 
-        DrawText(TextFormat("FPS : %d\nTime speed : x%d\nCounter : %d", GetFPS(), time.speed, time.counter), 10, 100, 20, BLACK);
+        DrawText(TextFormat("FPS : %d\nTime speed : x%d\nCounter : %d", GetFPS(), time.speed, time.counter), 10, 100, 10, BLACK);
 
-        draw_hud(hud_icons, tab_button_icon_rec, mouse_pos, button_pressed, view_mode, is_on_pause, time.speed);
+        if(button_pressed == Button_Road || button_pressed == Button_House) {
+            DrawRectangle((screen_width - MeasureText("Right click to disable", 20))/2 - 10, screen_height/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(GRAY, 0.5f));
+            DrawRectangleLines((screen_width - MeasureText("Right click to disable", 20))/2 - 10, screen_height/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(DARKGRAY, 0.5f));
+            DrawText("Build mode active", (GetScreenWidth()-MeasureText("Build mode active", 20))/2, screen_height/16 + 5, 20, Fade(BLACK, 0.5f));
+            DrawText("Right click to disable", (GetScreenWidth()-MeasureText("Right click to disable", 20))/2, screen_height/16 + 25, 20, Fade(BLACK, 0.5f));
+        }
+
+        else {
+            draw_hud(hud_icons, tab_button_icon_rec, mouse_pos, button_pressed, view_mode, is_on_pause, time.speed);
+            if(button_pressed == -1) {  /// No mode on
+                switch (button_hovered) {
+                    case Button_1:
+                        /// Draw a rectangle with description of the build button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build things like roads, houses...", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build things like roads, houses...", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Build things like roads, houses...", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_2:
+                        /// Draw a rectangle with description of the destroy button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Destroy things like roads, houses...", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Destroy things like roads, houses...", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Destroy things like roads, houses...", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_3:
+                        /// Draw a rectangle with description of the view button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change view mode", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change view mode", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Change view mode", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_4:
+                        /// Draw a rectangle with description of the pause button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Pause and resume time", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Pause and resume time", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Pause and resume time", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_5:
+                        /// Draw a rectangle with description of the time speed button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change time speed", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change time speed", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Change time speed", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                }
+            }
+            else if(button_pressed == Button_Build) {
+                switch (button_hovered) {
+                    case Button_1:
+                        /// Draw a rectangle with description of the return button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Return to main menu", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Return to main menu", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Return to main menu", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_2:
+                        /// Draw a rectangle with description of the road button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build roads", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build roads", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Build roads", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_3:
+                        /// Draw a rectangle with description of the house button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build houses", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build houses", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Build houses", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_4:
+                        /// Draw a rectangle with description of the water tower button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a water tower", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a water tower", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Build a water tower", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                    case Button_5:
+                        /// Draw a rectangle with description of the power plant button next to mouse
+                        DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a power plant", 20) + 20, 30, Fade(GRAY, 0.8f));
+                        DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a power plant", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                        DrawText("Build a power plant", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                        break;
+                }
+            }
+
+        }
 
         if (is_on_pause) {
             pause_counter++;
@@ -245,7 +321,7 @@ void test() {
 
         EndDrawing();
 
-        //----------------------------------------------------------------------------------
+        /*---------------------------------------FIN DE BOUCLE---------------------------------------*/
     }
 
     // De-Initialization
