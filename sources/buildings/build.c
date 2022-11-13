@@ -95,22 +95,49 @@ void build_one_road(Map_t *map, Vector2 building_core_position){
     }
 }
 
-int build_line_of_road(Map_t *map, Vector2 start, Vector2 end){
+void build_line_of_road(Map_t *map, Vector2 start, Vector2 end, int *money){
     Vector2 current = start;
     Vector2 direction = Vector2Subtract(end, start);
     direction = Vector2Normalize(direction);
-    int nb_roads_built = 0;
 
     do {
-        if(is_possible_to_build(map, current, Tile_Type_Road, ROAD_PRICE)){
+        if(is_possible_to_build(map, current, Tile_Type_Road, *money)){
             build_one_road(map, current);
-            nb_roads_built++;
+            *money -= ROAD_PRICE;
         }
         current = Vector2Add(current, direction);
     } while (Vector2Distance(current, end) >= 1);
-    if(is_possible_to_build(map, current, Tile_Type_Road, ROAD_PRICE)){
+    if(is_possible_to_build(map, current, Tile_Type_Road, *money)){
         build_one_road(map, current);
-        nb_roads_built++;
+        *money -= ROAD_PRICE;
     }
-    return nb_roads_built;
 }
+
+void build_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord, Vector2 *second_road_coord, Vector2 *last_road_coord, int *money, bool is_mouse_in_map){
+    /// Si on a cliqué sur la map
+    if (IsMouseButtonPressed(Mouse_Button_Left) && is_mouse_in_map) {
+        *first_road_coord = mouse_pos_world;
+        *second_road_coord = mouse_pos_world;
+        *last_road_coord = mouse_pos_world;
+    }
+    /// Si on garde le clic enfoncé
+    else if (IsMouseButtonDown(Mouse_Button_Left)) {
+        if (is_vec2D_same(*first_road_coord, *second_road_coord)) {
+            *second_road_coord = mouse_pos_world;
+        } else if (vec2D_sub(*first_road_coord, *second_road_coord).x) last_road_coord->x = mouse_pos_world.x;
+        else last_road_coord->y = mouse_pos_world.y;
+    }
+    /// Si on relâche le clic
+    else if (IsMouseButtonReleased(Mouse_Button_Left)) {
+        if (is_mouse_in_map && !is_vec2D_same(*first_road_coord, *last_road_coord)) {
+            build_line_of_road(map, *first_road_coord, *last_road_coord, money);
+        }
+        else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&is_vec2D_same(*first_road_coord, *second_road_coord)) {
+            if (is_possible_to_build(map, *first_road_coord, Tile_Type_Road, *money)) {
+                build_one_road(map, *first_road_coord);
+                money -= ROAD_PRICE;
+            }
+        }
+    }
+}
+

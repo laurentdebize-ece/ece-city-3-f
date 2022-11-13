@@ -67,3 +67,12 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
 
     DrawGrid2(map->width, TILES_WIDTH, (Vector3) {map->width*DECALAGE_MAP_X, 0.05f + DECALAGE_MAP_Y, map->height*DECALAGE_MAP_Z});
 }
+
+void
+
+bool is_mouse_on_map(Map_t *map, Vector2 mouse_pos_world) {
+    if (mouse_pos_world.x < 0 || mouse_pos_world.x > map->width || mouse_pos_world.y < 0 ||
+        mouse_pos_world.y > map->height)
+        return false;
+    return true;
+}

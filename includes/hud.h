@@ -40,6 +40,8 @@ typedef enum {
 
 void draw_hud(Texture2D hud_textures, Rectangle *tab_buttons_rec, Vector2 mouse_position, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed);
 
+void draw_button_description(Vector2 mouse_pos, int button_pressed, int button_hovered);
+
 void change_view_mode(int *view_mode);
 
 bool is_mouse_on_hud(Vector2 mouse_position);

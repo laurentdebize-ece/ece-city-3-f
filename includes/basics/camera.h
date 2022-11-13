@@ -54,6 +54,8 @@ static CameraData CAMERA = {        // Global CAMERA state context
         .panControl = Mouse_Button_Right
 };
 
+
+
 Camera camera_new(Map_t *map);
 
 void camera_update(Camera *camera);

@@ -34,6 +34,77 @@ void draw_hud(Texture2D hud_textures, Rectangle *tab_button_icon_rec, Vector2 mo
     }
 }
 
+void draw_button_description(Vector2 mouse_pos, int button_pressed, int button_hovered){
+    if(button_pressed == -1) {  /// No mode on
+        switch (button_hovered) {
+            case Button_1:
+                /// Draw a rectangle with description of the build button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build things like roads, houses...", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build things like roads, houses...", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Build things like roads, houses...", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_2:
+                /// Draw a rectangle with description of the destroy button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Destroy things like roads, houses...", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Destroy things like roads, houses...", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Destroy things like roads, houses...", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_3:
+                /// Draw a rectangle with description of the view button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change view mode\nShortcut : CTRL + V", 20) + 20, 60, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change view mode\nShortcut : CTRL + V", 20) + 20, 60, Fade(DARKGRAY, 0.8f));
+                DrawText("Change view mode\nShortcut : CTRL + V", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_4:
+                /// Draw a rectangle with description of the pause button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Pause and resume time\nShortcut : CTRL + P", 20) + 20, 60, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Pause and resume time\nShortcut : CTRL + P", 20) + 20, 60, Fade(DARKGRAY, 0.8f));
+                DrawText("Pause and resume time\nShortcut : CTRL + P", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_5:
+                /// Draw a rectangle with description of the time speed button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change time speed\nShortcut : CTRL + T", 20) + 20, 60, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Change time speed\nShortcut : CTRL + T", 20) + 20, 60, Fade(DARKGRAY, 0.8f));
+                DrawText("Change time speed\nShortcut : CTRL + T", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+        }
+    }
+    else if(button_pressed == Button_Build) {
+        switch (button_hovered) {
+            case Button_1:
+                /// Draw a rectangle with description of the return button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Return to main menu", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Return to main menu", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Return to main menu", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_2:
+                /// Draw a rectangle with description of the road button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build roads", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build roads", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Build roads", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_3:
+                /// Draw a rectangle with description of the house button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build houses", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build houses", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Build houses", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_4:
+                /// Draw a rectangle with description of the water tower button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a water tower", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a water tower", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Build a water tower", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+            case Button_5:
+                /// Draw a rectangle with description of the power plant button next to mouse
+                DrawRectangle(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a power plant", 20) + 20, 30, Fade(GRAY, 0.8f));
+                DrawRectangleLines(mouse_pos.x + 10, mouse_pos.y - 10, MeasureText("Build a power plant", 20) + 20, 30, Fade(DARKGRAY, 0.8f));
+                DrawText("Build a power plant", mouse_pos.x + 20, mouse_pos.y - 5, 20, Fade(BLACK, 0.8f));
+                break;
+        }
+    }
+}
+
 void change_view_mode(int *view_mode){
     *view_mode = (*view_mode + 1) % 3;
 }
