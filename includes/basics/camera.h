@@ -60,6 +60,6 @@ Camera camera_new(Map_t *map);
 
 void camera_update(Camera *camera);
 
-void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos);
+void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos, Vector2 screen_size);
 
 #endif //PROJET_CAMERA_H

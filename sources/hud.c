@@ -4,14 +4,47 @@
 
 #include "../includes/hud.h"
 
-void draw_hud(Texture2D hud_textures, Rectangle *tab_button_icon_rec, Vector2 mouse_pos, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed){
-    int width = GetScreenWidth(), height = GetScreenHeight();
+void draw_minimap(Map_t *map, Vector2 screen_size, int view_mode){
+    int minimap_width = (int)(screen_size.y * MINI_MAP_MAX_WIDTH_RATIO);
+    int minimap_height = (int)(screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO);
+    int minimap_x = (int)(screen_size.x - minimap_width - 20);
+    int minimap_y = (int)(screen_size.y - minimap_height - 20);
+    if (minimap_width > minimap_height){
+        minimap_width = minimap_height;
+    } else {
+        minimap_height = minimap_width;
+    }
+    for (int y = 0; y < map->height; ++y) {
+        for (int x = 0; x < map->width; ++x) {
+            if (map->tiles[y*map->width + x]->type == Tile_Type_Grass){
+                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, GREEN);
+            }
+            else if (map->tiles[y*map->width + x]->type == Tile_Type_Road){
+                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, GRAY);
+            }
+            else if (map->tiles[y*map->width + x]->type == Tile_Type_House){
+                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, BROWN);
+            }
+            else if (map->tiles[y*map->width + x]->type == Tile_Type_Builing) {
+                if (map->tiles[y*map->width + x]->varient == Building_Varient_Water_Tower) {
+                    DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, BLUE);
+                }
+                else if (map->tiles[y*map->width + x]->varient == Building_Varient_Power_Plant) {
+                    DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, YELLOW);
+                }
+            }
+
+        }
+    }
+}
+
+void draw_hud(Texture2D hud_textures, Rectangle *tab_button_icon_rec, Vector2 mouse_pos, Vector2 scren_size, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed){
     Color speed_colors[4] = {SKYBLUE, GREEN, YELLOW, RED};
     int speed_color = speed;
     if(speed_color == 5) speed_color = 3;
     else if(speed_color == 10) speed_color = 4;
-    DrawRectangle(0, height*(1.0 - HUD_HEIGHT_RATIO), width, height*HUD_HEIGHT_RATIO, Fade(BLACK, 0.5f));
-    DrawRectangleLines(0, height*3.0f/4.0f, width, height*HUD_HEIGHT_RATIO, BLACK);
+    DrawRectangle(0, scren_size.y*(1.0 - HUD_HEIGHT_RATIO), scren_size.x, scren_size.y*HUD_HEIGHT_RATIO, Fade(BLACK, 0.5f));
+    DrawRectangleLines(0, scren_size.y*3.0f/4.0f, scren_size.x, scren_size.y*HUD_HEIGHT_RATIO, BLACK);
 
     if(button_pressed == Button_Build || button_pressed == Button_Road || button_pressed == Button_House || button_pressed == Button_Water_Tower || button_pressed == Button_Power_Plant){  /// Si on est en mode construction
         for (int i = Button_Back; i < Button_Power_Plant+1; i++) {
@@ -115,3 +148,4 @@ bool is_mouse_on_hud(Vector2 mouse_position){
     }
     return false;
 }
+

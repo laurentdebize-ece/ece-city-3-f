@@ -7,10 +7,13 @@
 
 #define HUD_WIDTH_RATIO (1.0f/1.0f)
 #define HUD_HEIGHT_RATIO (1.0f/4.0f)
+#define MINI_MAP_MAX_WIDTH_RATIO (1.0f/4.0f)
+#define MINI_MAP_MAX_HEIGHT_RATIO (1.0f/4.0f) - 40
 #define PAUSE_BLINK_RATIO (1.0f/20.0f)
 #define MAX_HUD_BUTTONS 5
 
 #include <raylib.h>
+#include "map/map_draw.h"
 
 typedef enum {
     Button_Build,
@@ -38,7 +41,9 @@ typedef enum {
     Nb_Hud_Button_Positions
 }HUD_BUTTON_POSITIONS;
 
-void draw_hud(Texture2D hud_textures, Rectangle *tab_buttons_rec, Vector2 mouse_position, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed);
+void draw_minimap(Map_t *map, Vector2 screen_size, int view_mode);
+
+void draw_hud(Texture2D hud_textures, Rectangle *tab_buttons_rec, Vector2 mouse_position, Vector2 screen_size, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed);
 
 void draw_button_description(Vector2 mouse_pos, int button_pressed, int button_hovered);
 

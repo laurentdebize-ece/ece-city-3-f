@@ -14,8 +14,8 @@ void test() {
     print_map_console(map);
 
     /// Ouverture de la fenêtre
-    //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    SetConfigFlags(FLAG_FULLSCREEN_MODE);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(WIDTH, HEIGHT, TITLE);
 
     /// Chargement des modèles 3D et de leur texture
@@ -67,8 +67,7 @@ void test() {
     bool is_on_pause = false;
     int pause_counter = 0;
 
-    int screen_width = GetScreenWidth();
-    int screen_height = GetScreenHeight();
+    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};
 
     // Main game loop
     while (!should_window_be_closed())        /// Est-ce qu'on ferme la fenêtre ?
@@ -100,17 +99,16 @@ void test() {
         /*---------------------------------------UPDATE---------------------------------------*/
 
         if (IsWindowResized()){ /// Ca pue la merde
-            screen_width = GetScreenWidth();
-            screen_height = GetScreenHeight();
+            screen_size = get_screen_size();
             for (int i = 0; i < 5; ++i) {
-                tab_button_icon_rec[i].y = screen_height*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_height*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f;
+                tab_button_icon_rec[i].y = screen_size.x*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_size.y*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f;
             }
         }
 
         /// Mise à jour de la souris
         mouse_pos = GetMousePosition();
 
-        move_camera_with_mouse(&camera, mouse_pos);
+        move_camera_with_mouse(&camera, mouse_pos, screen_size);
         //camera_update(&camera);  // ma version petee
 
         UpdateCamera(&camera);          // Update camera
@@ -138,6 +136,7 @@ void test() {
                         build_roads(map, mouse_pos_world, &first_road_coord, &second_road_coord, &last_road_coord, &money, mouse_ground_collision.hit);
                         break;
                     case Button_House:    /// House mode on
+
                         if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)) {
                             add_house(map, &house, mouse_pos_world);
                             money -= HOUSE_PRICE;
@@ -209,31 +208,36 @@ void test() {
 
         if (!view_mode) house_draw(house);
 
+        if (button_pressed == Button_House && mouse_ground_collision.hit) {
+            draw_transparent_house(map, mouse_pos_world, money);
+        }
+
         EndMode3D();
 
         DrawRectangle(10, 10, 350, 50, Fade(GREEN, 0.5f));
         DrawRectangleLines(10, 10, 350, 50, GREEN);
         DrawText(TextFormat("Money : $%d", money), 20, 20, 30, BLACK);
 
-        print_time((Vector2) {WIDTH - 310, 10}, &time);
+        print_time((Vector2) {screen_size.x - 310, 10}, &time);
 
         DrawText(TextFormat("FPS : %d\nTime speed : x%d\nCounter : %d", GetFPS(), time.speed, time.counter), 10, 100, 10, BLACK);
 
         if(button_pressed == Button_Road || button_pressed == Button_House) {
-            DrawRectangle((screen_width - MeasureText("Right click to disable", 20))/2 - 10, screen_height/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(GRAY, 0.5f));
-            DrawRectangleLines((screen_width - MeasureText("Right click to disable", 20))/2 - 10, screen_height/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(DARKGRAY, 0.5f));
-            DrawText("Build mode active", (GetScreenWidth()-MeasureText("Build mode active", 20))/2, screen_height/16 + 5, 20, Fade(BLACK, 0.5f));
-            DrawText("Right click to disable", (GetScreenWidth()-MeasureText("Right click to disable", 20))/2, screen_height/16 + 25, 20, Fade(BLACK, 0.5f));
+            DrawRectangle((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(GRAY, 0.5f));
+            DrawRectangleLines((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(DARKGRAY, 0.5f));
+            DrawText("Build mode active", (GetScreenWidth()-MeasureText("Build mode active", 20))/2, screen_size.y/16 + 5, 20, Fade(BLACK, 0.5f));
+            DrawText("Right click to disable", (GetScreenWidth()-MeasureText("Right click to disable", 20))/2, screen_size.y/16 + 25, 20, Fade(BLACK, 0.5f));
         }
 
         else {
-            draw_hud(hud_icons, tab_button_icon_rec, mouse_pos, button_pressed, view_mode, is_on_pause, time.speed);
+            draw_hud(hud_icons, tab_button_icon_rec, mouse_pos, screen_size, button_pressed, view_mode, is_on_pause, time.speed);
+            draw_minimap(map, screen_size, view_mode);
             if (button_hovered != -1) draw_button_description(mouse_pos, button_pressed, button_hovered);
         }
 
         if (is_on_pause) {
             pause_counter++;
-            DrawText("PAUSE", WIDTH / 2 - MeasureText("PAUSE", 40) / 2, HEIGHT / 2 - 20, 50, Fade(WHITE, fabs(cos(pause_counter*PAUSE_BLINK_RATIO))));
+            DrawText("PAUSE", screen_size.x / 2 - MeasureText("PAUSE", 40) / 2, screen_size.y / 2 - 20, 50, Fade(WHITE, fabs(cos(pause_counter*PAUSE_BLINK_RATIO))));
         }
 
         EndDrawing();

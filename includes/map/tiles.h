@@ -46,16 +46,27 @@ typedef enum{
 }HouseVariant;
 
 typedef enum {
-    City_Center,
-    Chateau_D_Eau,
-    Centrale_Electrique,
+    Building_Varient_Water_Tower,
+    Building_Varient_Power_Plant,
     Nb_Variantes_Batiments
 }BuildingVariant;
+
+typedef enum {
+    Building_Orientation_N,
+    Building_Orientation_S,
+    Building_Orientation_E,
+    Building_Orientation_W
+}BuildingOrientation;
 
 typedef struct {
     TileType type;
     int varient;
-    void *building;
+    union {
+        void *building;
+    };
+    union {
+        BuildingOrientation orientation;
+    };
 }Tile_t;
 
 Tile_t tile_init_default(void);

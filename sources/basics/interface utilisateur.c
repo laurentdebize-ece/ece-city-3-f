@@ -19,3 +19,7 @@ bool should_window_be_closed(){
     }
     return false;
 }
+
+Vector2 get_screen_size(){
+    return (Vector2){GetScreenWidth(), GetScreenHeight()};
+}

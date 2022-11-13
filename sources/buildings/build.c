@@ -58,10 +58,6 @@ void test_build_house(Map_t *map, Vector2 building_core_position){
     }
 }
 
-void add_side_to_road(Tile_t *tile, RoadType side){
-
-}
-
 void build_one_road(Map_t *map, Vector2 building_core_position){
     /// On ajoute une route sur la case
     map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->type = Tile_Type_Road;
@@ -138,6 +134,17 @@ void build_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord,
                 money -= ROAD_PRICE;
             }
         }
+    }
+}
+
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money){
+    if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
+        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(GREEN, 0.5f));
+        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
+    }
+    else{
+        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(RED, 0.5f));
+        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
     }
 }
 

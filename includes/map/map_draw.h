@@ -18,6 +18,6 @@
 
 void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode);
 
-bool is_mouse_on_map(Map_t *map, Vector2 mouse_pos_world);
+_Bool is_mouse_on_map(Map_t *map, Vector2 mouse_pos_world);
 
 #endif //PROJET_MAP_DRAW_H
