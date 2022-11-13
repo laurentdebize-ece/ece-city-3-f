@@ -38,6 +38,8 @@ void house_update(House_t *house, Map_t *map, int *money, int speed);
 
 void house_draw(House_t *house);
 
+void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy);
+
 void house_destroy(House_t **house);
 
 #endif //PROJET_HOUSE_H

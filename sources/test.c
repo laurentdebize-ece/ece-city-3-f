@@ -41,18 +41,13 @@ void test() {
     /// Création de la position de la souris dans l'espace 3D
     Ray mouse_ray;
 
+    /// Création de la structure HUD
+    HUD_t hud;
+    hud_init(&hud, (Vector2){WIDTH, HEIGHT});
+
     SetCameraMode(camera, CAMERA_FREE); // Set a free camera mode
 
-    Texture2D hud_icons = LoadTexture("../assets/bitmaps/hud/hud_icons.png");
     Texture2D road_texture = LoadTexture("../assets/map/roads/road_texture.png");
-
-    Rectangle tab_button_icon_rec[Nb_Hud_Buttons] = {
-            (Rectangle){WIDTH/20.0f,  HEIGHT*(1.0f - HUD_HEIGHT_RATIO) + (float)(HEIGHT*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f, hud_icons.width, hud_icons.height / Nb_Hud_Buttons},
-            (Rectangle){WIDTH*2/20.f, HEIGHT*(1.0f - HUD_HEIGHT_RATIO) + (float)(HEIGHT*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f, hud_icons.width, hud_icons.height / Nb_Hud_Buttons},
-            (Rectangle){WIDTH*3/20.f, HEIGHT*(1.0f - HUD_HEIGHT_RATIO) + (float)(HEIGHT*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f, hud_icons.width, hud_icons.height / Nb_Hud_Buttons},
-            (Rectangle){WIDTH*4/20.f, HEIGHT*(1.0f - HUD_HEIGHT_RATIO) + (float)(HEIGHT*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f, hud_icons.width, hud_icons.height / Nb_Hud_Buttons},
-            (Rectangle){WIDTH*5/20.f, HEIGHT*(1.0f - HUD_HEIGHT_RATIO) + (float)(HEIGHT*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f, hud_icons.width, hud_icons.height / Nb_Hud_Buttons},
-    };
 
     int view_mode = 0;
 
@@ -62,7 +57,7 @@ void test() {
     SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
-    int button_pressed = -1, button_pressed_last = -1, button_hovered = -1, button_hovered_last = -1;
+    //int button_pressed = -1, button_pressed_last = -1, button_hovered = -1, button_hovered_last = -1;
 
     bool is_on_pause = false;
     int pause_counter = 0;
@@ -100,9 +95,7 @@ void test() {
 
         if (IsWindowResized()){ /// Ca pue la merde
             screen_size = get_screen_size();
-            for (int i = 0; i < 5; ++i) {
-                tab_button_icon_rec[i].y = screen_size.x*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_size.y*HUD_HEIGHT_RATIO - hud_icons.height / Nb_Hud_Buttons) / 2.0f;
-            }
+            resize_hud(&hud, screen_size);
         }
 
         /// Mise à jour de la souris
@@ -110,6 +103,9 @@ void test() {
 
         move_camera_with_mouse(&camera, mouse_pos, screen_size);
         //camera_update(&camera);  // ma version petee
+        if(CheckCollisionPointRec(mouse_pos, hud.mini_map) && IsMouseButtonDown(Mouse_Button_Left)){
+            move_camera_with_mini_map(&camera, map, hud.mini_map, mouse_pos);
+        }
 
         UpdateCamera(&camera);          // Update camera
 
@@ -125,13 +121,25 @@ void test() {
 
         /*---------------------------------------CLICK EVENT REACTION---------------------------------------*/
 
-        if(button_pressed == Button_Road || button_pressed == Button_House || button_pressed == Button_Water_Tower || button_pressed == Button_Power_Plant){    /// Si on a cliqué sur un bouton de construction
+        if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant){    /// Si on a cliqué sur un bouton de construction
             if (IsMouseButtonPressed(Mouse_Button_Right)) {
-                button_pressed = Button_Build;
-                button_hovered = -1;
+                hud.button_selected = -1;
+                hud.button_hovered = -1;
             }
             else {
-                switch (button_pressed) {
+                switch (hud.button_selected) {
+                    case Button_Destroy:
+                        if (IsMouseButtonPressed(Mouse_Button_Left)) {
+                            if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_House && money >= HOUSE_PRICE/5) {
+                                house_destroy_one(map, &house, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
+                                money -= HOUSE_PRICE/5;
+                            }
+                            else if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_Road && money >= ROAD_PRICE/5) {
+                                map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type = Tile_Type_Grass;
+                                money -= ROAD_PRICE/5;
+                            }
+                        }
+                        break;
                     case Button_Road:
                         build_roads(map, mouse_pos_world, &first_road_coord, &second_road_coord, &last_road_coord, &money, mouse_ground_collision.hit);
                         break;
@@ -141,55 +149,47 @@ void test() {
                             add_house(map, &house, mouse_pos_world);
                             money -= HOUSE_PRICE;
                             if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
-                                button_pressed = Button_Build;
-
+                                hud.button_selected = Button_Build;
+                            else
+                                hud.button_selected = Button_House;
+                            hud.button_hovered = -1;
                         }
                         break;
+
                 }
             }
         }
         else if (is_mouse_on_hud(mouse_pos)){
-            if (button_pressed==-1) button_hovered = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
-            else if (button_pressed == Button_Build) button_hovered = get_button_hovered(tab_button_icon_rec, 5, mouse_pos);
+            if (hud.button_selected==-1) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);
+            else if (hud.button_selected == Button_Build) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);
             if (IsMouseButtonPressed(Mouse_Button_Left)) {
-                switch (button_pressed) {
+                switch (hud.button_selected) {
                     case Button_Build:    /// Build mode on
-                        button_pressed = button_hovered;
-                        if (button_pressed == Button_1) {    /// Return button pressed
-                            button_pressed = -1;    /// Build mode off
-                        } else if (button_pressed == Button_2) {    /// Road button pressed
-                            button_pressed = Button_Road;    /// Road mode on
+                        hud.button_selected = hud.button_hovered;
+                        if (hud.button_selected == Button_1) {    /// Return button pressed
+                            hud.button_selected = -1;    /// Build mode off
+                        } else if (hud.button_selected == Button_2) {    /// Road button pressed
+                            hud.button_selected = Button_Road;    /// Road mode on
                             first_road_coord = (Vector2) {-1, -1};
                             second_road_coord = (Vector2) {-1, -1};
                             last_road_coord = (Vector2) {-1, -1};
-                        } else if (button_pressed == Button_3) {    /// House button pressed
-                            button_pressed = Button_House;    /// House mode on
-                        } else button_pressed = Button_Build;    /// Build mode stays on
-                        break;
-                    case Button_Destroy:    /// Destroy mode on
-                        button_pressed = button_hovered;
-                        if (button_pressed == Button_2) {    /// Destroy button pressed
-                            button_pressed = -1;    /// Destroy mode off
-                        } else if (button_pressed == Button_1) {  /// Build button pressed
-                            button_pressed = Button_Build;    /// Destroy mode off
-                        } else if (button_pressed == Button_3) {  /// House button pressed
-                            view_mode = (view_mode + 1) % 3;    /// House mode on
-                            button_pressed = Button_Destroy;    /// Destroy mode stays on
-                        } else button_pressed = Button_Destroy;    /// Destroy mode stays on
+                        } else if (hud.button_selected == Button_3) {    /// House button pressed
+                            hud.button_selected = Button_House;    /// House mode on
+                        } else hud.button_selected = Button_Build;    /// Build mode stays on
                         break;
 
                     default:    /// No mode on, default menu mode
-                        button_pressed = button_hovered;
-                        if (button_pressed == Button_3) {   /// View button pressed
+                        hud.button_selected = hud.button_hovered;
+                        if (hud.button_selected == Button_3) {   /// View button pressed
                             change_view_mode(&view_mode);
-                            button_pressed = -1;
-                        } else if (button_pressed == Button_4) {  /// Pause button pressed
+                            hud.button_selected = -1;
+                        } else if (hud.button_selected == Button_4) {  /// Pause button pressed
                             is_on_pause = !is_on_pause;
                             pause_counter = 0;
-                            button_pressed = -1;
-                        } else if (button_pressed == Button_5) {  /// Speed button pressed
+                            hud.button_selected = -1;
+                        } else if (hud.button_selected == Button_5) {  /// Speed button pressed
                             change_time_speed(&time);
-                            button_pressed = -1;
+                            hud.button_selected = -1;
                         }
                         break;
                 }
@@ -208,7 +208,7 @@ void test() {
 
         if (!view_mode) house_draw(house);
 
-        if (button_pressed == Button_House && mouse_ground_collision.hit) {
+        if (hud.button_selected == Button_House && mouse_ground_collision.hit) {
             draw_transparent_house(map, mouse_pos_world, money);
         }
 
@@ -220,19 +220,22 @@ void test() {
 
         print_time((Vector2) {screen_size.x - 310, 10}, &time);
 
+        // Draw camera position
+        DrawText(TextFormat("Camera position: (%.2f, %.2f, %.2f)", camera.position.x, camera.position.y, camera.position.z), 20, 50, 10, BLACK);
         DrawText(TextFormat("FPS : %d\nTime speed : x%d\nCounter : %d", GetFPS(), time.speed, time.counter), 10, 100, 10, BLACK);
 
-        if(button_pressed == Button_Road || button_pressed == Button_House) {
-            DrawRectangle((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(GRAY, 0.5f));
-            DrawRectangleLines((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 50, Fade(DARKGRAY, 0.5f));
+        if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House) {
+            DrawRectangle((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 70, Fade(GRAY, 0.5f));
+            DrawRectangleLines((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 70, Fade(DARKGRAY, 0.5f));
             DrawText("Build mode active", (GetScreenWidth()-MeasureText("Build mode active", 20))/2, screen_size.y/16 + 5, 20, Fade(BLACK, 0.5f));
             DrawText("Right click to disable", (GetScreenWidth()-MeasureText("Right click to disable", 20))/2, screen_size.y/16 + 25, 20, Fade(BLACK, 0.5f));
+            DrawText("Shift to keep active", (GetScreenWidth()-MeasureText("Shift to keep active", 20))/2, screen_size.y/16 + 45, 20, Fade(BLACK, 0.5f));
         }
 
         else {
-            draw_hud(hud_icons, tab_button_icon_rec, mouse_pos, screen_size, button_pressed, view_mode, is_on_pause, time.speed);
-            draw_minimap(map, screen_size, view_mode);
-            if (button_hovered != -1) draw_button_description(mouse_pos, button_pressed, button_hovered);
+            draw_hud(hud.hud_textures, hud.tab_buttons, mouse_pos, screen_size, hud.button_selected, view_mode, is_on_pause, time.speed);
+            draw_minimap(map, hud.mini_map, (Vector2){camera.position.x, camera.position.z}, (Vector2){camera.target.x, camera.target.z}, view_mode);
+            if (hud.button_hovered != -1) draw_button_description(mouse_pos, hud.button_selected, hud.button_hovered);
         }
 
         if (is_on_pause) {

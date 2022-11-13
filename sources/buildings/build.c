@@ -13,7 +13,7 @@ bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType b
             return true;
         case Tile_Type_House:
 
-            if (money < HOUSE_PRICE || building_core_position.x - 1 < 0 || building_core_position.x + 1 > map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 > map->height){
+            if (money < HOUSE_PRICE || building_core_position.x - 1 < 0 || building_core_position.x + 1 >= map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 >= map->height){
                 return false;
             }
             bool is_there_road = false;

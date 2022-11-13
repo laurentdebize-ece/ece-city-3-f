@@ -4,37 +4,79 @@
 
 #include "../includes/hud.h"
 
-void draw_minimap(Map_t *map, Vector2 screen_size, int view_mode){
-    int minimap_width = (int)(screen_size.y * MINI_MAP_MAX_WIDTH_RATIO);
-    int minimap_height = (int)(screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO);
-    int minimap_x = (int)(screen_size.x - minimap_width - 20);
-    int minimap_y = (int)(screen_size.y - minimap_height - 20);
-    if (minimap_width > minimap_height){
-        minimap_width = minimap_height;
+void hud_init(HUD_t *hud, Vector2 screen_size){
+    *hud = (HUD_t){
+            .button_hovered = -1,
+            .button_selected = -1,
+            .hud_textures = LoadTexture(HUD_TEXTURES_PATH),
+            .mini_map = {
+                    .width = screen_size.x * MINI_MAP_MAX_WIDTH_RATIO,
+                    .height = screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO - 40,
+                    .x = screen_size.x * (1 - MINI_MAP_MAX_WIDTH_RATIO) - 20,
+                    .y = screen_size.y * (1 - MINI_MAP_MAX_HEIGHT_RATIO) + 20
+            }
+    };
+    if (hud->mini_map.width > hud->mini_map.height){
+        hud->mini_map.width = hud->mini_map.height;
+        hud->mini_map.x = screen_size.x - hud->mini_map.width - 20;
     } else {
-        minimap_height = minimap_width;
+        hud->mini_map.height = hud->mini_map.width;
+        hud->mini_map.y = screen_size.y - hud->mini_map.height - 20;
     }
+    for (int i = 1; i <= Nb_Hud_Button_Positions; i++){
+        hud->tab_buttons[i-1] = (Rectangle){screen_size.x*i/20.0f,  screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_size.y*HUD_HEIGHT_RATIO - hud->hud_textures.height / Nb_Hud_Buttons) / 2.0f, hud->hud_textures.width, hud->hud_textures.height / Nb_Hud_Buttons};
+    }
+}
+
+void resize_hud(HUD_t *hud, Vector2 screen_size){
+    hud->mini_map = (Rectangle){
+            .width = screen_size.x * MINI_MAP_MAX_WIDTH_RATIO,
+            .height = screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO - 40,
+            .x = screen_size.x * (1 - MINI_MAP_MAX_WIDTH_RATIO) - 20,
+            .y = screen_size.y * (1 - MINI_MAP_MAX_HEIGHT_RATIO) + 20
+    };
+    if (hud->mini_map.width > hud->mini_map.height){
+        hud->mini_map.width = hud->mini_map.height;
+        hud->mini_map.x = screen_size.x - hud->mini_map.width - 20;
+    } else {
+        hud->mini_map.height = hud->mini_map.width;
+        hud->mini_map.y = screen_size.y - hud->mini_map.height - 20;
+    }
+    for (int i = 1; i <= Nb_Hud_Button_Positions; i++){
+        hud->tab_buttons[i-1] = (Rectangle){screen_size.x*i/20.0f,  screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + (float)(screen_size.y*HUD_HEIGHT_RATIO - hud->hud_textures.height / Nb_Hud_Buttons) / 2.0f, hud->hud_textures.width, hud->hud_textures.height / Nb_Hud_Buttons};
+    }
+}
+
+void draw_minimap(Map_t *map, Rectangle mini_map, Vector2 camera_position, Vector2 camera_target, int view_mode){
+
+    DrawRectangle(mini_map.x-5, mini_map.y-5, mini_map.width+10, mini_map.height+10, BLACK);
     for (int y = 0; y < map->height; ++y) {
         for (int x = 0; x < map->width; ++x) {
             if (map->tiles[y*map->width + x]->type == Tile_Type_Grass){
-                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, GREEN);
+                DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, GREEN);
             }
             else if (map->tiles[y*map->width + x]->type == Tile_Type_Road){
-                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, GRAY);
+                DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, GRAY);
             }
             else if (map->tiles[y*map->width + x]->type == Tile_Type_House){
-                DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, BROWN);
+                DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, BROWN);
             }
             else if (map->tiles[y*map->width + x]->type == Tile_Type_Builing) {
                 if (map->tiles[y*map->width + x]->varient == Building_Varient_Water_Tower) {
-                    DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, BLUE);
+                    DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, BLUE);
                 }
                 else if (map->tiles[y*map->width + x]->varient == Building_Varient_Power_Plant) {
-                    DrawRectangle(x * minimap_width / map->width + minimap_x, y * minimap_height / map->height + minimap_y, minimap_width / map->width, minimap_height / map->height, YELLOW);
+                    DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, YELLOW);
                 }
             }
 
         }
+    }
+    if (camera_target.x > 0 && camera_target.y > 0 && camera_target.x/TILES_WIDTH < map->width && camera_target.y/TILES_WIDTH < map->height){
+        DrawCircleV((Vector2){camera_target.x * mini_map.width / map->width / TILES_WIDTH + mini_map.x, camera_target.y * mini_map.height / map->height / TILES_WIDTH + mini_map.y}, 5, RED);
+    }
+    if (camera_position.x > 0 && camera_position.y > 0 && camera_position.x/TILES_WIDTH < map->width && camera_position.y/TILES_WIDTH < map->height){
+        DrawCircleV((Vector2){camera_position.x * mini_map.width / map->width / TILES_WIDTH + mini_map.x, camera_position.y * mini_map.height / map->height / TILES_WIDTH + mini_map.y}, 5, BLUE);
     }
 }
 

@@ -6,12 +6,20 @@
 
 Camera camera_new(Map_t *map){
     Camera camera = { 0 };
-    camera.position = (Vector3){ 50.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
+    camera.position = (Vector3){ 100.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
     camera.target = (Vector3){ 0.0f + map->width*DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + map->height*DECALAGE_MAP_Z};      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
     return camera;
+}
+
+void move_camera_with_mini_map(Camera *camera, Map_t *map, Rectangle mini_map, Vector2 mouse_pos){
+    Vector2 mouse_pos_on_mini_map = {mouse_pos.x - mini_map.x, mouse_pos.y - mini_map.y};
+    camera->target.x = (mouse_pos_on_mini_map.x) * map->width * TILES_WIDTH / mini_map.width;
+    camera->target.y = 0;
+    camera->target.z = (mouse_pos_on_mini_map.y) * map->height * TILES_WIDTH / mini_map.height;
+
 }
 
 void camera_update(Camera *camera){

@@ -58,6 +58,8 @@ static CameraData CAMERA = {        // Global CAMERA state context
 
 Camera camera_new(Map_t *map);
 
+void move_camera_with_mini_map(Camera *camera, Map_t *map, Rectangle mini_map, Vector2 mouse_pos);
+
 void camera_update(Camera *camera);
 
 void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos, Vector2 screen_size);
