@@ -129,13 +129,13 @@ void test() {
             else {
                 switch (hud.button_selected) {
                     case Button_Destroy:
-                        if (IsMouseButtonPressed(Mouse_Button_Left)) {
+                        if (IsMouseButtonPressed(Mouse_Button_Left)) {  /// Si on a cliqué sur le bouton de destruction
                             if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_House && money >= HOUSE_PRICE/5) {
                                 house_destroy_one(map, &house, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
                                 money -= HOUSE_PRICE/5;
                             }
                             else if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_Road && money >= ROAD_PRICE/5) {
-                                map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type = Tile_Type_Grass;
+                                destroy_one_road(map, mouse_pos_world);
                                 money -= ROAD_PRICE/5;
                             }
                         }
@@ -155,7 +155,6 @@ void test() {
                             hud.button_hovered = -1;
                         }
                         break;
-
                 }
             }
         }

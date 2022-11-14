@@ -7,16 +7,19 @@
 bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money){
     switch (building_varient) {
         case Tile_Type_Road:
+            /// Si on n'a pas assez d'argent ou que la case n'est pas vide ou que la souris est hors de la map
             if(money < ROAD_PRICE || building_core_position.x < 0 || building_core_position.x > map->width || building_core_position.y < 0 || building_core_position.y > map->height || map->tiles[(int)building_core_position.y*map->width+(int)building_core_position.x]->type != Tile_Type_Grass){
                 return false;
             }
             return true;
         case Tile_Type_House:
 
+            /// Si on n'a pas assez d'argent ou que la souris est hors de la map
             if (money < HOUSE_PRICE || building_core_position.x - 1 < 0 || building_core_position.x + 1 >= map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 >= map->height){
                 return false;
             }
             bool is_there_road = false;
+            /// On vérifie que les cases autour de la maison sont vides et qu'il y a une route autour
             for (int y = (int)building_core_position.y - 1; y <= (int)building_core_position.y + 1; ++y) {
                 for (int x = (int)building_core_position.x - 1; x <= (int)building_core_position.x + 1; ++x) {
                     if (map->tiles[y * map->width + x]->type != Tile_Type_Grass)
@@ -71,21 +74,30 @@ void build_one_road(Map_t *map, Vector2 building_core_position){
             map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->varient += ROAD_E;
         }
     }
-    if (building_core_position.x + 1 < map->width) {
+    if (building_core_position.x + 1 < map->width) {    /// Si on n'est pas sur le bord droit
+        /// Si la case à droite est une route
         if (map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x + 1]->type ==Tile_Type_Road){
+            /// On ajoute le côté droit
             map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x]->varient += ROAD_E;
+            /// On ajoute le côté gauche à la case à droite
             map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x + 1]->varient += ROAD_W;
         }
     }
-    if (building_core_position.y - 1 >= 0){
+    if (building_core_position.y - 1 >= 0){ /// Si on n'est pas sur le bord haut
+        /// Si la case au dessus est une route
         if (map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            /// On ajoute le côté haut
             map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient += ROAD_N;
+            /// On ajoute le côté bas à la case au dessus
             map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->varient += ROAD_S;
         }
     }
-    if (building_core_position.y + 1 < map->height){
+    if (building_core_position.y + 1 < map->height){    /// Si on n'est pas sur le bord bas
+        /// Si la case en dessous est une route
         if (map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            /// On ajoute le côté bas
             map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient += ROAD_S;
+            /// On ajoute le côté haut à la case en dessous
             map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->varient += ROAD_N;
         }
     }
@@ -137,12 +149,97 @@ void build_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord,
     }
 }
 
+void destroy_one_road(Map_t *map, Vector2 building_core_position){
+    /// On enlève la route
+    map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->type = Tile_Type_Grass;
+    map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x]->varient = 0;
+    /// On enlève les côtés
+    if (building_core_position.x - 1 >= 0) {    /// Si on n'est pas sur le bord gauche
+        /// Si la case à gauche est une route
+        if (map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x - 1]->type ==Tile_Type_Road){
+            /// On enlève le côté droit à la case à gauche
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x - 1]->varient -= ROAD_E;
+        }
+    }
+    if (building_core_position.x + 1 < map->width) {    /// Si on n'est pas sur le bord droit
+        /// Si la case à droite est une route
+        if (map->tiles[(int) building_core_position.y * map->width + (int) building_core_position.x + 1]->type ==Tile_Type_Road){
+            /// On enlève le côté gauche à la case à droite
+            map->tiles[(int)building_core_position.y * map->width + (int)building_core_position.x + 1]->varient -= ROAD_W;
+        }
+    }
+    if (building_core_position.y - 1 >= 0){ /// Si on n'est pas sur le bord haut
+        /// Si la case au dessus est une route
+        if (map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            /// On enlève le côté bas à la case au dessus
+            map->tiles[((int)building_core_position.y - 1) * map->width + (int)building_core_position.x]->varient -= ROAD_S;
+        }
+    }
+    if (building_core_position.y + 1 < map->height){ /// Si on n'est pas sur le bord bas
+        /// Si la case en dessous est une route
+        if (map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->type == Tile_Type_Road){
+            /// On enlève le côté haut à la case en dessous
+            map->tiles[((int)building_core_position.y + 1) * map->width + (int)building_core_position.x]->varient -= ROAD_N;
+        }
+    }
+}
+
+void destroy_line_of_road(Map_t *map, Vector2 start, Vector2 end, int *money){
+    Vector2 current = start;
+    Vector2 direction = Vector2Subtract(end, start);
+    direction = Vector2Normalize(direction);
+
+    do {
+        if(map->tiles[(int)current.y * map->width + (int)current.x]->type == Tile_Type_Road){
+            destroy_one_road(map, current);
+            *money -= ROAD_PRICE/5;
+        }
+        current = Vector2Add(current, direction);
+    } while (Vector2Distance(current, end) >= 1);
+    if(map->tiles[(int)end.y * map->width + (int)end.x]->type == Tile_Type_Road){
+        destroy_one_road(map, end);
+        *money -= ROAD_PRICE/5;
+    }
+}
+
+void destroy_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord, Vector2 *second_road_coord, Vector2 *last_road_coord, int *money, bool is_mouse_in_map){
+    /// Si on a cliqué sur la map
+    if (IsMouseButtonPressed(Mouse_Button_Left) && is_mouse_in_map) {
+        *first_road_coord = mouse_pos_world;
+        *second_road_coord = mouse_pos_world;
+        *last_road_coord = mouse_pos_world;
+    }
+        /// Si on garde le clic enfoncé
+    else if (IsMouseButtonDown(Mouse_Button_Left)) {
+        if (is_vec2D_same(*first_road_coord, *second_road_coord)) {
+            *second_road_coord = mouse_pos_world;
+        } else if (vec2D_sub(*first_road_coord, *second_road_coord).x) last_road_coord->x = mouse_pos_world.x;
+        else last_road_coord->y = mouse_pos_world.y;
+    }
+        /// Si on relâche le clic
+    else if (IsMouseButtonReleased(Mouse_Button_Left)) {
+        if (is_mouse_in_map && !is_vec2D_same(*first_road_coord, *last_road_coord)) {
+            destroy_line_of_road(map, *first_road_coord, *last_road_coord, money);
+        }
+        else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&is_vec2D_same(*first_road_coord, *second_road_coord)) {
+            if (map->tiles[(int)mouse_pos_world.y * map->width + (int)mouse_pos_world.x]->type == Tile_Type_Road && *money >= ROAD_PRICE/5) {
+                destroy_one_road(map, *first_road_coord);
+                money -= ROAD_PRICE/5;
+            }
+        }
+    }
+}
+
 void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money){
+    /// Si on peut construire une maison
     if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
+        /// On dessine une maison transparente verte à la position de la souris (pour montrer où elle sera construite)
         DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(GREEN, 0.5f));
         DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
     }
+    /// Si on ne peut pas construire une maison
     else{
+        /// On dessine une maison transparente rouge à la position de la souris (pour montrer où elle ne sera pas construite)
         DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(RED, 0.5f));
         DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
     }

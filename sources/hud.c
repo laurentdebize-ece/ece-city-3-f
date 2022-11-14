@@ -50,12 +50,13 @@ void resize_hud(HUD_t *hud, Vector2 screen_size){
 void draw_minimap(Map_t *map, Rectangle mini_map, Vector2 camera_position, Vector2 camera_target, int view_mode){
 
     DrawRectangle(mini_map.x-5, mini_map.y-5, mini_map.width+10, mini_map.height+10, BLACK);
+    DrawRectangle(mini_map.x, mini_map.y, mini_map.width, mini_map.height, GREEN);
     for (int y = 0; y < map->height; ++y) {
         for (int x = 0; x < map->width; ++x) {
-            if (map->tiles[y*map->width + x]->type == Tile_Type_Grass){
+            /*if (map->tiles[y*map->width + x]->type == Tile_Type_Grass){
                 DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, GREEN);
-            }
-            else if (map->tiles[y*map->width + x]->type == Tile_Type_Road){
+            }*/
+            if (map->tiles[y*map->width + x]->type == Tile_Type_Road){
                 DrawRectangle(x * mini_map.width / map->width + mini_map.x, y * mini_map.height / map->height + mini_map.y, mini_map.width / map->width, mini_map.height / map->height, GRAY);
             }
             else if (map->tiles[y*map->width + x]->type == Tile_Type_House){

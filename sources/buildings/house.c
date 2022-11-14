@@ -110,26 +110,34 @@ void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy) 
         free(*houses);
         *houses = NULL;
     }
-    else{
-        House_t *pHouse = (*houses);
-        while (pHouse != house_to_destroy) {
-            pHouse = pHouse->next;
-        }
-        pHouse->prev->next = pHouse->next;
-        pHouse->next->prev = pHouse->prev;
-
-        for (int y = pHouse->position.y-1; y <= pHouse->position.y+1; ++y) {
-            for (int x = pHouse->position.x-1; x <= pHouse->position.x+1; ++x) {
+    else if (*houses == house_to_destroy) {
+        (*houses)->prev->next = (*houses)->next;
+        (*houses)->next->prev = (*houses)->prev;
+        (*houses) = (*houses)->next;
+        for (int y = house_to_destroy->position.y-1; y <= house_to_destroy->position.y+1; ++y) {
+            for (int x = house_to_destroy->position.x-1; x <= house_to_destroy->position.x+1; ++x) {
                 map->tiles[y*map->width+x]->type = Tile_Type_Grass;
                 map->tiles[y*map->width+x]->building = NULL;
                 map->tiles[y*map->width+x]->varient = 0;
             }
         }
-        free(pHouse);
-        pHouse = NULL;
+        free(house_to_destroy);
+        house_to_destroy = NULL;
     }
+    else{
+        house_to_destroy->prev->next = house_to_destroy->next;
+        house_to_destroy->next->prev = house_to_destroy->prev;
 
-
+        for (int y = house_to_destroy->position.y-1; y <= house_to_destroy->position.y+1; ++y) {
+            for (int x = house_to_destroy->position.x-1; x <= house_to_destroy->position.x+1; ++x) {
+                map->tiles[y*map->width+x]->type = Tile_Type_Grass;
+                map->tiles[y*map->width+x]->building = NULL;
+                map->tiles[y*map->width+x]->varient = 0;
+            }
+        }
+        free(house_to_destroy);
+        house_to_destroy = NULL;
+    }
 }
 
 void house_destroy(House_t **house){
