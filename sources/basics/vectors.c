@@ -19,3 +19,10 @@ Vector2 vec2D_sub(Vector2 a, Vector2 b){
 Vector2 new_vec2D_with_length_and_angle(float length, double angle){
     return (Vector2) {length * cos(angle), length * sin(angle)};
 }
+
+bool is_vec2D_same(Vector2 a, Vector2 b){
+    if (a.x == b.x && a.y == b.y){
+        return true;
+    }
+    return false;
+}

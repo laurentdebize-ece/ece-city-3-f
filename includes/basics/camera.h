@@ -18,8 +18,8 @@
 #define CAMERA_FREE_SMOOTH_ZOOM_SENSITIVITY 0.05f
 #define CAMERA_FREE_PANNING_DIVIDER 5.1f
 
-#define MOVING_ZONE_WIDTH_RATIO 1.0f/24.0f
-#define MAX_CAMERA_SPEED 40.0f/FPS
+#define MOVING_ZONE_WIDTH_RATIO (1.0f/64.0f)
+#define MAX_CAMERA_SPEED (40.0f/FPS)
 
 typedef enum {
     MOVE_FRONT = 0,
@@ -54,10 +54,14 @@ static CameraData CAMERA = {        // Global CAMERA state context
         .panControl = Mouse_Button_Right
 };
 
+
+
 Camera camera_new(Map_t *map);
+
+void move_camera_with_mini_map(Camera *camera, Map_t *map, Rectangle mini_map, Vector2 mouse_pos);
 
 void camera_update(Camera *camera);
 
-void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos);
+void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos, Vector2 screen_size);
 
 #endif //PROJET_CAMERA_H

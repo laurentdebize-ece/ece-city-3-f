@@ -4,11 +4,33 @@
 
 #include "../includes/test.h"
 
+int entrer_nombre(){
+    int i;
+    printf("Ouvrir une nouvelle map vierge (1) ou charger une partie (2) ?\n");
+    fflush(stdout);
+    scanf("%d", &i);
+}
+
 void test() {
 
     /// Création de la map
-    Map_t *map = load_map(DEFAULT_MAP_FILE_PATH);
+    Map_t *map = NULL;
     House_t *house = NULL;
+    Time_t time = {1,0,0,0,0,3,2069};
+    int money = 500000;
+    /*while (!map) {
+        int i = entrer_nombre();
+        if (i == 2){
+            load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
+        }
+        else if (i == 1){
+            map = load_map(DEFAULT_MAP_FILE_PATH);
+        }
+        printf("Veuillez entrer 1 ou 2\n");
+        fflush(stdout);
+    }*/
+    map = load_map(DEFAULT_MAP_FILE_PATH);
+
 
     /// Affichage de la map en console
     print_map_console(map);
@@ -49,7 +71,7 @@ void test() {
     Rectangle vew_icon_rec = {WIDTH*3/20.f, HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
     int vew_mode = 0;
 
-    Time_t time = {0,0,0,0,3,1969};
+    Time_t time = {0,0,0,0,3,2069};
     int money = 500000;
 
     SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second

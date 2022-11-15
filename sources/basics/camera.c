@@ -6,12 +6,20 @@
 
 Camera camera_new(Map_t *map){
     Camera camera = { 0 };
-    camera.position = (Vector3){ 50.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
+    camera.position = (Vector3){ 100.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
     camera.target = (Vector3){ 0.0f + map->width*DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + map->height*DECALAGE_MAP_Z};      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
     return camera;
+}
+
+void move_camera_with_mini_map(Camera *camera, Map_t *map, Rectangle mini_map, Vector2 mouse_pos){
+    Vector2 mouse_pos_on_mini_map = {mouse_pos.x - mini_map.x, mouse_pos.y - mini_map.y};
+    camera->target.x = (mouse_pos_on_mini_map.x) * map->width * TILES_WIDTH / mini_map.width;
+    camera->target.y = 0;
+    camera->target.z = (mouse_pos_on_mini_map.y) * map->height * TILES_WIDTH / mini_map.height;
+
 }
 
 void camera_update(Camera *camera){
@@ -121,13 +129,13 @@ void camera_update(Camera *camera){
 
 }
 
-void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
+void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos, Vector2 screen_size){
 
     /// Update camera position with mouse coordinates
 
-    if (mouse_pos.x < WIDTH*MOVING_ZONE_WIDTH_RATIO){    /// Aller à gauche
-        float tauxX = 1 - mouse_pos.x / (WIDTH*MOVING_ZONE_WIDTH_RATIO);
-        if(mouse_pos.y < HEIGHT*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut à gauche
+    if (mouse_pos.x < screen_size.x*MOVING_ZONE_WIDTH_RATIO){    /// Aller à gauche
+        float tauxX = 1 - mouse_pos.x / (screen_size.x*MOVING_ZONE_WIDTH_RATIO);
+        if(mouse_pos.y < screen_size.y*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut à gauche
             float tauxY = 1 - mouse_pos.y / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
             /// A gauche
             camera->target.x += cos(-M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
@@ -135,8 +143,8 @@ void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
             /// En haut
             camera->target.x += cos(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
             camera->target.z += sin(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
-        }else if(mouse_pos.y > HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas à gauche
-            float tauxY = (mouse_pos.y - HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)) / (768*MOVING_ZONE_WIDTH_RATIO);
+        }else if(mouse_pos.y > screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas à gauche
+            float tauxY = (mouse_pos.y - screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)) / (screen_size.y*MOVING_ZONE_WIDTH_RATIO);
             /// A gauche
             camera->target.x += cos(-M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
             camera->target.z += sin(-M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
@@ -148,18 +156,18 @@ void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
             camera->target.x += cos(-M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
             camera->target.z += sin(-M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
         }
-    } else if (mouse_pos.x > WIDTH*(1-MOVING_ZONE_WIDTH_RATIO)){ /// Aller à droite
-        float tauxX = (mouse_pos.x - WIDTH*(1-MOVING_ZONE_WIDTH_RATIO)) / (WIDTH*MOVING_ZONE_WIDTH_RATIO);
-        if(mouse_pos.y < HEIGHT*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut à droite
-            float tauxY = 1 - mouse_pos.y / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
+    } else if (mouse_pos.x > screen_size.x*(1-MOVING_ZONE_WIDTH_RATIO)){ /// Aller à droite
+        float tauxX = (mouse_pos.x - screen_size.x*(1-MOVING_ZONE_WIDTH_RATIO)) / (screen_size.x*MOVING_ZONE_WIDTH_RATIO);
+        if(mouse_pos.y < screen_size.y*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut à droite
+            float tauxY = 1 - mouse_pos.y / (screen_size.y*MOVING_ZONE_WIDTH_RATIO);
             /// A droite
             camera->target.x += cos(M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
             camera->target.z += sin(M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
             /// En haut
             camera->target.x += cos(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
             camera->target.z += sin(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
-        }else if(mouse_pos.y > HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas à droite
-            float tauxY = (mouse_pos.y - HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)) / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
+        }else if(mouse_pos.y > screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas à droite
+            float tauxY = (mouse_pos.y - screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)) / (screen_size.y*MOVING_ZONE_WIDTH_RATIO);
             /// A droite
             camera->target.x += cos(M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
             camera->target.z += sin(M_PI_2+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxX*MAX_CAMERA_SPEED;
@@ -173,12 +181,12 @@ void move_camera_with_mouse(Camera *camera, Vector2 mouse_pos) {
         }
     }
     else{   /// Aller en haut ou en bas
-        if(mouse_pos.y < HEIGHT*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut
-            float tauxY = 1- mouse_pos.y / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
+        if(mouse_pos.y < screen_size.y*MOVING_ZONE_WIDTH_RATIO){  /// Aller en haut
+            float tauxY = 1- mouse_pos.y / (screen_size.y*MOVING_ZONE_WIDTH_RATIO);
             camera->target.x += cos(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
             camera->target.z += sin(getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
-        }else if(mouse_pos.y > HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas
-            float tauxY = (mouse_pos.y - HEIGHT*(1-MOVING_ZONE_WIDTH_RATIO)) / (HEIGHT*MOVING_ZONE_WIDTH_RATIO);
+        }else if(mouse_pos.y > screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)){    /// Aller en bas
+            float tauxY = (mouse_pos.y - screen_size.y*(1-MOVING_ZONE_WIDTH_RATIO)) / (screen_size.y*MOVING_ZONE_WIDTH_RATIO);
             camera->target.x += cos(M_PI+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
             camera->target.z += sin(M_PI+getRadianAngleBetween2Vec2D(new_vec2D(camera->position.x, camera->position.z), new_vec2D(camera->target.x, camera->target.z)))*tauxY*MAX_CAMERA_SPEED;
         }

@@ -5,9 +5,17 @@
 #include "../../includes/basics/time.h"
 
 void update_time(Time_t *time) {
-    time->counter++;
-    if (time->counter%(int)FPS == 0) {
+    time->counter+=time->speed;
+    if (time->counter >= FPS) {
         time->seconds++;
+        if (time->seconds % SECS_FOR_MONTH == 0) {
+            time->months++;
+            if (time->months >= 12) {
+                time->months = 0;
+                time->years++;
+            }
+        }
+        time->counter = time->counter %(int)FPS;
         if (time->seconds >= 60) {
             time->seconds = 0;
             time->minutes++;
@@ -15,14 +23,6 @@ void update_time(Time_t *time) {
                 time->minutes = 0;
                 time->hours++;
             }
-        }
-    }
-    if (time->counter % (int)TIME_FOR_MONTH == 0) {
-        time->counter = 0;
-        time->months++;
-        if (time->months >= 12) {
-            time->months = 0;
-            time->years++;
         }
     }
 }
@@ -150,4 +150,21 @@ void print_in_game_time(Vector2 position, Time_t *time) {
 void print_time(Vector2 position, Time_t *time) {
     print_real_time(position, time);
     print_in_game_time((Vector2){position.x, position.y + 60}, time);
+}
+
+void change_time_speed(Time_t *time) {
+    switch (time->speed) {
+        case 1:
+            time->speed = 2;
+            break;
+        case 2:
+            time->speed = 5;
+            break;
+        case 5:
+            time->speed = 10;
+            break;
+        case 10:
+            time->speed = 1;
+            break;
+    }
 }
