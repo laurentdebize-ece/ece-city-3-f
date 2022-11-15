@@ -139,8 +139,8 @@ void build_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord,
     else if (IsMouseButtonReleased(Mouse_Button_Left)) {
         if (is_mouse_in_map && !is_vec2D_same(*first_road_coord, *last_road_coord)) {
             build_line_of_road(map, *first_road_coord, *last_road_coord, money);
-        }
-        else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&is_vec2D_same(*first_road_coord, *second_road_coord)) {
+        } else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&
+                   is_vec2D_same(*first_road_coord, *second_road_coord)) {
             if (is_possible_to_build(map, *first_road_coord, Tile_Type_Road, *money)) {
                 build_one_road(map, *first_road_coord);
                 money -= ROAD_PRICE;
@@ -202,23 +202,23 @@ void destroy_line_of_road(Map_t *map, Vector2 start, Vector2 end, int *money){
     }
 }
 
-void destroy_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord, Vector2 *second_road_coord, Vector2 *last_road_coord, int *money, bool is_mouse_in_map){
+void destroy_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord, Vector2 *second_road_coord, Vector2 *last_road_coord, int *money){
     /// Si on a cliqué sur la map
-    if (IsMouseButtonPressed(Mouse_Button_Left) && is_mouse_in_map) {
+    if (IsMouseButtonPressed(Mouse_Button_Left) && is_mouse_on_map(map, mouse_pos_world)) {
         *first_road_coord = mouse_pos_world;
         *second_road_coord = mouse_pos_world;
         *last_road_coord = mouse_pos_world;
     }
         /// Si on garde le clic enfoncé
-    else if (IsMouseButtonDown(Mouse_Button_Left)) {
+    else if (IsMouseButtonDown(Mouse_Button_Left) && is_mouse_on_map(map, *first_road_coord)) {
         if (is_vec2D_same(*first_road_coord, *second_road_coord)) {
             *second_road_coord = mouse_pos_world;
         } else if (vec2D_sub(*first_road_coord, *second_road_coord).x) last_road_coord->x = mouse_pos_world.x;
         else last_road_coord->y = mouse_pos_world.y;
     }
         /// Si on relâche le clic
-    else if (IsMouseButtonReleased(Mouse_Button_Left)) {
-        if (is_mouse_in_map && !is_vec2D_same(*first_road_coord, *last_road_coord)) {
+    else if (IsMouseButtonReleased(Mouse_Button_Left) && is_mouse_on_map(map, *first_road_coord)) {
+        if (is_mouse_on_map(map, mouse_pos_world) && !is_vec2D_same(*first_road_coord, *last_road_coord)) {
             destroy_line_of_road(map, *first_road_coord, *last_road_coord, money);
         }
         else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&is_vec2D_same(*first_road_coord, *second_road_coord)) {
@@ -227,21 +227,6 @@ void destroy_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coor
                 money -= ROAD_PRICE/5;
             }
         }
-    }
-}
-
-void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money){
-    /// Si on peut construire une maison
-    if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
-        /// On dessine une maison transparente verte à la position de la souris (pour montrer où elle sera construite)
-        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(GREEN, 0.5f));
-        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
-    }
-    /// Si on ne peut pas construire une maison
-    else{
-        /// On dessine une maison transparente rouge à la position de la souris (pour montrer où elle ne sera pas construite)
-        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(RED, 0.5f));
-        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
     }
 }
 

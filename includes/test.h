@@ -10,6 +10,7 @@
 #include "../includes/basics/time.h"
 #include "../includes/buildings/house.h"
 #include "../includes/hud.h"
+#include "../includes/map/save_map.h"
 
 void test (void);
 

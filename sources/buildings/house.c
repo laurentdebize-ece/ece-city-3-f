@@ -41,6 +41,7 @@ void add_house(Map_t *map, House_t **house, Vector2 position) {
             }
         }
     }
+    map->house_count++;
 }
 
 void house_update(House_t *house, Map_t *map, int *money, int speed) {
@@ -110,7 +111,7 @@ void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy) 
         free(*houses);
         *houses = NULL;
     }
-    else if (*houses == house_to_destroy) {
+    else if (*houses == house_to_destroy) { /// Si la maison à démolir est la première maison de la liste chaînée
         (*houses)->prev->next = (*houses)->next;
         (*houses)->next->prev = (*houses)->prev;
         (*houses) = (*houses)->next;
@@ -124,7 +125,7 @@ void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy) 
         free(house_to_destroy);
         house_to_destroy = NULL;
     }
-    else{
+    else{   /// Sinon
         house_to_destroy->prev->next = house_to_destroy->next;
         house_to_destroy->next->prev = house_to_destroy->prev;
 
@@ -138,6 +139,7 @@ void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy) 
         free(house_to_destroy);
         house_to_destroy = NULL;
     }
+    map->house_count--;
 }
 
 void house_destroy(House_t **house){
@@ -152,3 +154,19 @@ void house_destroy(House_t **house){
     }while (current_house != *house);
     *house = NULL;
 }
+
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money){
+    /// Si on peut construire une maison
+    if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
+        /// On dessine une maison transparente verte à la position de la souris (pour montrer où elle sera construite)
+        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(GREEN, 0.5f));
+        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
+    }
+        /// Si on ne peut pas construire une maison
+    else{
+        /// On dessine une maison transparente rouge à la position de la souris (pour montrer où elle ne sera pas construite)
+        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(RED, 0.5f));
+        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
+    }
+}
+

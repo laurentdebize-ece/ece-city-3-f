@@ -4,11 +4,33 @@
 
 #include "../includes/test.h"
 
+int entrer_nombre(){
+    int i;
+    printf("Ouvrir une nouvelle map vierge (1) ou charger une partie (2) ?\n");
+    fflush(stdout);
+    scanf("%d", &i);
+}
+
 void test() {
 
     /// Création de la map
-    Map_t *map = load_map(DEFAULT_MAP_FILE_PATH);
+    Map_t *map = NULL;
     House_t *house = NULL;
+    Time_t time = {1,0,0,0,0,3,2069};
+    int money = 500000;
+    /*while (!map) {
+        int i = entrer_nombre();
+        if (i == 2){
+            load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
+        }
+        else if (i == 1){
+            map = load_map(DEFAULT_MAP_FILE_PATH);
+        }
+        printf("Veuillez entrer 1 ou 2\n");
+        fflush(stdout);
+    }*/
+    map = load_map(DEFAULT_MAP_FILE_PATH);
+
 
     /// Affichage de la map en console
     print_map_console(map);
@@ -51,9 +73,6 @@ void test() {
 
     int view_mode = 0;
 
-    Time_t time = {1,0,0,0,0,3,2069};
-    int money = 500000;
-
     SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
@@ -71,9 +90,8 @@ void test() {
         /*---------------------------------------COMMANDES CLAVIER---------------------------------------*/
         /// Commandes clavier
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
-
             if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
-                //save_map(map, DEFAULT_MAP_FILE_PATH);
+                save_map(map, house, &time, money, SAVE_1_PATH);
             }
             if (IsKeyPressed(KEY_T)){   /// Accélération du temps
                 change_time_speed(&time);
@@ -129,16 +147,11 @@ void test() {
             else {
                 switch (hud.button_selected) {
                     case Button_Destroy:
-                        if (IsMouseButtonPressed(Mouse_Button_Left)) {  /// Si on a cliqué sur le bouton de destruction
-                            if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_House && money >= HOUSE_PRICE/5) {
-                                house_destroy_one(map, &house, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
-                                money -= HOUSE_PRICE/5;
-                            }
-                            else if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_Road && money >= ROAD_PRICE/5) {
-                                destroy_one_road(map, mouse_pos_world);
-                                money -= ROAD_PRICE/5;
-                            }
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_House && money >= HOUSE_PRICE/5) {
+                            house_destroy_one(map, &house, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
+                            money -= HOUSE_PRICE/5;
                         }
+                        else  destroy_roads(map, mouse_pos_world, &first_road_coord, &second_road_coord, &last_road_coord, &money);
                         break;
                     case Button_Road:
                         build_roads(map, mouse_pos_world, &first_road_coord, &second_road_coord, &last_road_coord, &money, mouse_ground_collision.hit);
@@ -159,6 +172,7 @@ void test() {
             }
         }
         else if (is_mouse_on_hud(mouse_pos)){
+            mouse_pos_world = (Vector2){-1,-1};
             if (hud.button_selected==-1) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);
             else if (hud.button_selected == Button_Build) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);
             if (IsMouseButtonPressed(Mouse_Button_Left)) {
@@ -179,6 +193,7 @@ void test() {
 
                     default:    /// No mode on, default menu mode
                         hud.button_selected = hud.button_hovered;
+                        if (hud.button_selected == Button_2) first_road_coord = (Vector2){-1,-1};
                         if (hud.button_selected == Button_3) {   /// View button pressed
                             change_view_mode(&view_mode);
                             hud.button_selected = -1;

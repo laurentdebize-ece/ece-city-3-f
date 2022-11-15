@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <raylib.h>
 #include "../basics/interface utilisateur.h"
-#include "../map/map_draw.h"
+#include "build.h"
 
 #define HOUSE_TILE_WIDTH (3*TILES_WIDTH)
 #define HOUSE_TILE_HEIGHT (3*TILES_WIDTH)
@@ -41,5 +41,7 @@ void house_draw(House_t *house);
 void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy);
 
 void house_destroy(House_t **house);
+
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money);
 
 #endif //PROJET_HOUSE_H
