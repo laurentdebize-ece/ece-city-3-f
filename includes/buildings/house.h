@@ -21,6 +21,9 @@ typedef struct Chateau_D_Eau_t Chateau_D_Eau_t;
 
 typedef struct House_t {
     Vector2 position;
+    Model buildings[4];
+    BoundingBox bounds[4];
+
     int level;
     int counter;
     int electricity, water;

@@ -49,7 +49,7 @@ void test() {
     Rectangle vew_icon_rec = {WIDTH*3/20.f, HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
     int vew_mode = 0;
 
-    Time_t time = {0,0,0,0,3,2069};
+    Time_t time = {0,0,0,0,3,1969};
     int money = 500000;
 
     SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second

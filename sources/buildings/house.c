@@ -6,6 +6,19 @@
 
 House_t *create_house(Vector2 position) {
     House_t *house = malloc(sizeof(House_t));
+
+    house->buildings[1] = LoadModel("../assets/Models3d/Houses/buildingP1.obj"); // tableaux des maisons 3D
+    house-> bounds[1] = GetMeshBoundingBox(house->buildings[1].meshes[0]);   // Set model bounds
+
+    house->buildings[2] = LoadModel("../assets/Models3d/Houses/buildingM1.obj");
+    house-> bounds[2] = GetMeshBoundingBox(house->buildings[2].meshes[0]);
+
+    house->buildings[3] = LoadModel("../assets/Models3d/Houses/buildingG1.obj");
+    house-> bounds[3] = GetMeshBoundingBox(house->buildings[3].meshes[0]);
+
+    house->buildings[4] = LoadModel("../assets/Models3d/Houses/buildingT1.obj");
+    house-> bounds[4] = GetMeshBoundingBox(house->buildings[4].meshes[0]);
+
     house->level = Terrain_nu;
     house->counter = 0;
     house->electricity = 0;
@@ -76,14 +89,19 @@ void house_update(House_t *house, Map_t *map, int *money) {
 
 void house_draw(House_t *house) {
     Color houseColors[4] = {RED, YELLOW, GREEN, BLUE};
+
+
     if(!house){
         return;
     }
     House_t *current_house = house;
     do {
         if(current_house->level >= Cabane){
-            DrawCube((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, houseColors[current_house->level-2]);
-            DrawCubeWires((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, BLACK);
+
+            DrawModel(house-> buildings[current_house->level - 1], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 5.0f, WHITE);        // Draw 3d model with texture
+
+            //DrawCube((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, houseColors[current_house->level-2]);
+            //DrawCubeWires((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, BLACK);
         }
         current_house = current_house->next;
     }while (current_house != house);
