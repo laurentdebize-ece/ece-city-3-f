@@ -5,8 +5,10 @@
 #ifndef PROJET_INTERFACE_UTILISATEUR_H
 #define PROJET_INTERFACE_UTILISATEUR_H
 
-#define WIDTH 1920   //1024
-#define HEIGHT 1080  //768
+#include <raylib.h>
+
+#define WIDTH (1920-100)   //1024
+#define HEIGHT (1080-100)  //768
 #define TITLE "ECE City"
 #define FPS 60.0f
 
@@ -19,6 +21,10 @@ typedef enum {
     Nb_Mouse_Button
 } MOUSE_BUTTONS;
 
+int get_button_hovered(Rectangle *buttons, int buttons_count, Vector2 mouse_pos);
 
+bool should_window_be_closed();
+
+Vector2 get_screen_size();
 
 #endif //PROJET_INTERFACE_UTILISATEUR_H

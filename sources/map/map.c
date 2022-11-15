@@ -8,6 +8,7 @@ Map_t* map_create(int width, int height) {
     Map_t* map = malloc(sizeof(Map_t));
     map->width = width;
     map->height = height;
+    map->house_count = 0;
     /// Création du tableau de pointeurs de Tile_t (tuiles)
     map->tiles = malloc(height * width * sizeof(Tile_t *));
     for (int i = 0; i < width*height; i++) {
@@ -67,3 +68,4 @@ void map_destroy(Map_t **map) {
     free(*map);
     *map = NULL;
 }
+

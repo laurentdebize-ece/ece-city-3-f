@@ -19,16 +19,16 @@ typedef enum {
     ROAD_ALONE,
     ROAD_N,
     ROAD_S,
-    ROAD_E,
-    ROAD_W,
-    ROAD_NE,
-    ROAD_NW,
-    ROAD_SE,
-    ROAD_SW,
     ROAD_NS,
-    ROAD_EW,
+    ROAD_E,
+    ROAD_NE,
+    ROAD_SE,
     ROAD_NSE,
+    ROAD_W,
+    ROAD_NW,
+    ROAD_SW,
     ROAD_NSW,
+    ROAD_EW,
     ROAD_NEW,
     ROAD_SEW,
     ROAD_NSEW,
@@ -46,16 +46,27 @@ typedef enum{
 }HouseVariant;
 
 typedef enum {
-    City_Center,
-    Chateau_D_Eau,
-    Centrale_Electrique,
+    Building_Varient_Water_Tower,
+    Building_Varient_Power_Plant,
     Nb_Variantes_Batiments
 }BuildingVariant;
+
+typedef enum {
+    Building_Orientation_N,
+    Building_Orientation_S,
+    Building_Orientation_E,
+    Building_Orientation_W
+}BuildingOrientation;
 
 typedef struct {
     TileType type;
     int varient;
-    //union {};
+    union {
+        void *building;
+    };
+    union {
+        BuildingOrientation orientation;
+    };
 }Tile_t;
 
 Tile_t tile_init_default(void);
