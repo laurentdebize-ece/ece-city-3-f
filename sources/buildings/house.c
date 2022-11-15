@@ -16,7 +16,7 @@ House_t *create_house(Vector2 position) {
     house->buildings[3] = LoadModel("../assets/Models3d/Houses/buildingG1.obj");
     house-> bounds[3] = GetMeshBoundingBox(house->buildings[3].meshes[0]);
 
-    house->buildings[4] = LoadModel("../assets/Models3d/Houses/building1.obj");
+    house->buildings[4] = LoadModel("../assets/Models3d/Houses/buildingT1.obj");
     house-> bounds[4] = GetMeshBoundingBox(house->buildings[4].meshes[0]);
 
     house->level = Terrain_nu;
