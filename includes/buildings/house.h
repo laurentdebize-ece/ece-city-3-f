@@ -21,8 +21,6 @@ typedef struct Chateau_D_Eau_t Chateau_D_Eau_t;
 
 typedef struct House_t {
     Vector2 position;
-    Model buildings[4];
-    BoundingBox bounds[4];
 
     int level;
     int counter;
@@ -39,12 +37,12 @@ void add_house(Map_t *map, House_t **house, Vector2 position);
 
 void house_update(House_t *house, Map_t *map, int *money, int speed);
 
-void house_draw(House_t *house);
+void house_draw(House_t *house, Model *house_mesh);
 
 void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy);
 
 void house_destroy(House_t **house);
 
-void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money);
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Model *house_mesh);
 
 #endif //PROJET_HOUSE_H

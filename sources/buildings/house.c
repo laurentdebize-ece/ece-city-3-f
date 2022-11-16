@@ -7,18 +7,6 @@
 House_t *create_house(Vector2 position) {
     House_t *house = malloc(sizeof(House_t));
 
-    house->buildings[1] = LoadModel("../assets/Models3d/Houses/buildingP1.obj"); // tableaux des maisons 3D
-    house-> bounds[1] = GetMeshBoundingBox(house->buildings[1].meshes[0]);   // Set model bounds
-
-    house->buildings[2] = LoadModel("../assets/Models3d/Houses/buildingM1.obj");
-    house-> bounds[2] = GetMeshBoundingBox(house->buildings[2].meshes[0]);
-
-    house->buildings[3] = LoadModel("../assets/Models3d/Houses/buildingG1.obj");
-    house-> bounds[3] = GetMeshBoundingBox(house->buildings[3].meshes[0]);
-
-    house->buildings[4] = LoadModel("../assets/Models3d/Houses/buildingT1.obj");
-    house-> bounds[4] = GetMeshBoundingBox(house->buildings[4].meshes[0]);
-
     house->level = Terrain_nu;
     house->counter = 0;
     house->electricity = 0;
@@ -96,7 +84,7 @@ void house_update(House_t *house, Map_t *map, int *money, int speed) {
     }while (current_house != house);
 }
 
-void house_draw(House_t *house) {
+void house_draw(House_t *house, Model *house_mesh) {
     Color houseColors[4] = {RED, YELLOW, GREEN, BLUE};
 
 
@@ -107,7 +95,10 @@ void house_draw(House_t *house) {
     do {
         if(current_house->level >= Cabane){
 
-            DrawModel(house-> buildings[current_house->level - 1], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 5.0f, WHITE);        // Draw 3d model with texture
+            //DrawModel(house-> buildings[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, WHITE);        // Draw 3d model with texture
+
+            //DrawModel(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 5.0f, houseColors[current_house->level - 2]);        // Draw 3d model with texture
+            DrawModel(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, WHITE);        // Draw 3d model with texture
 
             //DrawCube((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, houseColors[current_house->level-2]);
             //DrawCubeWires((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, BLACK);
@@ -173,18 +164,16 @@ void house_destroy(House_t **house){
     *house = NULL;
 }
 
-void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money){
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Model *house_mesh) {
     /// Si on peut construire une maison
     if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
         /// On dessine une maison transparente verte à la position de la souris (pour montrer où elle sera construite)
-        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(GREEN, 0.5f));
-        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
+        DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(GREEN, 0.5f));
     }
         /// Si on ne peut pas construire une maison
     else{
         /// On dessine une maison transparente rouge à la position de la souris (pour montrer où elle ne sera pas construite)
-        DrawCube((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH,Fade(RED, 0.5f));
-        DrawCubeWires((Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, HOUSE_CUBE_WIDTH, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH*2, HOUSE_CUBE_WIDTH, Fade(BLACK, 0.5f));
+        DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(RED, 0.5f));
     }
 }
 

@@ -4,9 +4,9 @@
 
 #include "../../includes/basics/camera.h"
 
-Camera camera_new(Map_t *map){
+Camera camera_new(Map_t *map, float tile_size) {
     Camera camera = { 0 };
-    camera.position = (Vector3){ 100.0f + map->width*DECALAGE_MAP_X, 30.0f + DECALAGE_MAP_Y, 100.0f + map->height*DECALAGE_MAP_Z}; // Camera position
+    camera.position = (Vector3){ (100.0f + map->width*DECALAGE_MAP_X)*tile_size, (30.0f + DECALAGE_MAP_Y)*tile_size, (100.0f + map->height*DECALAGE_MAP_Z)*tile_size}; // Camera position
     camera.target = (Vector3){ 0.0f + map->width*DECALAGE_MAP_X, 0.0f + DECALAGE_MAP_Y, 0.0f + map->height*DECALAGE_MAP_Z};      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y

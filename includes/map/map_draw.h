@@ -10,7 +10,7 @@
 #include "../foncftions_affichage.h"
 #include "map.h"
 
-#define TILES_WIDTH 2.0f
+#define TILES_WIDTH 0.5f
 
 #define DECALAGE_MAP_X (TILES_WIDTH/2.0f)
 #define DECALAGE_MAP_Y 0.0f
