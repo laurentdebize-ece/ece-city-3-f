@@ -4,10 +4,10 @@
 
 #include "../../includes/buildings/house.h"
 
-House_t *create_house(Vector2 position) {
+House_t *create_house(Vector2 position, BuildingOrientation orientation) {
     House_t *house = malloc(sizeof(House_t));
     house->connexite = 0;
-    house->orientation = 0;
+    house->orientation = orientation;
     house->level = Terrain_nu;
     house->counter = 0;
     house->electricity = 0;
@@ -18,9 +18,9 @@ House_t *create_house(Vector2 position) {
     return house;
 }
 
-void add_house(Map_t *map, House_t **house, Vector2 position) {
+void add_house(Map_t *map, House_t **house, Vector2 position, BuildingOrientation orientation) {
     if(!*house){
-        *house = create_house(position);
+        *house = create_house(position, orientation);
         (*house)->next = *house;
         (*house)->prev = *house;
         for (int y = (int)position.y -1 ; y <= (int)position.y+1; ++y) {
@@ -31,7 +31,7 @@ void add_house(Map_t *map, House_t **house, Vector2 position) {
         }
     }
     else {
-        House_t *new_house = create_house(position);
+        House_t *new_house = create_house(position, orientation);
         (*house)->prev->next = new_house;
         new_house->prev = (*house)->prev;
         (*house)->prev = new_house;
@@ -96,10 +96,9 @@ void house_draw(House_t *house, Model *house_mesh) {
     do {
         if(current_house->level >= Cabane){
 
-            //DrawModel(house-> buildings[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, WHITE);        // Draw 3d model with texture
-
-            //DrawModel(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 5.0f, houseColors[current_house->level - 2]);        // Draw 3d model with texture
-            DrawModel(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, WHITE);        // Draw 3d model with texture
+            //DrawModel(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, WHITE);        // Draw 3d model with texture
+            //DrawModelWires(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, 1.0f, LIGHTGRAY);  // Draw 3d model wires (with texture)
+            DrawModelEx(house_mesh[current_house->level - 2], (Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, 0, (current_house->position.y+0.5f)*TILES_WIDTH}, (Vector3){0, 1, 0}, house->orientation * 90, (Vector3){1, 1, 1}, WHITE);
 
             //DrawCube((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, houseColors[current_house->level-2]);
             //DrawCubeWires((Vector3){(current_house->position.x+0.5f)*TILES_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH/2.0f, (current_house->position.y+0.5f)*TILES_WIDTH}, HOUSE_CUBE_WIDTH, (current_house->level-1)*HOUSE_CUBE_WIDTH, HOUSE_CUBE_WIDTH, BLACK);
@@ -165,16 +164,18 @@ void house_destroy(House_t **house){
     *house = NULL;
 }
 
-void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Model *house_mesh) {
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, BuildingOrientation orientation, Model *house_mesh) {
     /// Si on peut construire une maison
     if (is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
         /// On dessine une maison transparente verte à la position de la souris (pour montrer où elle sera construite)
-        DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(GREEN, 0.5f));
+        //DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(GREEN, 0.5f));
+        DrawModelEx(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1, 1, 1}, GREEN);
     }
         /// Si on ne peut pas construire une maison
     else{
         /// On dessine une maison transparente rouge à la position de la souris (pour montrer où elle ne sera pas construite)
-        DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(RED, 0.5f));
+        //DrawModel(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, 1.0f,Fade(RED, 0.5f));
+        DrawModelEx(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1, 1, 1}, RED);
     }
 }
 

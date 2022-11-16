@@ -25,8 +25,8 @@ void test() {
     Time_t time = {1,0,0,0,0,3,2069};
     int money = 500000;
 
-    map = load_map(DEFAULT_MAP_FILE_PATH);
-    //load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
+    //map = load_map(DEFAULT_MAP_FILE_PATH);
+    load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
 
     /// Affichage de la map en console
     print_map_console(map);
@@ -78,6 +78,8 @@ void test() {
 
     bool is_on_pause = false;
     int pause_counter = 0;
+
+    int building_orientation = Building_Orientation_S;
 
     Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};
 
@@ -139,6 +141,9 @@ void test() {
 
         /*---------------------------------------CLICK EVENT REACTION---------------------------------------*/
 
+        if ((IsMouseButtonPressed(Mouse_Button_Side_Front) || IsKeyPressed(KEY_Q)) && hud.button_selected == Button_House ) /// Si on clique sur rotation sens positif
+            building_orientation = (building_orientation + 1) % 4;
+
         if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant){    /// Si on a cliqué sur un bouton de construction
             if (IsMouseButtonPressed(Mouse_Button_Right)) {
                 hud.button_selected = -1;
@@ -159,7 +164,7 @@ void test() {
                     case Button_House:    /// House mode on
 
                         if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)) {
-                            add_house(map, &house, mouse_pos_world);
+                            add_house(map, &house, mouse_pos_world, building_orientation);
                             money -= HOUSE_PRICE;
                             if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
                                 hud.button_selected = Button_Build;
@@ -223,7 +228,7 @@ void test() {
         if (!view_mode) house_draw(house, house_model);
 
         if (hud.button_selected == Button_House && mouse_ground_collision.hit) {
-            draw_transparent_house(map, mouse_pos_world, money, &house_model[1]);
+            draw_transparent_house(map, mouse_pos_world, money, building_orientation, &house_model[1]);
         }
 
         EndMode3D();

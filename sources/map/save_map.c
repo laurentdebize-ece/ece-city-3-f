@@ -5,13 +5,19 @@
 #include "../../includes/map/save_map.h"
 
 void save_map(Map_t *map, House_t *house, Time_t *time, int money, char *path) {
+
+    /// Ouverture du fichier
     FILE *file = fopen(path, "w");
     if (file == NULL) {
         printf("Error opening file!\n");
         exit(1);
     }
+
+    /// Ecriture de la taille de la map et l'argent
     fprintf(file, "%d %d %d\n", map->width, map->height, money);
+    /// Récupération des infos du temps
     fprintf(file, "%d %d %d %d %d %d %d\n", time->years, time->months, time->hours, time->minutes, time->seconds, time->counter, time->speed);
+
     for (int y = 0; y < map->height; ++y) {
         for (int x = 0; x < map->width; ++x) {
             fprintf(file, "%d ", map->tiles[y*map->width+x]->type);
@@ -34,6 +40,7 @@ void save_map(Map_t *map, House_t *house, Time_t *time, int money, char *path) {
             current_house = current_house->next;
         }while (current_house != house);
     }
+
     fclose(file);
 }
 
@@ -64,6 +71,7 @@ void load_saved_map(Map_t **map, House_t **house, Time_t *time, int *money, char
                 *house = malloc(sizeof(House_t));
                 (*house)->next = *house;
                 (*house)->prev = *house;
+
             } else {
                 House_t *new_house = malloc(sizeof(House_t));
                 new_house->next = *house;
@@ -72,6 +80,11 @@ void load_saved_map(Map_t **map, House_t **house, Time_t *time, int *money, char
                 (*house)->prev = new_house;
             }
             fscanf(file, "%f %f %d %d\n", &(*house)->prev->position.x, &(*house)->prev->position.y, &(*house)->prev->level, &(*house)->prev->counter);
+            for (int y = (*house)->prev->position.y - 1; y <= (*house)->prev->position.y + 1; ++y) {
+                for (int x = (*house)->prev->position.x - 1; x <= (*house)->prev->position.x + 1; ++x) {
+                    (*map)->tiles[y*(*map)->width+x]->building = (*house)->prev;
+                }
+            }
         }
     }
     fclose(file);
