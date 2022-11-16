@@ -16,8 +16,8 @@
 #define HOUSE_LEVEL_UPDATE (15*FPS)
 #define TAX_PER_PERSON 10
 
-typedef struct Centrale_Electrique_t Centrale_Electrique_t;
-typedef struct Chateau_D_Eau_t Chateau_D_Eau_t;
+typedef struct Water_Tower_t Water_Tower_t;
+typedef struct Power_Plant_t Power_Plant_t;
 
 typedef struct House_t {
     Vector2 position;
@@ -32,9 +32,9 @@ typedef struct House_t {
     struct Centrale_Electrique_t *centrale_electrique;
 }House_t;
 
-House_t *create_house(Vector2 position);
+House_t *create_house(Vector2 position, BuildingOrientation orientation);
 
-void add_house(Map_t *map, House_t **house, Vector2 position);
+void add_house(Map_t *map, House_t **house, Vector2 position, BuildingOrientation orientation);
 
 void house_update(House_t *house, Map_t *map, int *money, int speed);
 
@@ -44,6 +44,6 @@ void house_destroy_one(Map_t *map, House_t **houses, House_t *house_to_destroy);
 
 void house_destroy(House_t **house);
 
-void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Model *house_mesh);
+void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, BuildingOrientation orientation, Model *house_mesh);
 
 #endif //PROJET_HOUSE_H
