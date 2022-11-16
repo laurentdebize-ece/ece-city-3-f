@@ -71,9 +71,6 @@ void test() {
     Rectangle vew_icon_rec = {WIDTH*3/20.f, HEIGHT*3.0f/4.0f + (float)(HEIGHT/4.0f - hud_icons.height/Nb_Hud_Buttons)/2.0f, hud_icons.width, hud_icons.height/Nb_Hud_Buttons};
     int vew_mode = 0;
 
-    Time_t time = {0,0,0,0,3,2069};
-    int money = 500000;
-
     SetTargetFPS(FPS);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
@@ -85,7 +82,7 @@ void test() {
         //----------------------------------------------------------------------------------
         mouse_pos = GetMousePosition();
 
-        move_camera_with_mouse(&camera, mouse_pos);
+        move_camera_with_mouse(&camera, mouse_pos, get_screen_size());
         //camera_update(&camera);  // ma version petee
 
         UpdateCamera(&camera);          // Update camera
@@ -98,7 +95,7 @@ void test() {
 
         update_time(&time);
 
-        house_update(house, map, &money);
+        house_update(house, map, &money, time.speed);
 
         if(IsMouseButtonPressed(Mouse_Button_Left)){
             if(mouse_ground_collision.hit && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)){
@@ -142,7 +139,7 @@ void test() {
 
         BeginMode3D(camera);
 
-            map_draw(map, TILES_WIDTH, vew_mode);
+            map_draw(map, road_texture ,TILES_WIDTH, vew_mode);
 
             if(!vew_mode) house_draw(house);
 
