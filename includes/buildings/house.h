@@ -16,8 +16,8 @@
 #define HOUSE_LEVEL_UPDATE (15*FPS)
 #define TAX_PER_PERSON 10
 
-typedef struct Centrale_Electrique_t Centrale_Electrique_t;
-typedef struct Chateau_D_Eau_t Chateau_D_Eau_t;
+typedef struct Water_Tower_t Water_Tower_t;
+typedef struct Power_Plant_t Power_Plant_t;
 
 typedef struct House_t {
     Vector2 position;
