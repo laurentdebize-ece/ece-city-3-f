@@ -21,10 +21,11 @@ typedef struct Chateau_D_Eau_t Chateau_D_Eau_t;
 
 typedef struct House_t {
     Vector2 position;
-
+    int connexite;
     int level;
     int counter;
     int electricity, water;
+    BuildingOrientation orientation;
     struct House_t *next;
     struct House_t *prev;
     struct Chateau_D_Eau_t *chateau_d_eau;

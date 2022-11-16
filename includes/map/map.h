@@ -16,6 +16,8 @@ typedef struct {
     int width;
     /// Hauteur de la map
     int height;
+    /// Nombre de zones connexes
+    int nb_connexite;
     /// Nombre de maisons
     int house_count;
     /// Tableau de pointeurs de Tile_t (tuiles)

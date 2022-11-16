@@ -52,20 +52,17 @@ typedef enum {
 }BuildingVariant;
 
 typedef enum {
-    Building_Orientation_N,
-    Building_Orientation_S,
     Building_Orientation_E,
-    Building_Orientation_W
+    Building_Orientation_S,
+    Building_Orientation_W,
+    Building_Orientation_N
 }BuildingOrientation;
 
 typedef struct {
     TileType type;
-    int varient;
+    int varient, connexite;
     union {
         void *building;
-    };
-    union {
-        BuildingOrientation orientation;
     };
 }Tile_t;
 

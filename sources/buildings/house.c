@@ -6,7 +6,8 @@
 
 House_t *create_house(Vector2 position) {
     House_t *house = malloc(sizeof(House_t));
-
+    house->connexite = 0;
+    house->orientation = 0;
     house->level = Terrain_nu;
     house->counter = 0;
     house->electricity = 0;
