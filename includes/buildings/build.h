@@ -11,10 +11,10 @@
 
 #define ROAD_PRICE 10
 #define HOUSE_PRICE 1000
+#define WATER_TOWER_PRICE 100000
+#define POWER_PLANT_PRICE 100000
 
-bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money);
-
-void test_build_house(Map_t *map, Vector2 building_core_position);
+bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money, BuildingOrientation orientation);
 
 void build_one_road(Map_t *map, Vector2 building_core_position);
 

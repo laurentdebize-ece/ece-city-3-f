@@ -21,12 +21,12 @@ void test() {
 
     /// Création de la map
     Map_t *map = NULL;
-    House_t *house = NULL;
+    Queue_t *houses = NULL, *water_towers = NULL, *power_plants = NULL;
     Time_t time = {1,0,0,0,0,3,2069};
     int money = 500000;
 
     //map = load_map(DEFAULT_MAP_FILE_PATH);
-    load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
+    load_saved_map(&map, &houses, &water_towers, &power_plants, &time, &money, SAVE_1_PATH);
 
     /// Affichage de la map en console
     print_map_console(map);
@@ -35,6 +35,7 @@ void test() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     //SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(WIDTH, HEIGHT, TITLE);
+    SetWindowPosition(10, 50);
 
     /// Chargement des modèles 3D et de leur texture
     Model house_model[4];
@@ -42,9 +43,6 @@ void test() {
     house_model[1] = LoadModel("../assets/Models3d/Houses/buildingM1.obj");
     house_model[2] = LoadModel("../assets/Models3d/Houses/buildingG1.obj");
     house_model[3] = LoadModel("../assets/Models3d/Houses/buildingT1.obj");
-
-    /// Création de la caméra
-    Camera3D camera = camera_new(map, TILES_WIDTH);
 
     /// Création de la position de la souris
     Vector2 mouse_pos = {0,0}, mouse_pos_world = {0,0};
@@ -65,7 +63,10 @@ void test() {
     HUD_t hud;
     hud_init(&hud, (Vector2){WIDTH, HEIGHT});
 
+    /// Création de la caméra
+    Camera3D camera = camera_new(map, TILES_WIDTH);
     SetCameraMode(camera, CAMERA_FREE); // Set a free camera mode
+    //SetCameraAltControl(KEY_LEFT_SHIFT); // Pour Martial qui n'a pas Alt sur son clavier
 
     Texture2D road_texture = LoadTexture("../assets/map/roads/road_texture.png");
 
@@ -91,7 +92,7 @@ void test() {
         /// Commandes clavier
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
             if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
-                save_map(map, house, &time, money, SAVE_1_PATH);
+                save_map(map, houses, water_towers, power_plants, &time, money, SAVE_1_PATH);
             }
             if (IsKeyPressed(KEY_T)){   /// Accélération du temps
                 change_time_speed(&time);
@@ -106,6 +107,15 @@ void test() {
             if (IsKeyPressed(KEY_C)) {  /// Reset de la caméra
                 camera = camera_new(map, TILES_WIDTH);
             }
+            if (IsKeyPressed(KEY_B))
+                hud.button_selected = Button_Build;
+            if (IsKeyPressed(KEY_D))
+                hud.button_selected = Button_Destroy;
+            if (IsKeyPressed(KEY_R))
+                hud.button_selected = Button_Road;
+            if (IsKeyPressed(KEY_H))
+                hud.button_selected = Button_House;
+
         }
 
 
@@ -136,12 +146,12 @@ void test() {
 
         if(!pause_counter) {    /// Si on n'est pas en pause alors on update le temps
             update_time(&time);
-            house_update(house, map, &money, time.speed);
+            house_update(houses, map, &money, time.speed);
         }
 
         /*---------------------------------------CLICK EVENT REACTION---------------------------------------*/
 
-        if ((IsMouseButtonPressed(Mouse_Button_Side_Front) || IsKeyPressed(KEY_Q)) && hud.button_selected == Button_House ) /// Si on clique sur rotation sens positif
+        if ((IsMouseButtonPressed(Mouse_Button_Side_Front) || IsKeyPressed(KEY_Q)) && (hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant)) /// Si on clique sur rotation sens positif
             building_orientation = (building_orientation + 1) % 4;
 
         if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant){    /// Si on a cliqué sur un bouton de construction
@@ -153,8 +163,18 @@ void test() {
                 switch (hud.button_selected) {
                     case Button_Destroy:
                         if (IsMouseButtonPressed(Mouse_Button_Left) && map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_House && money >= HOUSE_PRICE/5) {
-                            house_destroy_one(map, &house, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
+                            house_destroy_one(map, &houses, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
                             money -= HOUSE_PRICE/5;
+                        }
+                        else if (IsMouseButtonPressed(Mouse_Button_Left) && map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->type == Tile_Type_Builing) {
+                            if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->varient == Building_Varient_Water_Tower){
+                                money -= WATER_TOWER_PRICE/5;
+                                water_tower_destroy_one(map, &water_towers, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
+                            }
+                            else if (map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->varient == Building_Varient_Power_Plant){
+                                money -= POWER_PLANT_PRICE/5;
+                                power_plant_destroy_one(map, &power_plants, map->tiles[(int)(mouse_pos_world.y*map->width + mouse_pos_world.x)]->building);
+                            }
                         }
                         else  destroy_roads(map, mouse_pos_world, &first_road_coord, &second_road_coord, &last_road_coord, &money);
                         break;
@@ -163,13 +183,37 @@ void test() {
                         break;
                     case Button_House:    /// House mode on
 
-                        if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money)) {
-                            add_house(map, &house, mouse_pos_world, building_orientation);
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_House, money, building_orientation)) {
+                            add_house(map, &houses, mouse_pos_world, building_orientation);
                             money -= HOUSE_PRICE;
                             if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
                                 hud.button_selected = Button_Build;
                             else
                                 hud.button_selected = Button_House;
+                            hud.button_hovered = -1;
+                        }
+                        break;
+
+                    case Button_Water_Tower:    /// Water tower mode on
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, building_orientation)) {
+                            add_water_tower(map, &water_towers, mouse_pos_world, building_orientation);
+                            money -= WATER_TOWER_PRICE;
+                            if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
+                                hud.button_selected = Button_Build;
+                            else
+                                hud.button_selected = Button_Water_Tower;
+                            hud.button_hovered = -1;
+                        }
+                        break;
+
+                    case Button_Power_Plant:    /// Power plant mode on
+                        if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, building_orientation)) {
+                            add_power_plant(map, &power_plants, mouse_pos_world, building_orientation);
+                            money -= POWER_PLANT_PRICE;
+                            if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
+                                hud.button_selected = Button_Build;
+                            else
+                                hud.button_selected = Button_Power_Plant;
                             hud.button_hovered = -1;
                         }
                         break;
@@ -193,6 +237,10 @@ void test() {
                             last_road_coord = (Vector2) {-1, -1};
                         } else if (hud.button_selected == Button_3) {    /// House button pressed
                             hud.button_selected = Button_House;    /// House mode on
+                        } else if (hud.button_selected == Button_4) {    /// Water tower button pressed
+                            hud.button_selected = Button_Water_Tower;    /// Water tower mode on
+                        } else if (hud.button_selected == Button_5) {    /// Power plant button pressed
+                            hud.button_selected = Button_Power_Plant;    /// Power plant mode on
                         } else hud.button_selected = Button_Build;    /// Build mode stays on
                         break;
 
@@ -225,10 +273,20 @@ void test() {
 
         map_draw(map, road_texture, TILES_WIDTH, view_mode);
 
-        if (!view_mode) house_draw(house, house_model);
+        if (!view_mode) {
+            house_draw(houses, house_model);
+            water_tower_draw(water_towers, 0);
+            power_plant_draw(power_plants, 0);
+        }
 
         if (hud.button_selected == Button_House && mouse_ground_collision.hit) {
             draw_transparent_house(map, mouse_pos_world, money, building_orientation, &house_model[1]);
+        }
+        else if (hud.button_selected == Button_Water_Tower && mouse_ground_collision.hit) {
+            draw_transparent_water_tower(map, mouse_pos_world, money, building_orientation, 0);
+        }
+        else if (hud.button_selected == Button_Power_Plant && mouse_ground_collision.hit) {
+            draw_transparent_power_plant(map, mouse_pos_world, money, building_orientation, 0);
         }
 
         EndMode3D();
@@ -237,13 +295,21 @@ void test() {
         DrawRectangleLines(10, 10, 350, 50, GREEN);
         DrawText(TextFormat("Money : $%d", money), 20, 20, 30, BLACK);
 
+        DrawRectangle(370, 10, 350, 50, Fade(BLUE, 0.5f));
+        DrawRectangleLines(370, 10, 350, 50, DARKBLUE);
+        DrawText(TextFormat("Water : %d/%d", map->water_tower_count*WATER_TOWER_CAPACITY, map->water_tower_count*WATER_TOWER_CAPACITY), 380, 20, 30, BLACK);
+
+        DrawRectangle(730, 10, 350, 50, Fade(YELLOW, 0.5f));
+        DrawRectangleLines(730, 10, 350, 50, ORANGE);
+        DrawText(TextFormat("Power : %d/%d", map->power_plant_count*POWER_PLANT_CAPACITY, map->power_plant_count*POWER_PLANT_CAPACITY), 740, 20, 30, BLACK);
+
         print_time((Vector2) {screen_size.x - 310, 10}, &time);
 
         // Draw camera position
         DrawText(TextFormat("Camera position: (%.2f, %.2f, %.2f)", camera.position.x, camera.position.y, camera.position.z), 20, 50, 10, BLACK);
         DrawText(TextFormat("FPS : %d\nTime speed : x%d\nCounter : %d", GetFPS(), time.speed, time.counter), 10, 100, 10, BLACK);
 
-        if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House) {
+        if(hud.button_selected == Button_Destroy || hud.button_selected == Button_Road || hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant) {
             DrawRectangle((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 70, Fade(GRAY, 0.5f));
             DrawRectangleLines((screen_size.x - MeasureText("Right click to disable", 20))/2 - 10, screen_size.y/16, MeasureText("Right click to disable", 20) + 20, 70, Fade(DARKGRAY, 0.5f));
             DrawText("Build mode active", (GetScreenWidth()-MeasureText("Build mode active", 20))/2, screen_size.y/16 + 5, 20, Fade(BLACK, 0.5f));
@@ -272,5 +338,7 @@ void test() {
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
     map_destroy(&map);
-    house_destroy(&house);
+    house_destroy(&houses);
+    water_tower_destroy(&water_towers);
+    power_plant_destroy(&power_plants);
 }
