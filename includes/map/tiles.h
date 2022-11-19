@@ -53,9 +53,9 @@ typedef enum {
 
 typedef enum {
     Building_Orientation_E,
-    Building_Orientation_S,
+    Building_Orientation_N,
     Building_Orientation_W,
-    Building_Orientation_N
+    Building_Orientation_S
 }BuildingOrientation;
 
 typedef struct {
