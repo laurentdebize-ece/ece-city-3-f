@@ -11,6 +11,7 @@
 #include "../includes/buildings/house.h"
 #include "../includes/hud.h"
 #include "../includes/map/save_map.h"
+#include "../includes/buildings/algoConnexite.h"
 
 void test (void);
 

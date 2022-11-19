@@ -25,11 +25,12 @@ void test() {
     Time_t time = {1,0,0,0,0,3,2069};
     int money = 500000;
 
-    map = load_map(DEFAULT_MAP_FILE_PATH);
-    //load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
-
+    //map = load_map(DEFAULT_MAP_FILE_PATH);
+    load_saved_map(&map, &house, &time, &money, SAVE_1_PATH);
+    connexite(map);
     /// Affichage de la map en console
     print_map_console(map);
+
 
     /// Ouverture de la fenêtre
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
