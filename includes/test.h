@@ -5,12 +5,15 @@
 #ifndef PROJET_TEST_H
 #define PROJET_TEST_H
 
-#define WIDTH 1024
-#define HEIGHT 768
-#define TITLE "ECE City"
-#define FPS 120.0
-
-#include <raylib.h>
+#include "../includes/basics/camera.h"
+#include "buildings/build.h"
+#include "../includes/basics/time.h"
+#include "../includes/buildings/house.h"
+#include "../includes/buildings/water_tower.h"
+#include "../includes/buildings/power_plant.h"
+#include "../includes/hud.h"
+#include "../includes/map/save_map.h"
+#include "../includes/buildings/algoConnexite.h"
 
 void test (void);
 
