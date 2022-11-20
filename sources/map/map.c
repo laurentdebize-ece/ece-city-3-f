@@ -52,7 +52,7 @@ void print_map_console(Map_t* map){
     /// Affiche la map dans la console
     for (int y = 0; y < map->height; ++y) {
         for (int x = 0; x < map->width; ++x) {
-            printf("%d ", map->tiles[y*map->width + x]->type);
+            printf("%d ", map->tiles[y*map->width + x]->connexite);
         }
         printf("\n");
     }

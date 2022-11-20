@@ -27,7 +27,7 @@ void test() {
 
     //map = load_map(DEFAULT_MAP_FILE_PATH);
     load_saved_map(&map, &houses, &water_towers, &power_plants, &time, &money, SAVE_1_PATH);
-
+    connexite(map);
     /// Affichage de la map en console
     print_map_console(map);
 
