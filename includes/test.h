@@ -9,6 +9,8 @@
 #include "buildings/build.h"
 #include "../includes/basics/time.h"
 #include "../includes/buildings/house.h"
+#include "../includes/buildings/water_tower.h"
+#include "../includes/buildings/power_plant.h"
 #include "../includes/hud.h"
 #include "../includes/map/save_map.h"
 

@@ -7,7 +7,6 @@
 void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode) {
     switch (vew_mode) {
         case 0: {
-            Color house_colors[Nb_Variantes_Maisons] = {BROWN, LIME, RED, GREEN, BLUE, PURPLE};
             for (int y = 0; y < map->height; ++y) {
                 for (int x = 0; x < map->width; ++x) {
                     switch (map->tiles[y * map->width + x]->type) {
@@ -19,10 +18,17 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
                             DrawCubeTextureRec(road_texture, (Rectangle) {0, road_texture.width *(map->tiles[y * map->width + x]->varient),road_texture.width, road_texture.width},(Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,(float) y * tile_size + DECALAGE_MAP_Z}, tile_size, 0, tile_size, WHITE);
                             break;
                         case Tile_Type_House:
-                            DrawPlane((Vector3) {(x + 0.5f) * TILES_WIDTH, 0, (y + 0.5f) * TILES_WIDTH}, (Vector2) {tile_size, tile_size}, house_colors[map->tiles[y * map->width + x]->varient]);
+                            DrawPlane((Vector3) {(x + 0.5f) * TILES_WIDTH, 0, (y + 0.5f) * TILES_WIDTH}, (Vector2) {tile_size, tile_size}, GRAY);
                             break;
                         case Tile_Type_Builing:
-                            DrawPlane((Vector3) {(x + 0.5f) * TILES_WIDTH, 0, (y + 0.5f) * TILES_WIDTH},(Vector2) {tile_size, tile_size}, YELLOW);
+                            switch (map->tiles[y * map->width + x]->varient) {
+                                case Building_Varient_Water_Tower:
+                                    DrawPlane((Vector3) {(x + 0.5f) * TILES_WIDTH, 0, (y + 0.5f) * TILES_WIDTH}, (Vector2) {tile_size, tile_size}, BLUE);
+                                    break;
+                                case Building_Varient_Power_Plant:
+                                    DrawPlane((Vector3) {(x + 0.5f) * TILES_WIDTH, 0, (y + 0.5f) * TILES_WIDTH}, (Vector2) {tile_size, tile_size}, YELLOW);
+                                    break;
+                            }
                             break;
                         default:
                             break;

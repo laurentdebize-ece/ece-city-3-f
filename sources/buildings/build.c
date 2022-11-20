@@ -4,7 +4,7 @@
 
 #include "../../includes/buildings/build.h"
 
-bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money){
+bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money, BuildingOrientation orientation) {
     switch (building_varient) {
         case Tile_Type_Road:
             /// Si on n'a pas assez d'argent ou que la case n'est pas vide ou que la souris est hors de la map
@@ -13,7 +13,6 @@ bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType b
             }
             return true;
         case Tile_Type_House:
-
             /// Si on n'a pas assez d'argent ou que la souris est hors de la map
             if (money < HOUSE_PRICE || building_core_position.x - 1 < 0 || building_core_position.x + 1 >= map->width || building_core_position.y - 1 < 0 || building_core_position.y + 1 >= map->height){
                 return false;
@@ -47,17 +46,144 @@ bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType b
             }
             return is_there_road;
         case Tile_Type_Builing:
-            break;
-        default:
-            break;
-    }
-}
-
-void test_build_house(Map_t *map, Vector2 building_core_position){
-    for (int y = (int)building_core_position.y - 1; y <= (int)building_core_position.y + 1; ++y) {
-        for (int x = (int)building_core_position.x - 1; x <= (int)building_core_position.x + 1; ++x) {
-            map->tiles[y*map->width + x]->type = Tile_Type_House;
-        }
+            switch (orientation) {
+                case Building_Orientation_E: {
+                    if (money < WATER_TOWER_PRICE || building_core_position.x < 0 ||
+                        building_core_position.x + 3 >= map->width || building_core_position.y - 5 < 0 ||
+                        building_core_position.y >= map->height) {
+                        return false;
+                    }
+                    bool is_there_road = false;
+                    /// On vérifie que les cases autour de la maison sont vides et qu'il y a une route autour
+                    for (int y = (int) building_core_position.y - 5; y <= (int) building_core_position.y; ++y) {
+                        for (int x = (int) building_core_position.x; x <= (int) building_core_position.x + 3; ++x) {
+                            if (map->tiles[y * map->width + x]->type != Tile_Type_Grass)
+                                return false;
+                            if (!is_there_road) {
+                                if (x == (int) building_core_position.x && x-1 >= 0) {
+                                    if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (x == (int) building_core_position.x + 3 && x + 1 < map->width) {
+                                    if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y && y+1 < map->height) {
+                                    if (map->tiles[(y+1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y - 5 && y - 1 >= 0) {
+                                    if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                            }
+                        }
+                    }
+                    return is_there_road;
+                }
+                case Building_Orientation_N: {
+                    if (money < WATER_TOWER_PRICE || building_core_position.x - 5 < 0 ||
+                        building_core_position.x >= map->width || building_core_position.y >= map->height ||
+                        building_core_position.y - 3 < 0) {
+                        return false;
+                    }
+                    bool is_there_road = false;
+                    /// On vérifie que les cases autour de la maison sont vides et qu'il y a une route autour
+                    for (int y = (int) building_core_position.y - 3; y <= (int) building_core_position.y; ++y) {
+                        for (int x = (int) building_core_position.x - 5; x <= (int) building_core_position.x; ++x) {
+                            if (map->tiles[y * map->width + x]->type != Tile_Type_Grass)
+                                return false;
+                            if (!is_there_road) {
+                                if (x == (int) building_core_position.x && x+1 < map->width) {
+                                    if (map->tiles[y * map->width + x+1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (x == (int) building_core_position.x - 5 && x - 1 >= 0) {
+                                    if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y && y+1 < map->height) {
+                                    if (map->tiles[(y+1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y - 3 && y - 1 >= 0) {
+                                    if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                            }
+                        }
+                    }
+                    return is_there_road;
+                }
+                case Building_Orientation_W: {// x-3, x, y+5, y
+                    if (money < WATER_TOWER_PRICE || building_core_position.x - 3 < 0 ||
+                        building_core_position.x >= map->width || building_core_position.y < 0 ||
+                        building_core_position.y + 5 >= map->height) {
+                        return false;
+                    }
+                    bool is_there_road = false;
+                    /// On vérifie que les cases autour de la maison sont vides et qu'il y a une route autour
+                    for (int y = (int) building_core_position.y; y <= (int) building_core_position.y + 5; ++y) {
+                        for (int x = (int) building_core_position.x - 3; x <= (int) building_core_position.x; ++x) {
+                            if (map->tiles[y * map->width + x]->type != Tile_Type_Grass)
+                                return false;
+                            if (!is_there_road) {
+                                if (x == (int) building_core_position.x && x+1 < map->width) {
+                                    if (map->tiles[y * map->width + x+1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (x == (int) building_core_position.x - 3 && x - 1 >= 0) {
+                                    if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y && y-1 >= 0) {
+                                    if (map->tiles[(y-1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y + 5 && y + 1 < map->height) {
+                                    if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                            }
+                        }
+                    }
+                    return is_there_road;
+                }
+                case Building_Orientation_S: {// x, x + 5, y, y+3
+                    if (money < WATER_TOWER_PRICE || building_core_position.x < 0 ||
+                        building_core_position.x + 5 >= map->width || building_core_position.y < 0 ||
+                        building_core_position.y + 3 >= map->height) {
+                        return false;
+                    }
+                    bool is_there_road = false;
+                    /// On vérifie que les cases autour de la maison sont vides et qu'il y a une route autour
+                    for (int y = (int) building_core_position.y; y <= (int) building_core_position.y + 3; ++y) {
+                        for (int x = (int) building_core_position.x; x <= (int) building_core_position.x + 5; ++x) {
+                            if (map->tiles[y * map->width + x]->type != Tile_Type_Grass)
+                                return false;
+                            if (!is_there_road) {
+                                if (x == (int) building_core_position.x && x-1 >= 0) {
+                                    if (map->tiles[y * map->width + x-1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (x == (int) building_core_position.x + 5 && x + 1 < map->width) {
+                                    if (map->tiles[y * map->width + x+1]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y && y-1 >= 0) {
+                                    if (map->tiles[(y-1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                                if (y == (int) building_core_position.y + 3 && y + 1 < map->height) {
+                                    if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                        is_there_road = true;
+                                }
+                            }
+                        }
+                    }
+                    return is_there_road;
+                }
+            }
     }
 }
 
@@ -109,13 +235,13 @@ void build_line_of_road(Map_t *map, Vector2 start, Vector2 end, int *money){
     direction = Vector2Normalize(direction);
 
     do {
-        if(is_possible_to_build(map, current, Tile_Type_Road, *money)){
+        if(is_possible_to_build(map, current, Tile_Type_Road, *money, 0)){
             build_one_road(map, current);
             *money -= ROAD_PRICE;
         }
         current = Vector2Add(current, direction);
     } while (Vector2Distance(current, end) >= 1);
-    if(is_possible_to_build(map, current, Tile_Type_Road, *money)){
+    if(is_possible_to_build(map, current, Tile_Type_Road, *money, 0)){
         build_one_road(map, current);
         *money -= ROAD_PRICE;
     }
@@ -141,7 +267,7 @@ void build_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coord,
             build_line_of_road(map, *first_road_coord, *last_road_coord, money);
         } else if (IsMouseButtonReleased(Mouse_Button_Left) && is_vec2D_same(*first_road_coord, *last_road_coord) &&
                    is_vec2D_same(*first_road_coord, *second_road_coord)) {
-            if (is_possible_to_build(map, *first_road_coord, Tile_Type_Road, *money)) {
+            if (is_possible_to_build(map, *first_road_coord, Tile_Type_Road, *money, 0)) {
                 build_one_road(map, *first_road_coord);
                 money -= ROAD_PRICE;
             }

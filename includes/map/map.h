@@ -20,6 +20,10 @@ typedef struct {
     int nb_connexite;
     /// Nombre de maisons
     int house_count;
+    /// Nombre de châteaux d'eau
+    int water_tower_count;
+    /// Nombre de centrales électriques
+    int power_plant_count;
     /// Tableau de pointeurs de Tile_t (tuiles)
     Tile_t **tiles;
 } Map_t;

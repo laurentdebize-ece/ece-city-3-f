@@ -10,6 +10,8 @@ Map_t* map_create(int width, int height) {
     map->height = height;
     map->nb_connexite = 0;
     map->house_count = 0;
+    map->water_tower_count = 0;
+    map->power_plant_count = 0;
     /// Création du tableau de pointeurs de Tile_t (tuiles)
     map->tiles = malloc(height * width * sizeof(Tile_t *));
     for (int i = 0; i < width*height; i++) {
