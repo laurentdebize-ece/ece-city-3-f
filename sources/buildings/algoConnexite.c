@@ -4,14 +4,11 @@
 
 #include "../../includes/buildings/algoConnexite.h"
 
-
 void changeConnexite() {
 
 }
 
 void connexite(Map_t *map) {
-
-
     for (int i = 0; i < map->width * map->height; i++) {
         if (map->tiles[i]->type == Tile_Type_Road) {
             if (map->tiles[i]->connexite == 0) {
@@ -53,5 +50,12 @@ void connexite(Map_t *map) {
             }
         }
     }
+}
 
+void connexity(Map_t *map) {
+    for (int y = 0; y < map->height; ++y) {
+        for (int x = 0; x < map->width; ++x) {
+
+        }
+    }
 }
