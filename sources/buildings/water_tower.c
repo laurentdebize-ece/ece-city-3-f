@@ -15,15 +15,8 @@ Water_Tower_t *create_water_tower(Vector2 position, BuildingOrientation orientat
 }
 
 void add_water_tower(Map_t *map, Queue_t **water_towers, Vector2 position, BuildingOrientation orientation){
-    /// Si la liste est vide
-    if(*water_towers == NULL){
-        *water_towers = create_queue(create_water_tower(position, orientation));
-        (*water_towers)->next = *water_towers;
-        (*water_towers)->prev = *water_towers;
-    }
-    else{
-        add_queue(*water_towers, create_water_tower(position, orientation));
-    }
+
+    add_queue(water_towers, create_water_tower(position, orientation));
     Water_Tower_t *water_tower = (*water_towers)->prev->data;
     switch (orientation){
         case Building_Orientation_S:

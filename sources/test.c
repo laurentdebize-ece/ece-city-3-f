@@ -27,7 +27,7 @@ void test() {
 
     //map = load_map(DEFAULT_MAP_FILE_PATH);
     load_saved_map(&map, &houses, &water_towers, &power_plants, &time, &money, SAVE_1_PATH);
-    connexite(map);
+    connexity_init(map);
     /// Affichage de la map en console
     print_map_console(map);
 
@@ -60,7 +60,7 @@ void test() {
     Ray mouse_ray;
 
     /// Création de la structure HUD
-    HUD_t hud;
+    Hud_t hud;
     hud_init(&hud, (Vector2){WIDTH, HEIGHT});
 
     /// Création de la caméra
@@ -132,10 +132,7 @@ void test() {
         /// Mise a jour de la caméra
         move_camera_with_mouse(&camera, mouse_pos, screen_size);
         //camera_update(&camera);  // ma version petee
-        /// Si on clique sur la minimap
-        if(CheckCollisionPointRec(mouse_pos, hud.mini_map) && IsMouseButtonDown(Mouse_Button_Left)){
-            move_camera_with_mini_map(&camera, map, hud.mini_map, mouse_pos);
-        }
+
 
         UpdateCamera(&camera);          // Update camera
 
@@ -221,6 +218,10 @@ void test() {
             }
         }
         else if (is_mouse_on_hud(mouse_pos)){
+            /// Si on clique sur la minimap
+            if(CheckCollisionPointRec(mouse_pos, hud.mini_map) && IsMouseButtonDown(Mouse_Button_Left)){
+                move_camera_with_mini_map(&camera, map, hud.mini_map, mouse_pos);
+            }
             mouse_pos_world = (Vector2){-1,-1};
             if (hud.button_selected==-1) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);
             else if (hud.button_selected == Button_Build) hud.button_hovered = get_button_hovered(hud.tab_buttons, 5, mouse_pos);

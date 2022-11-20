@@ -24,6 +24,7 @@ typedef struct House_t {
     int counter;
     int electricity, water;
     Queue_t *water_towers;
+    Queue_t *power_plants;
     BuildingOrientation orientation;
 }House_t;
 

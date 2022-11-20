@@ -15,15 +15,8 @@ Power_Plant_t *create_power_plant(Vector2 position, BuildingOrientation orientat
 }
 
 void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, BuildingOrientation orientation){
-    /// Si la liste est vide
-    if(*power_plants == NULL){
-        *power_plants = create_queue(create_power_plant(position, orientation));
-        (*power_plants)->next = *power_plants;
-        (*power_plants)->prev = *power_plants;
-    }
-    else{
-        add_queue(*power_plants, create_power_plant(position, orientation));
-    }
+
+    add_queue(power_plants, create_power_plant(position, orientation));
     Power_Plant_t *water_tower = (*power_plants)->prev->data;
     switch (orientation){
         case Building_Orientation_S:

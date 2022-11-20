@@ -4,8 +4,8 @@
 
 #include "../includes/hud.h"
 
-void hud_init(HUD_t *hud, Vector2 screen_size){
-    *hud = (HUD_t){
+void hud_init(Hud_t *hud, Vector2 screen_size){
+    *hud = (Hud_t){
             .button_hovered = -1,
             .button_selected = -1,
             .hud_textures = LoadTexture(HUD_TEXTURES_PATH),
@@ -28,7 +28,7 @@ void hud_init(HUD_t *hud, Vector2 screen_size){
     }
 }
 
-void resize_hud(HUD_t *hud, Vector2 screen_size){
+void resize_hud(Hud_t *hud, Vector2 screen_size){
     hud->mini_map = (Rectangle){
             .width = screen_size.x * MINI_MAP_MAX_WIDTH_RATIO,
             .height = screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO - 40,

@@ -10,6 +10,6 @@
 
 void connexite(Map_t *map);
 
-void connexity(Map_t *map);
+void connexity_init(Map_t *map);
 
 #endif //PROJET_ALGOCONNEXITE_H

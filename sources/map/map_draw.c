@@ -44,6 +44,10 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
                         DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
                                              (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
                                   BLUE);
+                    else if (map->tiles[y * map->width + x]->type == Tile_Type_Builing && map->tiles[y * map->width + x]->varient == Building_Varient_Water_Tower)
+                        DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
+                                             (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
+                                  DARKBLUE);
                     else
                         DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
                                              (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
@@ -59,6 +63,10 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
                         DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
                                              (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
                                   YELLOW);
+                    else if (map->tiles[y * map->width + x]->type == Tile_Type_Builing && map->tiles[y * map->width + x]->varient == Building_Varient_Power_Plant)
+                        DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
+                                             (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
+                                  ORANGE);
                     else
                         DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,
                                              (float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},
@@ -70,7 +78,6 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
         default:
             break;
     }
-
     DrawGrid2(map->width, TILES_WIDTH, (Vector3) {map->width*DECALAGE_MAP_X, 0.05f + DECALAGE_MAP_Y, map->height*DECALAGE_MAP_Z});
 }
 

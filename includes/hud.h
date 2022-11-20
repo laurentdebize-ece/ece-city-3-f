@@ -47,11 +47,11 @@ typedef struct {
     HUD_BUTTONS button_selected;
     HUD_BUTTON_POSITIONS button_hovered;
     Rectangle mini_map;
-}HUD_t;
+}Hud_t;
 
-void hud_init(HUD_t *hud, Vector2 screen_size);
+void hud_init(Hud_t *hud, Vector2 screen_size);
 
-void resize_hud(HUD_t *hud, Vector2 screen_size);
+void resize_hud(Hud_t *hud, Vector2 screen_size);
 
 void draw_minimap(Map_t *map, Rectangle mini_map, Vector2 camera_position, Vector2 camera_target, int view_mode);
 
