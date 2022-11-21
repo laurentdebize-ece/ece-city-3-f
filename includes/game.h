@@ -18,17 +18,37 @@
 typedef struct Game_t {
     Camera camera;
     Time_t time;
-    Queue_t *house;
-    Queue_t *water_tower;
-    Queue_t *power_plant;
-    Hud_t *hud;
+    Model house_model[4];
+    Vector2 mouse_pos_world, first_road_coord, second_road_coord, last_road_coord;
+    Vector3 plateau[4];
+    Texture2D road_texture;
+    Ray mouse_ray;
+    RayCollision mouse_ground_collision;
+    Queue_t *houses;
+    Queue_t *water_towers;
+    Queue_t *power_plants;
+    Hud_t hud;
     Map_t *map;
+    int view_mode;
     int money;
+    int building_orientation;
     int population;
+    int pause_counter;
+    bool is_on_pause;
 } Game_t;
 
 Game_t *create_game(void);
 
+void commands(Game_t *game);
 
+void update_game(Game_t *game, Vector2 *mouse_pos, Vector2 *screen_size);
+
+void event_click_game(Game_t *game, Vector2 mouse_pos);
+
+void draw_3D_game(Game_t *game);
+
+void draw_2D_game(Game_t *game, Vector2 screen_size, Vector2 mouse_pos);
+
+void destroy_game(Game_t **game);
 
 #endif //PROJET_GAME_H

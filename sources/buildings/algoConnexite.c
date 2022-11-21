@@ -86,4 +86,3 @@ void connexity_init(Map_t *map) {
         }
     }
 }
-#pragma clang diagnostic pop
