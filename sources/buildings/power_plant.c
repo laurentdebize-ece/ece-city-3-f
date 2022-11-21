@@ -59,32 +59,31 @@ void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, Build
     map->power_plant_count++;
 }
 
-void power_plant_draw(Queue_t *power_plants, Model *water_tower_mesh){
+void power_plant_draw(Queue_t *power_plants, Model *power_plant_mesh){
     if(power_plants != NULL){
-        Queue_t *tmp = power_plants;
+        Queue_t *current_power_plant_cell = power_plants;
         do{
-            Power_Plant_t *water_tower = tmp->data;
-            switch (water_tower->orientation){
+            Power_Plant_t *current_power_plant = current_power_plant_cell->data;
+            switch (current_power_plant->orientation){
                 case Building_Orientation_S:
-                    DrawCube((Vector3){(water_tower->position.x + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, YELLOW);
-                    DrawCubeWires((Vector3){(water_tower->position.x + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, BLACK);
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+5.3f)*TILES_WIDTH, 0, (current_power_plant->position.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+5.3f)*TILES_WIDTH, 0, (current_power_plant->position.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
                     break;
                 case Building_Orientation_E:
-                    DrawCube((Vector3){(water_tower->position.x + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH * TILES_WIDTH, YELLOW);
-                    DrawCubeWires((Vector3){(water_tower->position.x + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH * TILES_WIDTH, BLACK);
-
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+2.95f)*TILES_WIDTH, 0, (current_power_plant->position.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+2.95f)*TILES_WIDTH, 0, (current_power_plant->position.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
                     break;
                 case Building_Orientation_N:
-                    DrawCube((Vector3){(water_tower->position.x - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, YELLOW);
-                    DrawCubeWires((Vector3){(water_tower->position.x - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, BLACK);
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-4.3f)*TILES_WIDTH, 0, (current_power_plant->position.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-4.3f)*TILES_WIDTH, 0, (current_power_plant->position.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
                     break;
                 case Building_Orientation_W:
-                    DrawCube((Vector3){(water_tower->position.x - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH * TILES_WIDTH, YELLOW);
-                    DrawCubeWires((Vector3){(water_tower->position.x - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (water_tower->position.y + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH * TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH * TILES_WIDTH, BLACK);
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-1.95f)*TILES_WIDTH, 0, (current_power_plant->position.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-1.95f)*TILES_WIDTH, 0, (current_power_plant->position.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63},Fade(LIGHTGRAY, 0.3f));
                     break;
             }
-            tmp = tmp->next;
-        }while(tmp != power_plants);
+            current_power_plant_cell = current_power_plant_cell->next;
+        }while(current_power_plant_cell != power_plants);
     }
 }
 
@@ -257,19 +256,23 @@ void power_plant_destroy(Queue_t **power_plants){
     }
 }
 
-void draw_transparent_power_plant(Map_t *map, Vector2 mouse_pos_world, int money, BuildingOrientation orientation, Model *water_tower_mesh){
+void draw_transparent_power_plant(Map_t *map, Vector2 mouse_pos_world, int money, BuildingOrientation orientation, Model *power_plant_mesh){
     switch (orientation){
         case Building_Orientation_S:
-            DrawCube((Vector3){(mouse_pos_world.x + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (mouse_pos_world.y + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH*TILES_WIDTH, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+5.3f)*TILES_WIDTH, 0, (mouse_pos_world.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+5.3f)*TILES_WIDTH, 0, (mouse_pos_world.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_E:
-            DrawCube((Vector3){(mouse_pos_world.x + POWER_PLANT_TILE_HEIGHT*TILES_WIDTH)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (mouse_pos_world.y - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+2.95f)*TILES_WIDTH, 0, (mouse_pos_world.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+2.95f)*TILES_WIDTH, 0, (mouse_pos_world.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_N:
-            DrawCube((Vector3){(mouse_pos_world.x - POWER_PLANT_TILE_WIDTH*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (mouse_pos_world.y - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH}, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT*TILES_WIDTH, POWER_PLANT_CUBE_LENGTH*TILES_WIDTH, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-4.3f)*TILES_WIDTH, 0, (mouse_pos_world.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-4.3f)*TILES_WIDTH, 0, (mouse_pos_world.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_W:
-            DrawCube((Vector3){(mouse_pos_world.x - POWER_PLANT_TILE_HEIGHT*TILES_WIDTH + 1)*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT/2.0f*TILES_WIDTH, (mouse_pos_world.y + POWER_PLANT_TILE_WIDTH*TILES_WIDTH)*TILES_WIDTH}, POWER_PLANT_CUBE_LENGTH*TILES_WIDTH, POWER_PLANT_CUBE_HEIGHT * TILES_WIDTH, POWER_PLANT_CUBE_WIDTH*TILES_WIDTH, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-1.95f)*TILES_WIDTH, 0, (mouse_pos_world.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+-1.95f)*TILES_WIDTH, 0, (mouse_pos_world.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
     }
 }

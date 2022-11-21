@@ -19,6 +19,8 @@ typedef struct Game_t {
     Camera camera;
     Time_t time;
     Model house_model[4];
+    Model water_tower_model;
+    Model power_plant_model;
     Vector2 mouse_pos_world, first_road_coord, second_road_coord, last_road_coord;
     Vector3 plateau[4];
     Texture2D road_texture;

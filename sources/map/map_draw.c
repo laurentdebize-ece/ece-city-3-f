@@ -11,7 +11,7 @@ void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode)
                 for (int x = 0; x < map->width; ++x) {
                     switch (map->tiles[y * map->width + x]->type) {
                         case Tile_Type_Grass:
-                            DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,(float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},DARKGREEN);
+                            DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,(float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},(Color) {0, 255, 0, 255});
                             break;
                         case Tile_Type_Road:
                             //DrawPlane((Vector3) {(float) x * tile_size + DECALAGE_MAP_X, DECALAGE_MAP_Y,(float) y * tile_size + DECALAGE_MAP_Z}, (Vector2) {tile_size, tile_size},GRAY);

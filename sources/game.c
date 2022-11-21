@@ -35,6 +35,9 @@ Game_t *create_game(void) {
     game->house_model[2] = LoadModel("../assets/Models3d/Houses/buildingG1.obj");
     game->house_model[3] = LoadModel("../assets/Models3d/Houses/buildingT1.obj");
 
+    game->power_plant_model = LoadModel("../assets/Models3d/power_plant/ncl2.obj");
+    game->power_plant_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("../assets/Models3d/power_plant/Nuclear station_color_1_.png");
+
     /// Création de la position de la souris
     game->mouse_pos_world = (Vector2){0,0};
 
@@ -250,7 +253,7 @@ void draw_3D_game(Game_t *game) {
     if (!game->view_mode) {
         house_draw(game->houses, game->house_model);
         water_tower_draw(game->water_towers, 0);
-        power_plant_draw(game->power_plants, 0);
+        power_plant_draw(game->power_plants, &game->power_plant_model);
     }
 
     if (game->hud.button_selected == Button_House && game->mouse_ground_collision.hit) {
@@ -260,7 +263,7 @@ void draw_3D_game(Game_t *game) {
         draw_transparent_water_tower(game->map, game->mouse_pos_world, game->money, game->building_orientation, 0);
     }
     else if (game->hud.button_selected == Button_Power_Plant && game->mouse_ground_collision.hit) {
-        draw_transparent_power_plant(game->map, game->mouse_pos_world, game->money, game->building_orientation, 0);
+        draw_transparent_power_plant(game->map, game->mouse_pos_world, game->money, game->building_orientation, &game->power_plant_model);
     }
 
     EndMode3D();
@@ -317,6 +320,8 @@ void destroy_game(Game_t **game) {
     UnloadModel((*game)->house_model[1]);
     UnloadModel((*game)->house_model[2]);
     UnloadModel((*game)->house_model[3]);
+    UnloadModel((*game)->water_tower_model);
+    UnloadModel((*game)->power_plant_model);
     UnloadTexture((*game)->road_texture);
     free(*game);
 }
