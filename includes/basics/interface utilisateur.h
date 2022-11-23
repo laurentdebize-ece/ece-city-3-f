@@ -1,7 +1,3 @@
-//
-// Created by eleuc on 31/10/2022.
-//
-
 #ifndef PROJET_INTERFACE_UTILISATEUR_H
 #define PROJET_INTERFACE_UTILISATEUR_H
 

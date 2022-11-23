@@ -3,7 +3,7 @@
 //
 
 #include "../../includes/buildings/water_tower.h"
-
+/*
 Water_Tower_t *create_water_tower(Vector2 position, BuildingOrientation orientation){
     Water_Tower_t *water_tower = malloc(sizeof(Water_Tower_t));
     water_tower->position = position;
@@ -282,3 +282,4 @@ void draw_transparent_water_tower(Map_t *map, Vector2 mouse_pos_world, int money
             break;
     }
 }
+*/

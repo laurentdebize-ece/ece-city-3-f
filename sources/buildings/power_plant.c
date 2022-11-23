@@ -3,7 +3,7 @@
 //
 
 #include "../../includes/buildings/power_plant.h"
-
+/*
 Power_Plant_t *create_power_plant(Vector2 position, BuildingOrientation orientation) {
     Power_Plant_t *power_plant = malloc(sizeof(Power_Plant_t));
     power_plant->position = position;
@@ -280,3 +280,4 @@ void draw_transparent_power_plant(Map_t *map, Vector2 mouse_pos_world, int money
             break;
     }
 }
+*/

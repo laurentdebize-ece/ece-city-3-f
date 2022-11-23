@@ -178,7 +178,7 @@ void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Buil
 }
 
 */
-
+/*
 House_t *create_house(Vector2 position, BuildingOrientation orientation) {
     House_t *house = malloc(sizeof(House_t));
     house->connexite = 0;
@@ -360,3 +360,5 @@ void draw_transparent_house(Map_t *map, Vector2 mouse_pos_world, int money, Buil
         DrawModelEx(house_mesh[0], (Vector3){(mouse_pos_world.x+0.5f)*TILES_WIDTH, 0, (mouse_pos_world.y+0.5f)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1, 1, 1}, RED);
     }
 }
+
+*/

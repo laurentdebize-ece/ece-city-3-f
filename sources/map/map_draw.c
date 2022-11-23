@@ -3,7 +3,7 @@
 //
 
 #include "../../includes/map/map_draw.h"
-
+/*
 void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode) {
     switch (vew_mode) {
         case 0: {
@@ -79,3 +79,4 @@ _Bool is_mouse_on_map(Map_t *map, Vector2 mouse_pos_world) {
         return false;
     return true;
 }
+ */

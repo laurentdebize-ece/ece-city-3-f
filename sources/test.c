@@ -9,7 +9,7 @@
 //
 
 #include "../includes/test.h"
-
+/*
 int entrer_nombre(){
     int i;
     printf("Ouvrir une nouvelle map vierge (1) ou charger une partie (2) ?\n");
@@ -89,6 +89,7 @@ void test() {
     {
 
         /*---------------------------------------COMMANDES CLAVIER---------------------------------------*/
+/*
         /// Commandes clavier
         if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
             if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
@@ -117,10 +118,10 @@ void test() {
                 hud.button_selected = Button_House;
 
         }
-
+*/
 
         /*---------------------------------------UPDATE---------------------------------------*/
-
+/*
         if (IsWindowResized()){ /// Ca pue la merde
             screen_size = get_screen_size();
             resize_hud(&hud, screen_size);
@@ -148,9 +149,9 @@ void test() {
             update_time(&time);
             house_update(houses, map, &money, time.speed);
         }
-
+*/
         /*---------------------------------------CLICK EVENT REACTION---------------------------------------*/
-
+/*
         if ((IsMouseButtonPressed(Mouse_Button_Side_Front) || IsKeyPressed(KEY_Q)) && (hud.button_selected == Button_House || hud.button_selected == Button_Water_Tower || hud.button_selected == Button_Power_Plant)) /// Si on clique sur rotation sens positif
             building_orientation = (building_orientation + 1) % 4;
 
@@ -262,9 +263,9 @@ void test() {
                 }
             }
         }
-
+*/
         /*---------------------------------------DRAWING---------------------------------------*/
-
+/*
         BeginDrawing();
 
         ClearBackground(SKYBLUE); // Clear background to sky blue
@@ -328,10 +329,10 @@ void test() {
         }
 
         EndDrawing();
-
+*/
         /*---------------------------------------FIN DE BOUCLE---------------------------------------*/
-    }
-
+    //}
+/*
     // De-Initialization
     //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
@@ -341,3 +342,4 @@ void test() {
     water_tower_destroy(&water_towers);
     power_plant_destroy(&power_plants);
 }
+*/

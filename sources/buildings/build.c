@@ -3,7 +3,7 @@
 //
 
 #include "../../includes/buildings/build.h"
-
+/*
 bool is_possible_to_build(Map_t *map, Vector2 building_core_position, TileType building_varient, int money, BuildingOrientation orientation) {
     switch (building_varient) {
         case Tile_Type_Road:
@@ -356,3 +356,4 @@ void destroy_roads(Map_t *map, Vector2 mouse_pos_world, Vector2 *first_road_coor
     }
 }
 
+*/
