@@ -110,6 +110,9 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
                     (*map)->tiles[y*(*map)->width+x]->building = last_house_created;
                 }
             }
+            last_house_created->electricity = 0;
+            last_house_created->water = 0;
+            last_house_created->connexite = 0;
             switch (last_house_created->level) {
                 case Cabane:
                     *population += 10;

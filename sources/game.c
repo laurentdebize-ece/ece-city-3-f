@@ -96,6 +96,8 @@ void commands(Game_t *game) {
             game->hud.button_selected = Button_Road;
         if (IsKeyPressed(KEY_H))
             game->hud.button_selected = Button_House;
+        if (IsKeyPressed(KEY_W))
+            game->hud.button_selected = Button_Water_Tower;
     }
     if (IsKeyPressed(KEY_DELETE) && game->hud.selected_entity) {
         if (game->hud.selected_entity_type == Tile_Type_House) {
