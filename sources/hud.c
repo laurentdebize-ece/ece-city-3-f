@@ -4,10 +4,11 @@
 
 #include "../includes/hud.h"
 
-void hud_init(HUD_t *hud, Vector2 screen_size){
-    *hud = (HUD_t){
+void hud_init(Hud_t *hud, Vector2 screen_size){
+    *hud = (Hud_t){
             .button_hovered = -1,
             .button_selected = -1,
+            .selected_entity = NULL,
             .hud_textures = LoadTexture(HUD_TEXTURES_PATH),
             .mini_map = {
                     .width = screen_size.x * MINI_MAP_MAX_WIDTH_RATIO,
@@ -28,7 +29,7 @@ void hud_init(HUD_t *hud, Vector2 screen_size){
     }
 }
 
-void resize_hud(HUD_t *hud, Vector2 screen_size){
+void resize_hud(Hud_t *hud, Vector2 screen_size){
     hud->mini_map = (Rectangle){
             .width = screen_size.x * MINI_MAP_MAX_WIDTH_RATIO,
             .height = screen_size.y * MINI_MAP_MAX_HEIGHT_RATIO - 40,
@@ -78,6 +79,53 @@ void draw_minimap(Map_t *map, Rectangle mini_map, Vector2 camera_position, Vecto
     }
     if (camera_position.x > 0 && camera_position.y > 0 && camera_position.x/TILES_WIDTH < map->width && camera_position.y/TILES_WIDTH < map->height){
         DrawCircleV((Vector2){camera_position.x * mini_map.width / map->width / TILES_WIDTH + mini_map.x, camera_position.y * mini_map.height / map->height / TILES_WIDTH + mini_map.y}, 5, BLUE);
+    }
+}
+
+void draw_selected_entity_info(void* entity, int entity_type, int entity_varient, Vector2 screen_size){
+    if (entity_type == Tile_Type_House){
+        House_t *house = (House_t*)entity;
+        switch (house->level) {
+            case Ruins:
+                DrawText("Ruins", (screen_size.x - MeasureText("Ruins", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 0", (screen_size.x - MeasureText("Population : 0", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+            case Terrain_nu:
+                DrawText("Terrain nu", (screen_size.x - MeasureText("Terrain nu", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 0", (screen_size.x - MeasureText("Population : 0", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+            case Cabane:
+                DrawText("Cabane", (screen_size.x - MeasureText("Cabane", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 10", (screen_size.x - MeasureText("Population : 10", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+            case Maison:
+                DrawText("Maison", (screen_size.x - MeasureText("Maison", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 50", (screen_size.x - MeasureText("Population : 50", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+            case Immeuble:
+                DrawText("Immeuble", (screen_size.x - MeasureText("Immeuble", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 100", (screen_size.x - MeasureText("Population : 100", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+            case Gratte_Ciel:
+                DrawText("Gratte Ciel", (screen_size.x - MeasureText("Gratte ciel", 30))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText("Population: 1000", (screen_size.x - MeasureText("Population : 1000", 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                break;
+        }
+        DrawText(TextFormat("City : %d", house->connexite), (screen_size.x - MeasureText(TextFormat("City : %d", house->connexite), 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 80, 20, WHITE);
+        DrawText(TextFormat("Water consumption : %d", house->water), (screen_size.x - MeasureText(TextFormat("Water consumption : %d", house->water), 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 110, 20, WHITE);
+        DrawText(TextFormat("Electricity consumption : %d", house->electricity), (screen_size.x - MeasureText(TextFormat("Electricity consumption : %d", house->electricity), 20))/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 140, 20, WHITE);
+    }
+    else {
+        switch (entity_varient) {
+            case Building_Varient_Water_Tower:
+                DrawText("Water Tower", screen_size.x/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 20, WHITE);
+                break;
+            case Building_Varient_Power_Plant:
+                DrawText("Power Plant", screen_size.x/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 20, WHITE);
+                break;
+            default:
+                break;
+        }
     }
 }
 

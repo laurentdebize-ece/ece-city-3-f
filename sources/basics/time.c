@@ -27,7 +27,7 @@ void update_time(Time_t *time) {
     }
 }
 
-void print_real_time(Vector2 position, Time_t *time) {
+void print_real_time(Vector2 position, Vector2 size, Time_t *time) {
 
     char time_string[16]={'T','i','m','e',' ',':',' ',' ',' ',' ',' ',' ',' ',' ',' ','\0'};
 
@@ -54,12 +54,12 @@ void print_real_time(Vector2 position, Time_t *time) {
         time_string[13] = (time->seconds / 10) + '0';
         time_string[14] = (time->seconds % 10) + '0';
     }
-    DrawRectangle( position.x, position.y, 300, 50, Fade(RED, 0.5f));
-    DrawRectangleLines( position.x, position.y, 300, 50, RED);
+    DrawRectangle( position.x, position.y, size.x, size.y, Fade(RED, 0.5f));
+    DrawRectangleLines( position.x, position.y, size.x, size.y, RED);
     DrawText(time_string, position.x + 10, position.y + 10, 30, BLACK);
 }
 
-void print_in_game_time(Vector2 position, Time_t *time) {
+void print_in_game_time(Vector2 position, Vector2 size, Time_t *time) {
     char time_sting[16]={'D', 'a', 't', 'e', ' ', ':', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\0'};
 
     switch (time->months) {
@@ -142,14 +142,14 @@ void print_in_game_time(Vector2 position, Time_t *time) {
         time_sting[13] = '0' + (time->years % 100) / 10;
         time_sting[14] = '0' + time->years % 10;
     }
-    DrawRectangle( position.x, position.y, 300, 50, Fade(ORANGE, 0.5f));
-    DrawRectangleLines( position.x, position.y, 300, 50, ORANGE);
+    DrawRectangle( position.x, position.y, size.x, size.y, Fade(ORANGE, 0.5f));
+    DrawRectangleLines( position.x, position.y, size.x, size.y, ORANGE);
     DrawText(time_sting, position.x + 10, position.y + 10, 30, BLACK);
 }
 
-void print_time(Vector2 position, Time_t *time) {
-    print_real_time(position, time);
-    print_in_game_time((Vector2){position.x, position.y + 60}, time);
+void print_time(Vector2 position, Vector2 size, Time_t *time) {
+    print_real_time(position, size, time);
+    print_in_game_time((Vector2){position.x, position.y + 60}, size, time);
 }
 
 void change_time_speed(Time_t *time) {

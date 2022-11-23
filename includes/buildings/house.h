@@ -23,7 +23,9 @@ typedef struct House_t {
     int level;
     int counter;
     int electricity, water;
+    int distance;
     Queue_t *water_towers;
+    Queue_t *power_plants;
     BuildingOrientation orientation;
 }House_t;
 
@@ -31,7 +33,7 @@ House_t *create_house(Vector2 position, BuildingOrientation orientation);
 
 void add_house(Map_t *map, Queue_t **houses, Vector2 position, BuildingOrientation orientation);
 
-void house_update(Queue_t *houses, Map_t *map, int *money, int speed);
+void house_update(Queue_t *houses, Map_t *map, int *population, int *money, int speed);
 
 void house_draw(Queue_t *houses, Model *house_mesh);
 

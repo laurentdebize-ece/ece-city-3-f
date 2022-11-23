@@ -22,11 +22,11 @@ typedef struct {
 
 void update_time(Time_t *time);
 
-void print_real_time(Vector2 position, Time_t *time);
+void print_real_time(Vector2 position, Vector2 size, Time_t *time);
 
-void print_in_game_time(Vector2 position, Time_t *time);
+void print_in_game_time(Vector2 position, Vector2 size, Time_t *time);
 
-void print_time(Vector2 position, Time_t *time);
+void print_time(Vector2 position, Vector2 size, Time_t *time);
 
 void change_time_speed(Time_t *time);
 

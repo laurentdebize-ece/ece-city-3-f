@@ -14,6 +14,9 @@
 
 #include <raylib.h>
 #include "map/map_draw.h"
+#include "buildings/house.h"
+#include "buildings/water_tower.h"
+#include "buildings/power_plant.h"
 
 typedef enum {
     Button_Build,
@@ -46,14 +49,19 @@ typedef struct {
     Texture2D hud_textures;
     HUD_BUTTONS button_selected;
     HUD_BUTTON_POSITIONS button_hovered;
+    void* selected_entity;
+    TileType selected_entity_type;
+    int selected_entity_variant;
     Rectangle mini_map;
-}HUD_t;
+}Hud_t;
 
-void hud_init(HUD_t *hud, Vector2 screen_size);
+void hud_init(Hud_t *hud, Vector2 screen_size);
 
-void resize_hud(HUD_t *hud, Vector2 screen_size);
+void resize_hud(Hud_t *hud, Vector2 screen_size);
 
 void draw_minimap(Map_t *map, Rectangle mini_map, Vector2 camera_position, Vector2 camera_target, int view_mode);
+
+void draw_selected_entity_info(void* entity, int entity_type, int entity_varient, Vector2 screen_size);
 
 void draw_hud(Texture2D hud_textures, Rectangle *tab_buttons_rec, Vector2 mouse_position, Vector2 screen_size, HUD_BUTTONS button_pressed, int view_mode, bool is_paused, int speed);
 
