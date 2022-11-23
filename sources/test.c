@@ -12,8 +12,6 @@ void test() {
 
     SetTargetFPS(FPS);  /// Définition du nombre de FPS
 
-    //int button_pressed = -1, button_pressed_last = -1, button_hovered = -1, button_hovered_last = -1;
-
     Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
 
     while (!should_window_be_closed()) {    /// Est-ce qu'on ferme la fenêtre ?
@@ -21,8 +19,8 @@ void test() {
         /*--------------------------------------------COMMANDES CLAVIER-----------------------------------------------*/
 
         /// Commandes clavier
-        if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL))
-            commands(game);
+
+        commands(game);
 
         /*--------------------------------------------------UPDATE----------------------------------------------------*/
 

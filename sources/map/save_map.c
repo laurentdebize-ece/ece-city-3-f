@@ -32,6 +32,8 @@ void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_p
         fprintf(file, "\n");
     }
     fprintf(file, "\n\n\n");
+
+    /// Sauvegarde des maisons
     fprintf(file, "%d\n", map->house_count);
     if (map->house_count > 0) {
         Queue_t *current_cell = house;
@@ -64,7 +66,7 @@ void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_p
     fclose(file);
 }
 
-void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, char *path) {
+void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population, char *path) {
     FILE *file = fopen(path, "r");
     if (file == NULL) {
         printf("Error opening file!\n");
@@ -84,6 +86,8 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
             fscanf(file, "%d ", &(*map)->tiles[y*(*map)->width+x]->varient);
         }
     }
+
+    /// Lecture des données des maisons
     fscanf(file, "%d\n", &(*map)->house_count);
     if ((*map)->house_count > 0) {
         for (int i = 0; i < (*map)->house_count; ++i) {
@@ -105,6 +109,20 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
                 for (int x = last_house_created->position.x - 1; x <= last_house_created->position.x + 1; ++x) {
                     (*map)->tiles[y*(*map)->width+x]->building = last_house_created;
                 }
+            }
+            switch (last_house_created->level) {
+                case Cabane:
+                    *population += 10;
+                    break;
+                case Maison:
+                    *population += 50;
+                    break;
+                case Immeuble:
+                    *population += 100;
+                    break;
+                case Gratte_Ciel:
+                    *population += 1000;
+                    break;
             }
         }
     }

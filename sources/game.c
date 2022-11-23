@@ -13,14 +13,17 @@ Game_t *create_game(void) {
     game->water_towers = NULL;
     game->power_plants = NULL;
 
-    /// Ouverture de la fenêtre
+    /// Ouverture de la fenêtre (à supprimer)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     //SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(WIDTH, HEIGHT, TITLE);
     SetWindowPosition(10, 50);
 
     //map = load_map(DEFAULT_MAP_FILE_PATH);
-    load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, SAVE_1_PATH);
+    load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population, SAVE_1_PATH);
+
+    connexity_init(game->map);
+    print_map_console(game->map);
 
     /// Création de la caméra
     game->camera = camera_new(game->map, TILES_WIDTH);
@@ -54,6 +57,7 @@ Game_t *create_game(void) {
 
     /// Chargement de la texture de la route
     game->road_texture = LoadTexture("../assets/map/roads/road_texture.png");
+    game->grass_texture = LoadTexture("../assets/map/grass.png");
 
     game->view_mode = 0;
 
@@ -67,31 +71,67 @@ Game_t *create_game(void) {
 }
 
 void commands(Game_t *game) {
-    if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
-        save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
+    if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)){
+        if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
+            save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
+        }
+        if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
+            change_time_speed(&game->time);
+        }
+        if (IsKeyPressed(KEY_P)) {  /// Pause
+            game->is_on_pause = !game->is_on_pause;
+            game->pause_counter = 0;
+        }
+        if (IsKeyPressed(KEY_V)) {  /// Changement de vue
+            change_view_mode(&game->view_mode);
+        }
+        if (IsKeyPressed(KEY_C)) {  /// Reset de la caméra
+            game->camera = camera_new(game->map, TILES_WIDTH);
+        }
+        if (IsKeyPressed(KEY_B))
+            game->hud.button_selected = Button_Build;
+        if (IsKeyPressed(KEY_D))
+            game->hud.button_selected = Button_Destroy;
+        if (IsKeyPressed(KEY_R))
+            game->hud.button_selected = Button_Road;
+        if (IsKeyPressed(KEY_H))
+            game->hud.button_selected = Button_House;
     }
-    if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
-        change_time_speed(&game->time);
+    if (IsKeyPressed(KEY_DELETE) && game->hud.selected_entity) {
+        if (game->hud.selected_entity_type == Tile_Type_House) {
+            game->money -= HOUSE_PRICE/5;
+            switch (((House_t*)game->hud.selected_entity)->level) {
+                case Cabane:
+                    game->population -= 10;
+                    break;
+                case Maison:
+                    game->population -= 50;
+                    break;
+                case Immeuble:
+                    game->population -= 100;
+                    break;
+                case Gratte_Ciel:
+                    game->population -= 1000;
+                    break;
+            }
+            house_destroy_one(game->map, &game->houses, game->hud.selected_entity);
+        }
+        else if (game->hud.selected_entity_type == Tile_Type_Builing) {
+            switch (game->hud.selected_entity_variant) {
+                case Building_Varient_Water_Tower:
+                    game->money -= WATER_TOWER_PRICE/5;
+                    water_tower_destroy_one(game->map, &game->water_towers, game->hud.selected_entity);
+                    break;
+                case Building_Varient_Power_Plant:
+                    game->money -= POWER_PLANT_PRICE/5;
+                    power_plant_destroy_one(game->map, &game->power_plants, game->hud.selected_entity);
+                    break;
+            }
+        }
+        game->hud.selected_entity = NULL;
+        game->hud.selected_entity_type = -1;
+        game->hud.selected_entity_variant = -1;
     }
-    if (IsKeyPressed(KEY_P)) {  /// Pause
-        game->is_on_pause = !game->is_on_pause;
-        game->pause_counter = 0;
-    }
-    if (IsKeyPressed(KEY_V)) {  /// Changement de vue
-        change_view_mode(&game->view_mode);
-    }
-    if (IsKeyPressed(KEY_C)) {  /// Reset de la caméra
-        game->camera = camera_new(game->map, TILES_WIDTH);
-    }
-    if (IsKeyPressed(KEY_B))
-        game->hud.button_selected = Button_Build;
-    if (IsKeyPressed(KEY_D))
-        game->hud.button_selected = Button_Destroy;
-    if (IsKeyPressed(KEY_R))
-        game->hud.button_selected = Button_Road;
-    if (IsKeyPressed(KEY_H))
-        game->hud.button_selected = Button_House;
-
 }
 
 void update_game(Game_t *game, Vector2 *mouse_pos, Vector2 *screen_size) {
@@ -118,7 +158,7 @@ void update_game(Game_t *game, Vector2 *mouse_pos, Vector2 *screen_size) {
 
     if(!game->is_on_pause) {    /// Si on n'est pas en pause alors on update le temps
         update_time(&game->time);
-        house_update(game->houses, game->map, &game->money, game->time.speed);
+        house_update(game->houses, game->map, &game->population, &game->money, game->time.speed);
     }
     else game->pause_counter++;
 }
@@ -143,6 +183,20 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
             switch (game->hud.button_selected) {
                 case Button_Destroy:    /// Destroy mode on
                     if (IsMouseButtonPressed(Mouse_Button_Left) && game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type == Tile_Type_House && game->money >= HOUSE_PRICE/5) {
+                        switch (((House_t*)game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building)->level) {
+                            case Cabane:
+                                game->population -= 10;
+                                break;
+                            case Maison:
+                                game->population -= 50;
+                                break;
+                            case Immeuble:
+                                game->population -= 100;
+                                break;
+                            case Gratte_Ciel:
+                                game->population -= 1000;
+                                break;
+                        }
                         house_destroy_one(game->map, &game->houses, game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building);
                         game->money -= HOUSE_PRICE/5;
                     }
@@ -243,12 +297,47 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
             }
         }
     }
+    else {
+        if (IsMouseButtonPressed(Mouse_Button_Left)) {
+            printf("\nMouse clicked on the map");
+            fflush(stdout);
+            switch (game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type) {
+                case Tile_Type_House:
+                    printf("\nHouse clicked");
+                    fflush(stdout);
+                    game->hud.selected_entity = game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building;
+                    game->hud.selected_entity_type = Tile_Type_House;
+                    game->hud.selected_entity_variant = ((House_t*) game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building)->level;
+                    break;
+                case Tile_Type_Builing:
+                    switch (game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->varient) {
+                        case Building_Varient_Water_Tower:
+                            game->hud.selected_entity = game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building;
+                            game->hud.selected_entity_type = Tile_Type_Builing;
+                            game->hud.selected_entity_variant = Building_Varient_Water_Tower;
+                            break;
+                        case Building_Varient_Power_Plant:
+                            game->hud.selected_entity = game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building;
+                            game->hud.selected_entity_type = Tile_Type_Builing;
+                            game->hud.selected_entity_variant = Building_Varient_Power_Plant;
+                            break;
+                    }
+                    break;
+                case Tile_Type_Road:
+                case Tile_Type_Grass:
+                    game->hud.selected_entity = NULL;
+                    game->hud.selected_entity_type = -1;
+                    game->hud.selected_entity_variant = -1;
+                    break;
+            }
+        }
+    }
 }
 
 void draw_3D_game(Game_t *game) {
     BeginMode3D(game->camera);
 
-    map_draw(game->map, game->road_texture, TILES_WIDTH, game->view_mode);
+    map_draw(game->map, game->road_texture, game->grass_texture, TILES_WIDTH, game->view_mode);
 
     if (!game->view_mode) {
         house_draw(game->houses, game->house_model);
@@ -301,6 +390,7 @@ void draw_2D_game(Game_t *game, Vector2 screen_size, Vector2 mouse_pos) {
     }
 
     else {
+        if(game->hud.selected_entity) draw_selected_entity_info(game->hud.selected_entity, game->hud.selected_entity_type, game->hud.selected_entity_variant, screen_size);
         draw_hud(game->hud.hud_textures, game->hud.tab_buttons, mouse_pos, screen_size, game->hud.button_selected, game->view_mode, game->is_on_pause, game->time.speed);
         draw_minimap(game->map, game->hud.mini_map, (Vector2){game->camera.position.x, game->camera.position.z}, (Vector2){game->camera.target.x, game->camera.target.z}, game->view_mode);
         if (game->hud.button_hovered != -1) draw_button_description(mouse_pos, game->hud.button_selected, game->hud.button_hovered);

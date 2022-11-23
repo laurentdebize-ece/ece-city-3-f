@@ -21,7 +21,7 @@
 typedef struct Power_Plant_t {
     Vector2 position;
     int connexite;
-    int power;
+    int electrecity;
     Queue_t *houses;
     BuildingOrientation orientation;
 }Power_Plant_t;

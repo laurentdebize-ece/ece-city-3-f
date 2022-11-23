@@ -15,6 +15,6 @@
 
 void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_plant, Time_t *time, int money, char *path);
 
-void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, char *path);
+void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population, char *path);
 
 #endif //PROJET_SAVE_MAP_H

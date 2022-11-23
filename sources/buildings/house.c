@@ -187,6 +187,7 @@ House_t *create_house(Vector2 position, BuildingOrientation orientation) {
     house->counter = 0;
     house->electricity = 0;
     house->water = 0;
+    house->distance = 0;
     house->position = position;
     return house;
 }
@@ -219,7 +220,7 @@ void add_house(Map_t *map, Queue_t **houses, Vector2 position, BuildingOrientati
     map->house_count++;
 }
 
-void house_update(Queue_t *houses, Map_t *map, int *money, int speed) {
+void house_update(Queue_t *houses, Map_t *map, int *population, int *money, int speed) {
     if(!houses){
         return;
     }
@@ -248,6 +249,20 @@ void house_update(Queue_t *houses, Map_t *map, int *money, int speed) {
 
             if (current_house->level < Gratte_Ciel) {
                 current_house->level += 1;
+                switch (current_house->level) {
+                    case Cabane:
+                        *population+= 10;
+                        break;
+                    case Maison:
+                        *population+= 40;
+                        break;
+                    case Immeuble:
+                        *population+= 50;
+                        break;
+                    case Gratte_Ciel:
+                        *population+= 900;
+                        break;
+                }
                 for (int y = (int)current_house->position.y - 1; y <= (int)current_house->position.y+1; ++y) {
                     for (int x = (int)current_house->position.x - 1; x <= (int)current_house->position.x+1; ++x) {
                         map->tiles[y*map->width+x]->varient = current_house->level;
@@ -257,6 +272,14 @@ void house_update(Queue_t *houses, Map_t *map, int *money, int speed) {
         }
         current_house_in_queue = current_house_in_queue->next;
     }while (current_house_in_queue != houses);
+}
+
+void house_update_capitaliste() {
+
+}
+
+void house_update_communiste() {
+
 }
 
 void house_draw(Queue_t *houses, Model *house_mesh) {

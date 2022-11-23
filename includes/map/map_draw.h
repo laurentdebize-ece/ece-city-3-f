@@ -16,7 +16,7 @@
 #define DECALAGE_MAP_Y 0.0f
 #define DECALAGE_MAP_Z (TILES_WIDTH/2.0f)
 
-void map_draw(Map_t *map, Texture2D road_texture, float tile_size, int vew_mode);
+void map_draw(Map_t *map, Texture2D road_texture, Texture2D grass_texture, float tile_size, int view_mode);
 
 _Bool is_mouse_on_map(Map_t *map, Vector2 mouse_pos_world);
 

@@ -8,7 +8,7 @@ Power_Plant_t *create_power_plant(Vector2 position, BuildingOrientation orientat
     Power_Plant_t *power_plant = malloc(sizeof(Power_Plant_t));
     power_plant->position = position;
     power_plant->connexite = 0;
-    power_plant->power = 0;
+    power_plant->electrecity = POWER_PLANT_CAPACITY;
     power_plant->houses = NULL;
     power_plant->orientation = orientation;
     return power_plant;
@@ -62,7 +62,7 @@ void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, Build
 void power_plant_draw(Queue_t *power_plants, Model *power_plant_mesh){
     if(power_plants != NULL){
         Queue_t *current_power_plant_cell = power_plants;
-        do{
+        do {
             Power_Plant_t *current_power_plant = current_power_plant_cell->data;
             switch (current_power_plant->orientation){
                 case Building_Orientation_S:

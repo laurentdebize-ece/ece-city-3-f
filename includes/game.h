@@ -24,6 +24,7 @@ typedef struct Game_t {
     Vector2 mouse_pos_world, first_road_coord, second_road_coord, last_road_coord;
     Vector3 plateau[4];
     Texture2D road_texture;
+    Texture2D grass_texture;
     Ray mouse_ray;
     RayCollision mouse_ground_collision;
     Queue_t *houses;
