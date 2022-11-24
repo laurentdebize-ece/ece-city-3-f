@@ -12,6 +12,7 @@ int main (void){
     int etat=0;
     int* pointeurEtat= &etat;
 
+
     Menu_Bouttons etatA = Accueil;
     Menu_Bouttons* pointeurEtatA = &etatA; //remplacer les valeurs de etat par les enum de etatA
 
@@ -25,6 +26,8 @@ int main (void){
 
     SetTargetFPS(60);
 
+    Game_t* game = create_game();
+
     InitAudioDevice();
 
     image = LoadTexture(sprite_Capitaliste);
@@ -36,8 +39,6 @@ int main (void){
     while(!WindowShouldClose()) {
 
         UpdateMusicStream(music);
-
-        BeginDrawing();
 
         switch(*pointeurEtat) {
 
@@ -58,19 +59,23 @@ int main (void){
             case 5: afficher_credits(pointeurEtat);
             break;
 
+            case 100:
+            case 200:
+                StopMusicStream(music);
+                loop_jeu(game);
+                break;
+
             default:
-                test();
             break;
 
         }
+    }
 
-    }EndDrawing();
+    destroy_game(game);
 
     StopMusicStream(music);
     UnloadMusicStream(music);
     CloseAudioDevice();
-
-    CloseWindow();
 
     return 0;
 }

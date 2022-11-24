@@ -13,11 +13,6 @@ Game_t *create_game(void) {
     game->water_towers = NULL;
     game->power_plants = NULL;
 
-    /// Ouverture de la fenêtre (à supprimer)
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(WIDTH, HEIGHT, TITLE);
-    SetWindowPosition(10, 50);
 
     //map = load_map(DEFAULT_MAP_FILE_PATH);
     load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population, SAVE_1_PATH);

@@ -9,4 +9,6 @@
 
 void test (void);
 
+void loop_jeu(Game_t* jeu);
+
 #endif //PROJET_TEST_H
