@@ -65,7 +65,6 @@ int main (void){
                 loop_jeu(game);
                 break;
 
-
             default:
             break;
 
