@@ -7,9 +7,6 @@
 
 
 #define TITLE "ECE City"
-#define WIDTH 1920
-#define HEIGHT 1080
-
 
 void menu() {
 
@@ -22,14 +19,18 @@ void menu() {
     Menu_Bouttons etatA = Accueil;
     Menu_Bouttons* pointeurEtatA = &etatA; //remplacer les valeurs de etat par les enum de etatA
 
-    Texture2D image,image2,image_ecran_accueil;
+    Texture2D image,image2,image_ecran_accueil,image_mode2jeu,image_option;
     Music music;
+
     const char* sprite_Capitaliste = "../assets/bitmaps/Menu/PIGGYBANKMODIF.png";
     const char* sprite_Communiste = "../assets/bitmaps/Menu/CommunisteMODIF.png";
-    const char* ecran_accueil = "../assets/bitmaps/Menu/FONDECRAN.png";
+    const char* ecran_accueil = "../assets/bitmaps/Menu/campagne.png";
+    const char* USA_URSS = "../assets/bitmaps/Menu/COLDWAR2.png";
+    const char* ecran_option = "../assets/bitmaps/Menu/GearModif.png";
 
 
     InitWindow(WIDTH,HEIGHT,TITLE);
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetTargetFPS(60);
 
@@ -43,6 +44,9 @@ void menu() {
     image = LoadTexture(sprite_Capitaliste);
     image2 = LoadTexture(sprite_Communiste);
     image_ecran_accueil = LoadTexture(ecran_accueil);
+    image_mode2jeu = LoadTexture(USA_URSS);
+    image_option = LoadTexture(ecran_option);
+
     music = LoadMusicStream("../assets/Sound/Music/MUSIC.mp3");
 
     PlayMusicStream(music);
@@ -67,14 +71,18 @@ void menu() {
                 afficher_menu_accueil(pointeurEtat);
                 break;
 
-            case 1: afficher_modes_jeu(pointeurEtat,image,image2);
+            case 1:
+                DrawTexture(image_mode2jeu,0,0,WHITE);
+                afficher_modes_jeu(pointeurEtat,image,image2);
                 break;
 
             case 2:
                 //load_saved_map();
                 break;
 
-            case 3: afficher_options_jeu(pointeurEtat);
+            case 3:
+                DrawTexture(image_option,0,0,WHITE);
+                afficher_options_jeu(pointeurEtat);
                 break;
 
             case 4 :afficher_regles(pointeurEtat);

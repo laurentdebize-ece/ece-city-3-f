@@ -107,7 +107,7 @@ void afficher_regles(int* pointeurEtat) {
     DrawText("Bienvenue dans ECE CITY !",Regles.x+20,Regles.y+20,30,WHITE);
     DrawText("Vous êtes le maire de cette belle ville, mais tout est encore à faire. En effet vous devrez construire des bâtiments,", Regles.x+20,Regles.y+80,30,WHITE);
     DrawText("gérer des ressources et faire croître votre ville",Regles.x +20 , Regles.y +140,30,WHITE);
-    DrawText("Chaque maison vous rapporte de l'argent mais a besoin d'électricité et d'eau pour évoluer à un stade plus avancé",Regles.x+20, Regles.x+200,30,WHITE);
+    DrawText("Chaque maison vous rapporte de l'argent mais a besoin d'électricité et d'eau pour évoluer à un stade plus avancé.",Regles.x+20, Regles.x+200,30,WHITE);
 
 
 
