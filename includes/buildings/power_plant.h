@@ -30,6 +30,18 @@ typedef struct Power_Plant_t {
 
 Power_Plant_t *create_power_plant(Vector2 position, BuildingOrientation orientation);
 
+/// Attribue une connexité à une seule centrale électrique
+
+void find_power_plant_connexity(Map_t *map, Power_Plant_t *power_plant);
+
+/// Attribue une connexité à toutes les centrales électriques
+
+void find_all_power_plants_connexity(Map_t *map, Queue_t *power_plants);
+
+/// Supprime la connexité de toutes les centrales électriques
+
+void reset_all_power_plants_connexity(Queue_t *power_plants);
+
 /// Ajout d'une centrale électrique à la map
 
 void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, BuildingOrientation orientation);

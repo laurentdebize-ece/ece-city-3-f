@@ -14,17 +14,221 @@ Power_Plant_t *create_power_plant(Vector2 position, BuildingOrientation orientat
     return power_plant;
 }
 
+void find_power_plant_connexity(Map_t *map, Power_Plant_t *power_plant){
+    switch (power_plant->orientation) {
+        case Building_Orientation_E:
+            for (int y = (int) power_plant->position.y - 5;
+                 y <= (int) power_plant->position.y && !power_plant->connexite; ++y) {
+                for (int x = (int) power_plant->position.x;
+                     x <= (int) power_plant->position.x + 3 && !power_plant->connexite; ++x) {
+                    if (x == (int) power_plant->position.x && x - 1 >= 0) {
+                        if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                    }
+                    if (x == (int) power_plant->position.x + 3 && x + 1 < map->width) {
+                        if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y && y + 1 < map->height) {
+                        if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y - 5 && y - 1 >= 0) {
+                        if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                    }
+                }
+            }
+            break;
+        case Building_Orientation_N:
+            for (int y = (int) power_plant->position.y - 3; y <= (int) power_plant->position.y && !power_plant->connexite; ++y) {
+                for (int x = (int) power_plant->position.x - 5; x <= (int) power_plant->position.x && !power_plant->connexite; ++x) {
+                    if (x == (int) power_plant->position.x && x + 1 < map->width) {
+                        if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                    }
+                    if (x == (int) power_plant->position.x - 5 && x - 1 >= 0) {
+                        if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y && y + 1 < map->height) {
+                        if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y - 3 && y - 1 >= 0) {
+                        if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                    }
+                }
+            }
+            break;
+        case Building_Orientation_W:
+            for (int y = (int) power_plant->position.y; y <= (int) power_plant->position.y + 5 && !power_plant->connexite; ++y) {
+                for (int x = (int) power_plant->position.x - 3; x <= (int) power_plant->position.x && !power_plant->connexite; ++x) {
+                    if (x == (int) power_plant->position.x && x + 1 < map->width) {
+                        if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                    }
+                    if (x == (int) power_plant->position.x - 3 && x - 1 >= 0) {
+                        if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y && y - 1 >= 0) {
+                        if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y + 5 && y + 1 < map->height) {
+                        if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                    }
+                }
+            }
+            break;
+        case Building_Orientation_S:
+            for (int y = (int) power_plant->position.y; y <= (int) power_plant->position.y + 3 && !power_plant->connexite; ++y) {
+                for (int x = (int) power_plant->position.x; x <= (int) power_plant->position.x + 5 && !power_plant->connexite; ++x) {
+                    if (x == (int) power_plant->position.x && x - 1 >= 0) {
+                        if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                    }
+                    if (x == (int) power_plant->position.x + 5 && x + 1 < map->width) {
+                        if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y && y - 1 >= 0) {
+                        if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                    }
+                    if (y == (int) power_plant->position.y + 3 && y + 1 < map->height) {
+                        if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                            power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                    }
+                }
+            }
+            break;
+    }
+}
+
+void find_all_power_plants_connexity(Map_t *map, Queue_t *power_plants) {
+    Queue_t *current_power_plant_cell = power_plants;
+    do {
+        Power_Plant_t *power_plant = current_power_plant_cell->data;
+        switch (power_plant->orientation) {
+            case Building_Orientation_E:
+                for (int y = (int) power_plant->position.y - 5;
+                     y <= (int) power_plant->position.y && !power_plant->connexite; ++y) {
+                    for (int x = (int) power_plant->position.x;
+                         x <= (int) power_plant->position.x + 3 && !power_plant->connexite; ++x) {
+                        if (x == (int) power_plant->position.x && x - 1 >= 0) {
+                            if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                        }
+                        if (x == (int) power_plant->position.x + 3 && x + 1 < map->width) {
+                            if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y && y + 1 < map->height) {
+                            if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y - 5 && y - 1 >= 0) {
+                            if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                        }
+                    }
+                }
+                break;
+            case Building_Orientation_N:
+                for (int y = (int) power_plant->position.y - 3; y <= (int) power_plant->position.y && !power_plant->connexite; ++y) {
+                    for (int x = (int) power_plant->position.x - 5; x <= (int) power_plant->position.x && !power_plant->connexite; ++x) {
+                        if (x == (int) power_plant->position.x && x + 1 < map->width) {
+                            if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                        }
+                        if (x == (int) power_plant->position.x - 5 && x - 1 >= 0) {
+                            if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y && y + 1 < map->height) {
+                            if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y - 3 && y - 1 >= 0) {
+                            if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                        }
+                    }
+                }
+                break;
+            case Building_Orientation_W:
+                for (int y = (int) power_plant->position.y; y <= (int) power_plant->position.y + 5 && !power_plant->connexite; ++y) {
+                    for (int x = (int) power_plant->position.x - 3; x <= (int) power_plant->position.x && !power_plant->connexite; ++x) {
+                        if (x == (int) power_plant->position.x && x + 1 < map->width) {
+                            if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                        }
+                        if (x == (int) power_plant->position.x - 3 && x - 1 >= 0) {
+                            if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y && y - 1 >= 0) {
+                            if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y + 5 && y + 1 < map->height) {
+                            if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                        }
+                    }
+                }
+                break;
+            case Building_Orientation_S:
+                for (int y = (int) power_plant->position.y; y <= (int) power_plant->position.y + 3 && !power_plant->connexite; ++y) {
+                    for (int x = (int) power_plant->position.x; x <= (int) power_plant->position.x + 5 && !power_plant->connexite; ++x) {
+                        if (x == (int) power_plant->position.x && x - 1 >= 0) {
+                            if (map->tiles[y * map->width + x - 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x - 1]->connexite;
+                        }
+                        if (x == (int) power_plant->position.x + 5 && x + 1 < map->width) {
+                            if (map->tiles[y * map->width + x + 1]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[y * map->width + x + 1]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y && y - 1 >= 0) {
+                            if (map->tiles[(y - 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y - 1) * map->width + x]->connexite;
+                        }
+                        if (y == (int) power_plant->position.y + 3 && y + 1 < map->height) {
+                            if (map->tiles[(y + 1) * map->width + x]->type == Tile_Type_Road)
+                                power_plant->connexite = map->tiles[(y + 1) * map->width + x]->connexite;
+                        }
+                    }
+                }
+                break;
+        }
+        current_power_plant_cell = current_power_plant_cell->next;
+    } while (current_power_plant_cell != power_plants);
+}
+
+void reset_all_power_plants_connexity(Queue_t *power_plants){
+    Queue_t *current_power_plant_cell = power_plants;
+    do {
+        ((Power_Plant_t*)current_power_plant_cell->data)->connexite = 0;
+        ((Power_Plant_t*)current_power_plant_cell->data)->electrecity = 0;
+        current_power_plant_cell = current_power_plant_cell->next;
+    } while (current_power_plant_cell != power_plants);
+}
+
 void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, BuildingOrientation orientation){
 
     add_queue(power_plants, create_power_plant(position, orientation));
-    Power_Plant_t *water_tower = (*power_plants)->prev->data;
+    Power_Plant_t *power_plant = (*power_plants)->prev->data;
     switch (orientation){
         case Building_Orientation_S:
             for (int x = 0; x < POWER_PLANT_TILE_WIDTH; ++x) {
                 for (int y = 0; y < POWER_PLANT_TILE_HEIGHT; ++y) {
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->type = Tile_Type_Builing;
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->varient = Building_Varient_Power_Plant;
-                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = water_tower;
+                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = power_plant;
                 }
             }
             break;
@@ -33,7 +237,7 @@ void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, Build
                 for (int y = 0; y > -POWER_PLANT_TILE_WIDTH; --y) {
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->type = Tile_Type_Builing;
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->varient = Building_Varient_Power_Plant;
-                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = water_tower;
+                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = power_plant;
                 }
             }
             break;
@@ -42,7 +246,7 @@ void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, Build
                 for (int y = 0; y > -POWER_PLANT_TILE_HEIGHT; --y) {
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->type = Tile_Type_Builing;
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->varient = Building_Varient_Power_Plant;
-                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = water_tower;
+                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = power_plant;
                 }
             }
             break;
@@ -51,7 +255,7 @@ void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, Build
                 for (int y = 0; y < POWER_PLANT_TILE_WIDTH; ++y) {
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->type = Tile_Type_Builing;
                     map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->varient = Building_Varient_Power_Plant;
-                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = water_tower;
+                    map->tiles[(int)(position.y+y)*map->width + (int)position.x+x]->building = power_plant;
                 }
             }
             break;
@@ -66,20 +270,20 @@ void power_plant_draw(Queue_t *power_plants, Model *power_plant_mesh){
             Power_Plant_t *current_power_plant = current_power_plant_cell->data;
             switch (current_power_plant->orientation){
                 case Building_Orientation_S:
-                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+5.3f)*TILES_WIDTH, 0, (current_power_plant->position.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
-                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+5.3f)*TILES_WIDTH, 0, (current_power_plant->position.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
+                    DrawModelEx(*power_plant_mesh, (Vector3){current_power_plant->position.x*TILES_WIDTH, 0, current_power_plant->position.y*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){current_power_plant->position.x*TILES_WIDTH, 0, current_power_plant->position.y*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, LIGHTGRAY);
                     break;
                 case Building_Orientation_E:
-                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+2.95f)*TILES_WIDTH, 0, (current_power_plant->position.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
-                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+2.95f)*TILES_WIDTH, 0, (current_power_plant->position.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
+                    DrawModelEx(*power_plant_mesh, (Vector3){current_power_plant->position.x*TILES_WIDTH, 0, (current_power_plant->position.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){current_power_plant->position.x*TILES_WIDTH, 0, (current_power_plant->position.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, LIGHTGRAY);
                     break;
                 case Building_Orientation_N:
-                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-4.3f)*TILES_WIDTH, 0, (current_power_plant->position.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
-                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-4.3f)*TILES_WIDTH, 0, (current_power_plant->position.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade(LIGHTGRAY, 0.3f));
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+1)*TILES_WIDTH, 0, (current_power_plant->position.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+1)*TILES_WIDTH, 0, (current_power_plant->position.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, LIGHTGRAY);
                     break;
                 case Building_Orientation_W:
-                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-1.95f)*TILES_WIDTH, 0, (current_power_plant->position.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, WHITE);
-                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x-1.95f)*TILES_WIDTH, 0, (current_power_plant->position.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (current_power_plant->orientation+1) * 90, (Vector3){0.65, 0.65, 0.63},Fade(LIGHTGRAY, 0.3f));
+                    DrawModelEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+1)*TILES_WIDTH, 0, current_power_plant->position.y*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, WHITE);
+                    DrawModelWiresEx(*power_plant_mesh, (Vector3){(current_power_plant->position.x+1)*TILES_WIDTH, 0, current_power_plant->position.y*TILES_WIDTH}, (Vector3){0, 1, 0}, current_power_plant->orientation * 90, (Vector3){1,1,1}, LIGHTGRAY);
                     break;
             }
             current_power_plant_cell = current_power_plant_cell->next;
@@ -259,20 +463,20 @@ void power_plant_destroy(Queue_t **power_plants){
 void draw_transparent_power_plant(Map_t *map, Vector2 mouse_pos_world, int money, BuildingOrientation orientation, Model *power_plant_mesh){
     switch (orientation){
         case Building_Orientation_S:
-            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+5.3f)*TILES_WIDTH, 0, (mouse_pos_world.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
-            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+5.3f)*TILES_WIDTH, 0, (mouse_pos_world.y+3.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
+            DrawModelEx(*power_plant_mesh, (Vector3){mouse_pos_world.x*TILES_WIDTH, 0, mouse_pos_world.y*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){mouse_pos_world.x*TILES_WIDTH, 0, mouse_pos_world.y*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_E:
-            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+2.95f)*TILES_WIDTH, 0, (mouse_pos_world.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
-            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+2.95f)*TILES_WIDTH, 0, (mouse_pos_world.y-4.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
+            DrawModelEx(*power_plant_mesh, (Vector3){mouse_pos_world.x*TILES_WIDTH, 0, (mouse_pos_world.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){mouse_pos_world.x*TILES_WIDTH, 0, (mouse_pos_world.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_N:
-            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-4.3f)*TILES_WIDTH, 0, (mouse_pos_world.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
-            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-4.3f)*TILES_WIDTH, 0, (mouse_pos_world.y-2.0f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+1)*TILES_WIDTH, 0, (mouse_pos_world.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+1)*TILES_WIDTH, 0, (mouse_pos_world.y+1)*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
         case Building_Orientation_W:
-            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x-1.95f)*TILES_WIDTH, 0, (mouse_pos_world.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
-            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+-1.95f)*TILES_WIDTH, 0, (mouse_pos_world.y+5.3f)*TILES_WIDTH}, (Vector3){0, 1, 0}, (orientation+1) * 90, (Vector3){0.65, 0.65, 0.63}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
+            DrawModelEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+1)*TILES_WIDTH, 0, mouse_pos_world.y*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, (is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? GREEN : RED);
+            DrawModelWiresEx(*power_plant_mesh, (Vector3){(mouse_pos_world.x+1)*TILES_WIDTH, 0, mouse_pos_world.y*TILES_WIDTH}, (Vector3){0, 1, 0}, orientation * 90, (Vector3){1,1,1}, Fade((is_possible_to_build(map, mouse_pos_world, Tile_Type_Builing, money, orientation)) ? DARKGREEN : MAROON, 0.3f));
             break;
     }
 }

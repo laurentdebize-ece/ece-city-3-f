@@ -31,6 +31,12 @@ typedef struct House_t {
 
 House_t *create_house(Vector2 position, BuildingOrientation orientation);
 
+void reset_all_houses_connexity(Queue_t *houses);
+
+void find_house_connexity(Map_t *map, House_t *house);
+
+void find_all_houses_connexity(Map_t *map, Queue_t *houses);
+
 void add_house(Map_t *map, Queue_t **houses, Vector2 position, BuildingOrientation orientation);
 
 void house_update(Queue_t *houses, Map_t *map, int *population, int *money, int speed);
