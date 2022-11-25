@@ -101,18 +101,23 @@ void afficher_regles(int* pointeurEtat) {
     BeginDrawing();
 
     bouton_rectangle(Regles,"",BLUE,BLUE,0,WHITE);
+
     bouton_Retour(pointeurEtat);
 
-    //même idée pour pas dupli que pour les crédits
+    DrawText("Bienvenue dans ECE CITY !",Regles.x+20,Regles.y+20,30,WHITE);
+    DrawText("Vous êtes le maire de cette belle ville, mais tout est encore à faire. En effet vous devrez construire des bâtiments,", Regles.x+20,Regles.y+80,30,WHITE);
+    DrawText("gérer des ressources et faire croître votre ville",Regles.x +20 , Regles.y +140,30,WHITE);
+    DrawText("Chaque maison vous rapporte de l'argent mais a besoin d'électricité et d'eau pour évoluer à un stade plus avancé",Regles.x+20, Regles.x+200,30,WHITE);
 
 
 
+
+    EndDrawing();
 }
 
-void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
 
-    const char* sprite_Capitiliste = "../PIGGYBANK.png"; //on pourra les effacer car elles sont dans le main pour eviter dupli
-    const char* sprite_Communiste = "../CommunisteMODIF.png";
+
+void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
 
     bool mouse_on_Capitalistes = false;
     bool mouse_on_Communistes  = false;
@@ -128,8 +133,6 @@ void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
 
             ClearBackground(WHITE);
 
-            DrawRectangleRec(Capitalistes,BLUE);
-            DrawRectangleRec(Communistes,RED);
             bouton_Retour(pointeurEtat);
 
             bouton_rectangle(Communistes,"COMMUNISTES",RED,RED,30,WHITE);
@@ -161,20 +164,14 @@ void afficher_menu_accueil(int* pointeurEtat) {
     Rectangle Option = { WIDTH/3, (HEIGHT/3)+320,640,110};
     Rectangle Quitter = { WIDTH/3, (HEIGHT/3)+480,640,110};
 
-    bool mouse_on_Jouer =false;
-    bool mouse_on_Charger =false;
-    bool mouse_on_Option =false;
-    bool mouse_on_Quitter =false;
+
     bool clignotte=false;
+    bool mouse_on_Jouer = CheckCollisionPointRec(GetMousePosition(),Jouer);
+    bool mouse_on_Charger = CheckCollisionPointRec(GetMousePosition(),Charger);
+    bool mouse_on_Option = CheckCollisionPointRec(GetMousePosition(),Option);
+    bool mouse_on_Quitter = CheckCollisionPointRec(GetMousePosition(),Quitter);
 
-
-
-    mouse_on_Jouer = CheckCollisionPointRec(GetMousePosition(),Jouer);
-    mouse_on_Charger = CheckCollisionPointRec(GetMousePosition(),Charger);
-    mouse_on_Option = CheckCollisionPointRec(GetMousePosition(),Option);
-    mouse_on_Quitter = CheckCollisionPointRec(GetMousePosition(),Quitter);
-
-
+    /// La variable timer est calée sur le temps qui s'est écoulé depuis la création de la fenêtre
         if((int)timer % 2 == 0) {
             clignotte=true;
         }

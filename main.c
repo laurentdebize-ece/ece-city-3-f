@@ -9,9 +9,12 @@
 
 int main (void){
 
+
+    /// Initialisation des variables utiles à l'affichage des bitmaps
+
     int etat=0;
     int* pointeurEtat= &etat;
-
+    bool pause = false;
 
     Menu_Bouttons etatA = Accueil;
     Menu_Bouttons* pointeurEtatA = &etatA; //remplacer les valeurs de etat par les enum de etatA
@@ -22,25 +25,39 @@ int main (void){
     const char* sprite_Communiste = "../assets/bitmaps/Menu/CommunisteMODIF.png";
     const char* ecran_accueil = "../assets/bitmaps/Menu/FONDECRAN.png";
 
+
     InitWindow(WIDTH,HEIGHT,TITLE);
 
     SetTargetFPS(60);
+
 
     Game_t* game = create_game();
 
     InitAudioDevice();
 
+    /// Téléchargement des bitmaps et de la musique
+
     image = LoadTexture(sprite_Capitaliste);
     image2 = LoadTexture(sprite_Communiste);
     image_ecran_accueil = LoadTexture(ecran_accueil);
     music = LoadMusicStream("../assets/Sound/Music/MUSIC.mp3");
+
     PlayMusicStream(music);
 
     while(!WindowShouldClose()) {
 
         UpdateMusicStream(music);
 
+        if(IsKeyPressed(KEY_P)) {
+            pause = !pause;
+            if(pause==true) {
+                PauseMusicStream(music);
+            } else ResumeMusicStream(music);
+        }
+
         switch(*pointeurEtat) {
+
+            /// Différents cas en fonction du bouton sur lequel on clique
 
             case 0:
                 DrawTexture(image_ecran_accueil,0,0,WHITE);
@@ -49,6 +66,10 @@ int main (void){
 
             case 1: afficher_modes_jeu(pointeurEtat,image,image2);
             break;
+
+            case 2:
+                //load_saved_map();
+                break;
 
             case 3: afficher_options_jeu(pointeurEtat);
             break;
