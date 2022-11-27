@@ -10,6 +10,5 @@
 int main (void){
 
     menu(GetMousePosition(),GetScreenWidth(),GetScreenHeight()); //prendre en para screen size et mouse position
-
     return 0;
 }
