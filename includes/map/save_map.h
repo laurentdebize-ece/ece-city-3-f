@@ -14,8 +14,8 @@
 
 #define SAVE_1_PATH "../assets/map/save_1.txt"
 
-void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_plant, Time_t *time, int money, char *path);
+void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_plant, Time_t *time, int money,bool capitaliste, char *path);
 
-void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population, char *path);
+void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population,bool* capitaliste, char *path);
 
 #endif //PROJET_SAVE_MAP_H

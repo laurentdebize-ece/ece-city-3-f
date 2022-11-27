@@ -4,23 +4,20 @@
 
 #include "../includes/game.h"
 
-Game_t *create_game(void) {
+Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap) {
 
     Game_t *game = malloc(sizeof(Game_t));
     game->money = 500000;
+    game->population=0;
     game->time = (Time_t){1,0,0,0,0,3,2069};
     game->houses = NULL;
     game->water_towers = NULL;
     game->power_plants = NULL;
 
-    /// Ouverture de la fenêtre (à supprimer)
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(WIDTH, HEIGHT, TITLE);
-    SetWindowPosition(10, 50);
-
-    //game->map = load_map(DEFAULT_MAP_FILE_PATH);
-    load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population, SAVE_1_PATH);
+    if(loadmap) {
+        load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population,&game->capitaliste, SAVE_1_PATH);
+    }
+    else game->map = load_map(DEFAULT_MAP_FILE_PATH);
 
     print_map_console(game->map);
 
@@ -68,9 +65,6 @@ Game_t *create_game(void) {
     game-> pause_counter = 0;
     game->is_on_pause = false;
 
-    link_all_houses_to_water_towers(game->map, game->houses);
-    share_water(game->houses);
-
     return game;
 }
 
@@ -79,6 +73,10 @@ void commands(Game_t *game) {
         if (IsKeyPressed(KEY_S))   /// Sauvegarde de la map
             save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
         if (IsKeyPressed(KEY_T))   /// Accélération du temps
+        if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
+            save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money,game->capitaliste, SAVE_1_PATH);
+        }
+        if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
             change_time_speed(&game->time);
         if (IsKeyPressed(KEY_P)) {  /// Pause
             game->is_on_pause = !game->is_on_pause;

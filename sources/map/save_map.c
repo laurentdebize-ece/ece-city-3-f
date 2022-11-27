@@ -4,7 +4,7 @@
 
 #include "../../includes/map/save_map.h"
 
-void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_plant, Time_t *time, int money, char *path) {
+void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_plant, Time_t *time, int money,bool capitaliste, char *path) {
 
     /// Ouverture du fichier
     FILE *file = fopen(path, "w");
@@ -14,7 +14,7 @@ void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_p
     }
 
     /// Ecriture de la taille de la map et l'argent
-    fprintf(file, "%d %d %d\n", map->width, map->height, money);
+    fprintf(file, "%d %d %d %d\n", map->width, map->height, money,capitaliste);
     /// Récupération des infos du temps
     fprintf(file, "%d %d %d %d %d %d %d\n", time->years, time->months, time->hours, time->minutes, time->seconds, time->counter, time->speed);
 
@@ -66,14 +66,14 @@ void save_map(Map_t *map, Queue_t *house, Queue_t *water_tower, Queue_t *power_p
     fclose(file);
 }
 
-void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population, char *path) {
+void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t **power_plant, Time_t *time, int *money, int *population,bool* capitaliste, char *path) {
     FILE *file = fopen(path, "r");
     if (file == NULL) {
         printf("Error opening file!\n");
         exit(1);
     }
     int width, height;
-    fscanf(file, "%d %d %d\n", &width, &height, money);
+    fscanf(file, "%d %d %d %d\n", &width, &height, money,capitaliste);
     *map = map_create(width, height);
     fscanf(file, "%d %d %d %d %d %d %d\n", &time->years, &time->months, &time->hours, &time->minutes, &time->seconds, &time->counter, &time->speed);
     for (int y = 0; y < (*map)->height; ++y) {

@@ -4,15 +4,15 @@
 
 #include "../includes/test.h"
 
-void test() {
+void test(bool capitaliste) {
 
-    Game_t *game = create_game();   /// Création et initialisation du jeu
+    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
+
+    Game_t *game = create_game(screen_size,capitaliste,1);   /// Création et initialisation du jeu
 
     Vector2 mouse_pos = {0,0};  /// Création de la position de la souris
 
     SetTargetFPS(FPS);  /// Définition du nombre de FPS
-
-    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
 
     while (!should_window_be_closed()) {    /// Est-ce qu'on ferme la fenêtre ?
 
@@ -53,5 +53,39 @@ void test() {
     CloseWindow();
 
     destroy_game(&game);
+
+}
+
+void loop_jeu(Game_t* game,bool capitaliste) {
+
+    Vector2 mouse_pos = {0,0};  /// Création de la position de la souris
+
+    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
+
+        /*--------------------------------------------COMMANDES CLAVIER-----------------------------------------------*/
+
+        /// Commandes clavier
+
+        commands(game);
+
+        /*--------------------------------------------------UPDATE----------------------------------------------------*/
+
+
+
+        update_game(game, &mouse_pos, &screen_size);    /// Update du jeu
+
+        /*--------------------------------------------CLICK EVENT REACTION--------------------------------------------*/
+
+        event_click_game(game, mouse_pos);
+
+        /*--------------------------------------------------DRAWING---------------------------------------------------*/
+
+        BeginDrawing();
+        ClearBackground(SKYBLUE);   /// On efface l'écran avec la couleur du ciel
+
+        draw_3D_game(game);    /// Dessin du jeu en 3D
+
+        draw_2D_game(game, screen_size, mouse_pos);    /// Dessin du jeu en 2D
+        EndDrawing();
 
 }
