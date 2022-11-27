@@ -40,17 +40,6 @@ void menu() {
     bool mode2jeu= NULL;
     bool type2map = false;
 
-    int* population;
-    int* money;
-    char* path;
-    Time_t* time = NULL;
-    Queue_t ** elec = NULL;
-    Queue_t ** house = NULL;
-    Queue_t ** chateau_eau = NULL;
-    Map_t** map = NULL;
-    Queue_t** queue = NULL;
-
-
 
     Texture2D image,image2,image_ecran_accueil,image_mode2jeu,image_option,image_coeur,image_thinking;
     Music music;
@@ -122,9 +111,11 @@ void menu() {
                 afficher_modes_jeu(pointeurEtat,image,image2,&mode2jeu);
                 break;
 
-            case 2:
-                load_saved_map(map,house,chateau_eau,elec,time,money,population,&mode2jeu,path);
+            case 2: {
+                game = malloc(sizeof(Game_t ));
+                load_saved_map(&game->map,&game->houses,&game->water_towers,&game->power_plants,&game->time,&game->money,&game->population,&game->capitaliste,SAVE_1_PATH);
                 break;
+            }
 
             case 3:
                 DrawTexture(image_option,0,0,WHITE);
