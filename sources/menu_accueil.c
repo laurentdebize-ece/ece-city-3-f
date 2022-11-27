@@ -158,6 +158,7 @@ void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2,bool*
             if(mouse_on_Capitalistes) {
                 DrawTexture(image,Capitalistes.x,Communistes.y,WHITE);
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    /// bool *capitaliste définie le mode de jeu
                     *capitaliste = true;
                     *pointeurEtat=100;
                 }

@@ -79,7 +79,7 @@ void menu() {
 
     PlayMusicStream(music);
 
-    while(!WindowShouldClose()&& *pointeurEtat!=-1) {
+    while(!WindowShouldClose()&& *pointeurEtat!=-1) { /// case -1 correspond au bouton quitter
 
         UpdateMusicStream(music);
 
