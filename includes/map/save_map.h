@@ -10,6 +10,7 @@
 #include "../buildings/house.h"
 #include "../buildings/water_tower.h"
 #include "../buildings/power_plant.h"
+#include "../buildings/algoConnexite.h"
 
 #define SAVE_1_PATH "../assets/map/save_1.txt"
 

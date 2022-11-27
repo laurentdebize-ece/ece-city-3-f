@@ -19,7 +19,6 @@ Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap) {
     }
     else game->map = load_map(DEFAULT_MAP_FILE_PATH);
 
-    connexity_init(game->map);
     print_map_console(game->map);
 
     /// Création de la caméra
@@ -37,6 +36,8 @@ Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap) {
 
     game->power_plant_model = LoadModel("../assets/Models3d/power_plant/ncl2.obj");
     game->power_plant_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("../assets/Models3d/power_plant/Nuclear station_color_1_.png");
+
+    game->water_tower_model = LoadModel("../assets/Models3d/water_treatment/1. Model/Water_Treatment_Plant_001.obj");
 
     /// Création de la position de la souris
     game->mouse_pos_world = (Vector2){0,0};
@@ -200,24 +201,54 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
                         game->money -= HOUSE_PRICE/5;
                     }
                     else if (IsMouseButtonPressed(Mouse_Button_Left) && game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type == Tile_Type_Builing) {
-                        if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->varient == Building_Varient_Water_Tower){
+                        if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->varient == Building_Varient_Water_Tower && game->money - WATER_TOWER_PRICE/5 >= 0){
                             game->money -= WATER_TOWER_PRICE/5;
                             water_tower_destroy_one(game->map, &game->water_towers, game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building);
                         }
-                        else if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->varient == Building_Varient_Power_Plant){
+                        else if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->varient == Building_Varient_Power_Plant && game->money - POWER_PLANT_PRICE/5 >= 0){
                             game->money -= POWER_PLANT_PRICE/5;
                             power_plant_destroy_one(game->map, &game->power_plants, game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building);
                         }
                     }
-                    else  destroy_roads(game->map, game->mouse_pos_world, &game->first_road_coord, &game->second_road_coord, &game->last_road_coord, &game->money);
+                    else if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type == Tile_Type_Road) {
+                        destroy_roads(game->map, game->mouse_pos_world, &game->first_road_coord, &game->second_road_coord, &game->last_road_coord, &game->money);
+                        reset_connexity(game->map);
+                        connexity_init(game->map);
+                        if (game->map->house_count) {
+                            reset_all_houses_connexity(game->houses);
+                            find_all_houses_connexity(game->map, game->houses);
+                        }
+                        if (game->map->water_tower_count) {
+                            reset_all_water_towers_connexity(game->water_towers);
+                            find_all_water_towers_connexity(game->map, game->water_towers);
+                        }
+                        if (game->map->power_plant_count) {
+                            reset_all_power_plants_connexity(game->power_plants);
+                            find_all_power_plants_connexity(game->map, game->power_plants);
+                        }
+                    }
                     break;
                 case Button_Road:   /// Road mode on
                     build_roads(game->map, game->mouse_pos_world, &game->first_road_coord, &game->second_road_coord, &game->last_road_coord, &game->money, game->mouse_ground_collision.hit);
+                    reset_connexity(game->map);
+                    connexity_init(game->map);
+                    if (game->map->house_count) {
+                        reset_all_houses_connexity(game->houses);
+                        find_all_houses_connexity(game->map, game->houses);
+                    }
+                    if (game->map->water_tower_count) {
+                        reset_all_water_towers_connexity(game->water_towers);
+                        find_all_water_towers_connexity(game->map, game->water_towers);
+                    }
+                    if (game->map->power_plant_count){
+                        reset_all_power_plants_connexity(game->power_plants);
+                        find_all_power_plants_connexity(game->map, game->power_plants);
+                    }
                     break;
                 case Button_House:    /// House mode on
-
                     if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(game->map, game->mouse_pos_world, Tile_Type_House, game->money, game->building_orientation)) {
                         add_house(game->map, &game->houses, game->mouse_pos_world, game->building_orientation);
+                        find_house_connexity(game->map, game->houses->prev->data);
                         game->money -= HOUSE_PRICE;
                         if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
                             game->hud.button_selected = Button_Build;
@@ -230,6 +261,7 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
                 case Button_Water_Tower:    /// Water tower mode on
                     if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(game->map, game->mouse_pos_world, Tile_Type_Builing, game->money, game->building_orientation)) {
                         add_water_tower(game->map, &game->water_towers, game->mouse_pos_world, game->building_orientation);
+                        find_water_tower_connexity(game->map, game->water_towers->prev->data);
                         game->money -= WATER_TOWER_PRICE;
                         if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
                             game->hud.button_selected = Button_Build;
@@ -242,6 +274,7 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
                 case Button_Power_Plant:    /// Power plant mode on
                     if (IsMouseButtonPressed(Mouse_Button_Left) && is_possible_to_build(game->map, game->mouse_pos_world, Tile_Type_Builing, game->money, game->building_orientation)) {
                         add_power_plant(game->map, &game->power_plants, game->mouse_pos_world, game->building_orientation);
+                        find_power_plant_connexity(game->map, game->power_plants->prev->data);
                         game->money -= POWER_PLANT_PRICE;
                         if (!IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_RIGHT_SHIFT))    /// Shift not pressed
                             game->hud.button_selected = Button_Build;
@@ -298,12 +331,8 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
     }
     else {
         if (IsMouseButtonPressed(Mouse_Button_Left)) {
-            printf("\nMouse clicked on the map");
-            fflush(stdout);
             switch (game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type) {
                 case Tile_Type_House:
-                    printf("\nHouse clicked");
-                    fflush(stdout);
                     game->hud.selected_entity = game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building;
                     game->hud.selected_entity_type = Tile_Type_House;
                     game->hud.selected_entity_variant = ((House_t*) game->map->tiles[(int) (game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->building)->level;
@@ -340,7 +369,7 @@ void draw_3D_game(Game_t *game) {
 
     if (!game->view_mode) {
         house_draw(game->houses, game->house_model);
-        water_tower_draw(game->water_towers, 0);
+        water_tower_draw(game->water_towers, &game->water_tower_model);
         power_plant_draw(game->power_plants, &game->power_plant_model);
     }
 

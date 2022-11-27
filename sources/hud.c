@@ -117,12 +117,32 @@ void draw_selected_entity_info(void* entity, int entity_type, int entity_varient
     }
     else {
         switch (entity_varient) {
-            case Building_Varient_Water_Tower:
-                DrawText("Water Tower", screen_size.x/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 20, WHITE);
+            case Building_Varient_Water_Tower: {
+                Water_Tower_t *water_tower = entity;
+                DrawText("Water Tower", (screen_size.x - MeasureText("Water Tower", 30)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText(TextFormat("City : %d", water_tower->connexite),
+                         (screen_size.x - MeasureText(TextFormat("City : %d", water_tower->connexite), 20)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                DrawText(TextFormat("Water remaining : %d/%d", water_tower->water, WATER_TOWER_CAPACITY),
+                         (screen_size.x -
+                          MeasureText(TextFormat("Water consumption : %d/%d", water_tower->water, WATER_TOWER_CAPACITY),
+                                      20)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 80, 20, WHITE);
                 break;
-            case Building_Varient_Power_Plant:
-                DrawText("Power Plant", screen_size.x/2, screen_size.y*(1.0f - HUD_HEIGHT_RATIO) + 10, 20, WHITE);
+            }
+            case Building_Varient_Power_Plant: {
+                Power_Plant_t *power_plant = entity;
+                DrawText("Water Tower", (screen_size.x - MeasureText("Water Tower", 30)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 10, 30, WHITE);
+                DrawText(TextFormat("City : %d", power_plant->connexite),
+                         (screen_size.x - MeasureText(TextFormat("City : %d", power_plant->connexite), 20)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 50, 20, WHITE);
+                DrawText(TextFormat("Power remaining : %d/%d", power_plant->electrecity, WATER_TOWER_CAPACITY),
+                         (screen_size.x - MeasureText(TextFormat("Water consumption : %d/%d", power_plant->electrecity, WATER_TOWER_CAPACITY), 20)) / 2,
+                         screen_size.y * (1.0f - HUD_HEIGHT_RATIO) + 80, 20, WHITE);
                 break;
+            }
             default:
                 break;
         }

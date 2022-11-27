@@ -32,6 +32,12 @@ typedef struct Water_Tower_t {
 
 Water_Tower_t *create_water_tower(Vector2 position, BuildingOrientation orientation);
 
+void find_water_tower_connexity(Map_t *map, Water_Tower_t *water_tower);
+
+void find_all_water_towers_connexity(Map_t *map, Queue_t *water_towers);
+
+void reset_all_water_towers_connexity(Queue_t *water_tower);
+
 void add_water_tower(Map_t *map, Queue_t **water_towers, Vector2 position, BuildingOrientation orientation);
 
 void water_tower_update(Queue_t *water_towers, Map_t *map, int *money, int speed);

@@ -9,7 +9,7 @@
 #include "water_tower.h"
 #include "power_plant.h"
 
-void add_house_by_level(Power_Plant_t *power_plant, House_t *house);
+void add_house_to_power_plant_by_level(Power_Plant_t *power_plant, House_t *house);
 
 void water_tower_add_house(Map_t *map);
 
