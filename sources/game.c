@@ -68,36 +68,35 @@ Game_t *create_game(void) {
     game-> pause_counter = 0;
     game->is_on_pause = false;
 
+    link_all_houses_to_water_towers(game->map, game->houses);
+    share_water(game->houses);
+
     return game;
 }
 
 void commands(Game_t *game) {
     if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)){
-        if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
+        if (IsKeyPressed(KEY_S))   /// Sauvegarde de la map
             save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
-        }
-        if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
+        if (IsKeyPressed(KEY_T))   /// Accélération du temps
             change_time_speed(&game->time);
-        }
         if (IsKeyPressed(KEY_P)) {  /// Pause
             game->is_on_pause = !game->is_on_pause;
             game->pause_counter = 0;
         }
-        if (IsKeyPressed(KEY_V)) {  /// Changement de vue
+        if (IsKeyPressed(KEY_V))    /// Changement de vue
             change_view_mode(&game->view_mode);
-        }
-        if (IsKeyPressed(KEY_C)) {  /// Reset de la caméra
+        if (IsKeyPressed(KEY_C))    /// Reset de la caméra
             game->camera = camera_new(game->map, TILES_WIDTH);
-        }
-        if (IsKeyPressed(KEY_B))
+        if (IsKeyPressed(KEY_B))    /// Mode construction
             game->hud.button_selected = Button_Build;
-        if (IsKeyPressed(KEY_D))
+        if (IsKeyPressed(KEY_D))    /// Mode destruction
             game->hud.button_selected = Button_Destroy;
-        if (IsKeyPressed(KEY_R))
+        if (IsKeyPressed(KEY_R))    /// Mode route
             game->hud.button_selected = Button_Road;
-        if (IsKeyPressed(KEY_H))
+        if (IsKeyPressed(KEY_H))    /// Mode maison
             game->hud.button_selected = Button_House;
-        if (IsKeyPressed(KEY_W))
+        if (IsKeyPressed(KEY_W))    /// Mode tour d'eau
             game->hud.button_selected = Button_Water_Tower;
     }
     if (IsKeyPressed(KEY_DELETE) && game->hud.selected_entity) {
@@ -153,7 +152,8 @@ void update_game(Game_t *game, Vector2 *mouse_pos, Vector2 *screen_size) {
     }
 
     UpdateCamera(&game->camera);          // Update camera
-
+    if (game->camera.position.y < 0.0f)
+        game->camera.position.y = 0.5f;
     game->mouse_ray = GetMouseRay(*mouse_pos, game->camera);
     game->mouse_ground_collision = GetRayCollisionQuad(game->mouse_ray, game->plateau[0], game->plateau[1], game->plateau[2], game->plateau[3]);
     game->mouse_pos_world = (Vector2) {(int) (game->mouse_ground_collision.point.x / TILES_WIDTH),
@@ -215,19 +215,26 @@ void event_click_game(Game_t *game, Vector2 mouse_pos) {
                     }
                     else if (game->map->tiles[(int)(game->mouse_pos_world.y*game->map->width + game->mouse_pos_world.x)]->type == Tile_Type_Road) {
                         destroy_roads(game->map, game->mouse_pos_world, &game->first_road_coord, &game->second_road_coord, &game->last_road_coord, &game->money);
-                        reset_connexity(game->map);
-                        connexity_init(game->map);
-                        if (game->map->house_count) {
-                            reset_all_houses_connexity(game->houses);
-                            find_all_houses_connexity(game->map, game->houses);
-                        }
-                        if (game->map->water_tower_count) {
-                            reset_all_water_towers_connexity(game->water_towers);
-                            find_all_water_towers_connexity(game->map, game->water_towers);
-                        }
-                        if (game->map->power_plant_count) {
-                            reset_all_power_plants_connexity(game->power_plants);
-                            find_all_power_plants_connexity(game->map, game->power_plants);
+                        if (IsMouseButtonPressed(Mouse_Button_Left)) {
+                            reset_connexity(game->map);
+                            connexity_init(game->map);
+                            //if (game->map->house_count && game->map->water_tower_count){
+                            //    reset_water_canalisations(game->map);
+                            //    reset_houses_water(game->houses);
+                            //    link_all_houses_to_water_towers(game->map, game->houses);
+                            //}
+                            if (game->map->house_count) {
+                                reset_all_houses_connexity(game->houses);
+                                find_all_houses_connexity(game->map, game->houses);
+                            }
+                            if (game->map->water_tower_count) {
+                                reset_all_water_towers_connexity(game->water_towers);
+                                find_all_water_towers_connexity(game->map, game->water_towers);
+                            }
+                            if (game->map->power_plant_count) {
+                                reset_all_power_plants_connexity(game->power_plants);
+                                find_all_power_plants_connexity(game->map, game->power_plants);
+                            }
                         }
                     }
                     break;

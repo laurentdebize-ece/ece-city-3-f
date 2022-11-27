@@ -34,7 +34,6 @@ void find_house_connexity(Map_t *map, House_t *house){
                     x = map->width;
                     y = map->height;
                 }
-
             }
             if (x == (int) house->position.x + 1 && x + 1 < map->width) {
                 if (map->tiles[y * map->width + (x + 1)]->type == Tile_Type_Road){

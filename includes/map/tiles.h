@@ -60,10 +60,9 @@ typedef enum {
 
 typedef struct {
     TileType type;
-    int varient, connexite;
-    union {
-        void *building;
-    };
+    int varient, connexite, distance;
+    void *building;
+    _Bool water, electricity;
 }Tile_t;
 
 Tile_t tile_init_default(void);

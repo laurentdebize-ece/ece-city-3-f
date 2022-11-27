@@ -23,7 +23,7 @@ typedef struct House_t {
     int level;
     int counter;
     int electricity, water;
-    int distance;
+    Queue_t *distance;
     Queue_t *water_towers;
     Queue_t *power_plants;
     BuildingOrientation orientation;

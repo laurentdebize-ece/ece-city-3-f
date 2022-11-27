@@ -68,19 +68,22 @@ void connexity_init(Map_t *map) {
                     /// Si la case de droite n'est pas hors du plateau
                     if (num_case%map->width != map->width-1 && map->tiles[num_case+1]->type == Tile_Type_Road && !map->tiles[num_case+1]->connexite) {
                         map->tiles[num_case + 1]->connexite = connexite;
-                        add_queue(&queue, (void *) (num_case + 1));
+                        add_to_back_queue(&queue, (void *) (num_case + 1));
                     }
-                    if (map->tiles[num_case-1]->type == Tile_Type_Road && !map->tiles[num_case-1]->connexite && num_case%map->width != 0){
+                    /// Si la case de gauche n'est pas hors du plateau
+                    if (num_case%map->width != 0 && map->tiles[num_case-1]->type == Tile_Type_Road && !map->tiles[num_case-1]->connexite){
                         map->tiles[num_case-1]->connexite = connexite;
-                        add_queue(&queue, (void *) (num_case - 1));
+                        add_to_back_queue(&queue, (void *) (num_case - 1));
                     }
-                    if (map->tiles[num_case+map->width]->type == Tile_Type_Road && !map->tiles[num_case+map->width]->connexite && num_case+map->width < map->width*map->height){
+                    /// Si la case du haut n'est pas hors du plateau
+                    if (num_case+map->width < map->width*map->height && map->tiles[num_case+map->width]->type == Tile_Type_Road && !map->tiles[num_case+map->width]->connexite){
                         map->tiles[num_case+map->width]->connexite = connexite;
-                        add_queue(&queue, (void *) (num_case + map->width));
+                        add_to_back_queue(&queue, (void *) (num_case + map->width));
                     }
-                    if (map->tiles[num_case-map->width]->type == Tile_Type_Road && !map->tiles[num_case-map->width]->connexite && num_case-map->width >= 0){
+                    /// Si la case du bas n'est pas hors du plateau
+                    if (num_case-map->width >= 0 && map->tiles[num_case-map->width]->type == Tile_Type_Road && !map->tiles[num_case-map->width]->connexite){
                         map->tiles[num_case-map->width]->connexite = connexite;
-                        add_queue(&queue, (void *) (num_case - map->width));
+                        add_to_back_queue(&queue, (void *) (num_case - map->width));
                     }
                 }
             }

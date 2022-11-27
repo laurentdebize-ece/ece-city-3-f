@@ -220,7 +220,7 @@ void reset_all_water_towers_connexity(Queue_t *water_tower){
 
 void add_water_tower(Map_t *map, Queue_t **water_towers, Vector2 position, BuildingOrientation orientation){
 
-    add_queue(water_towers, create_water_tower(position, orientation));
+    add_to_back_queue(water_towers, create_water_tower(position, orientation));
     Water_Tower_t *water_tower = (*water_towers)->prev->data;
     switch (orientation){
         case Building_Orientation_S:

@@ -12,7 +12,7 @@ Queue_t *create_queue(void *data){
     return queue;
 }
 
-void add_queue(Queue_t **queue, void *data){
+void add_to_back_queue(Queue_t **queue, void *data){
     if (*queue == NULL){
         *queue = create_queue(data);
         (*queue)->next = *queue;
@@ -27,9 +27,25 @@ void add_queue(Queue_t **queue, void *data){
     }
 }
 
+void add_to_front_queue(Queue_t **queue, void *data){
+    if (*queue == NULL){
+        *queue = create_queue(data);
+        (*queue)->next = *queue;
+        (*queue)->prev = *queue;
+    }
+    else {
+        Queue_t *new = create_queue(data);
+        new->prev = (*queue);
+        new->next = (*queue)->next;
+        (*queue)->next->prev = new;
+        (*queue)->next = new;
+        *queue = new;
+    }
+}
+
 void retirer_premier_queue(Queue_t **queue){
     Queue_t *tmp = *queue;
-    if(tmp->next == tmp) {
+    if(tmp->next == tmp || tmp->next == NULL) {
         free(tmp);
         *queue = NULL;
     }

@@ -15,7 +15,9 @@ typedef struct Queue_t{
 
 Queue_t *create_queue(void *data);
 
-void add_queue(Queue_t **queue, void *data);
+void add_to_back_queue(Queue_t **queue, void *data);
+
+void add_to_front_queue(Queue_t **queue, void *data);
 
 void retirer_premier_queue(Queue_t **queue);
 

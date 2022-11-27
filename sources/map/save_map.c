@@ -113,6 +113,8 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
             last_house_created->electricity = 0;
             last_house_created->water = 0;
             last_house_created->connexite = 0;
+            last_house_created->water_towers = NULL;
+            last_house_created->power_plants = NULL;
             find_house_connexity(*map, last_house_created);
             switch (last_house_created->level) {
                 case Cabane:
@@ -149,6 +151,8 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
             fscanf(file, "%f %f %d\n", &last_water_tower_created->position.x, &last_water_tower_created->position.y, &last_water_tower_created->orientation);
             find_water_tower_connexity(*map, last_water_tower_created);
             last_water_tower_created->water = WATER_TOWER_CAPACITY;
+            last_water_tower_created->houses = NULL;
+            last_water_tower_created->connexite = 0;
             switch (last_water_tower_created->orientation) {
                 case Building_Orientation_S:
                     for (int y = last_water_tower_created->position.y; y < last_water_tower_created->position.y + WATER_TOWER_TILE_HEIGHT; ++y) {
@@ -200,6 +204,8 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
             fscanf(file, "%f %f %d\n", &last_power_plant_created->position.x, &last_power_plant_created->position.y, &last_power_plant_created->orientation);
             last_power_plant_created->electrecity = POWER_PLANT_CAPACITY;
             find_power_plant_connexity(*map, last_power_plant_created);
+            last_power_plant_created->houses = NULL;
+            last_power_plant_created->connexite = 0;
             switch (last_power_plant_created->orientation) {
                 case Building_Orientation_S:
                     for (int y = last_power_plant_created->position.y; y < last_power_plant_created->position.y + POWER_PLANT_TILE_HEIGHT; ++y) {

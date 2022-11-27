@@ -220,7 +220,7 @@ void reset_all_power_plants_connexity(Queue_t *power_plants){
 
 void add_power_plant(Map_t *map, Queue_t **power_plants, Vector2 position, BuildingOrientation orientation){
 
-    add_queue(power_plants, create_power_plant(position, orientation));
+    add_to_back_queue(power_plants, create_power_plant(position, orientation));
     Power_Plant_t *power_plant = (*power_plants)->prev->data;
     switch (orientation){
         case Building_Orientation_S:

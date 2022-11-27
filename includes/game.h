@@ -13,7 +13,7 @@
 #include "buildings/power_plant.h"
 #include "hud.h"
 #include "map/save_map.h"
-#include "buildings/algoConnexite.h"
+#include "buildings/water_elec_distribution.h"
 
 typedef struct Game_t {
     Camera camera;
