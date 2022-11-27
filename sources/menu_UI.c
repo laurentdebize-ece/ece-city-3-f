@@ -7,8 +7,6 @@
 #include "../includes/map/map.h"
 #include "../includes/map/save_map.h"
 
-#define TITLE "ECE City"
-
 void resize_Menu(int width_Window, int height_Window) {
      if(!IsWindowFullscreen()) {
          int ecran = GetCurrentMonitor(); //sur quel écran est l'image/nbr d'écran connectés
@@ -56,7 +54,7 @@ void menu() {
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     resize_Menu(WIDTH,HEIGHT);
 
-    SetTargetFPS(60);
+    SetTargetFPS(FPS);
 
     Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};
 

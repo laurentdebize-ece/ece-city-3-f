@@ -7,8 +7,8 @@
 
 #include <raylib.h>
 
-#define WIDTH (1920)   //1024
-#define HEIGHT (1080)  //768
+#define WIDTH (1920-100)   //1024
+#define HEIGHT (1080-100)  //768
 #define TITLE "ECE City"
 #define FPS 60.0f
 

@@ -73,7 +73,7 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
         exit(1);
     }
     int width, height;
-    fscanf(file, "%d %d %d %d\n", &width, &height, money,capitaliste);
+    fscanf(file, "%d %d %d %d\n", &width, &height, money, capitaliste);
     *map = map_create(width, height);
     fscanf(file, "%d %d %d %d %d %d %d\n", &time->years, &time->months, &time->hours, &time->minutes, &time->seconds, &time->counter, &time->speed);
     for (int y = 0; y < (*map)->height; ++y) {
@@ -95,7 +95,6 @@ void load_saved_map(Map_t **map, Queue_t **house, Queue_t **water_tower, Queue_t
                 *house = create_queue(malloc(sizeof(House_t)));
                 (*house)->next = *house;
                 (*house)->prev = *house;
-
             } else {
                 Queue_t *new_house = create_queue(malloc(sizeof(House_t)));
                 new_house->next = *house;

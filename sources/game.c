@@ -70,13 +70,10 @@ Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap) {
 
 void commands(Game_t *game) {
     if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)){
-        if (IsKeyPressed(KEY_S))   /// Sauvegarde de la map
-            save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
         if (IsKeyPressed(KEY_T))   /// Accélération du temps
-        if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
+        if (IsKeyPressed(KEY_S))   /// Sauvegarde de la map
             save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money,game->capitaliste, SAVE_1_PATH);
-        }
-        if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
+        if (IsKeyPressed(KEY_T))    /// Accélération du temps
             change_time_speed(&game->time);
         if (IsKeyPressed(KEY_P)) {  /// Pause
             game->is_on_pause = !game->is_on_pause;
