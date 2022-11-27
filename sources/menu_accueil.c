@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../includes/menu_UI.h"
-
+#include "../includes/test.h"
+#include "../includes/game.h"
 
 #define TITLE "ECE City"
 
@@ -62,21 +63,31 @@ void afficher_options_jeu(int* pointeurEtat) {
     EndDrawing();
 }
 
+void quitter_propre(Game_t* game,Music music) {
 
-void afficher_credits(int* pointeurEtat) {
+    destroy_game(&game);
+    StopMusicStream(music);
+    UnloadMusicStream(music);
+    CloseAudioDevice();
+    CloseWindow();
+}
+
+void afficher_credits(int* pointeurEtat,Texture2D coeur) {
 
     Rectangle Credits = {0,0, WIDTH,HEIGHT};
 
     BeginDrawing();
 
+    ClearBackground(WHITE);
+
     bouton_rectangle(Credits,"",BLUE,BLUE,0,WHITE);
     bouton_Retour(pointeurEtat);
+    DrawTexture(coeur,(WIDTH-coeur.width)/2,40+(HEIGHT-coeur.height)/2,WHITE);
 
     /*char* txt1 = "Créateurs"; //idée faire une enum pour que les txt soit les valeurs de i et comme j'aug les distance pareil on mettra j
 
     for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
-
 
         }
 
@@ -94,33 +105,38 @@ void afficher_credits(int* pointeurEtat) {
     EndDrawing();
 }
 
-void afficher_regles(int* pointeurEtat) {
+void afficher_regles(int* pointeurEtat,Texture2D reflx) {
 
     Rectangle Regles = {0,0, WIDTH,HEIGHT};
 
     BeginDrawing();
 
     bouton_rectangle(Regles,"",BLUE,BLUE,0,WHITE);
-
     bouton_Retour(pointeurEtat);
+
+    DrawTexture(reflx,(WIDTH-reflx.width)/2,(HEIGHT-reflx.height)-50,WHITE);
 
     DrawText("Bienvenue dans ECE CITY !",Regles.x+20,Regles.y+20,30,WHITE);
     DrawText("Vous êtes le maire de cette belle ville, mais tout est encore à faire. En effet vous devrez construire des bâtiments,", Regles.x+20,Regles.y+80,30,WHITE);
     DrawText("gérer des ressources et faire croître votre ville",Regles.x +20 , Regles.y +140,30,WHITE);
-    DrawText("Chaque maison vous rapporte de l'argent mais a besoin d'électricité et d'eau pour évoluer à un stade plus avancé.",Regles.x+20, Regles.x+200,30,WHITE);
-
-
-
+    DrawText("Chaque habitation vous rapporte de l'argent mais a besoin d'électricité et d'eau pour évoluer à un stade plus avancé.",Regles.x+20, Regles.y+200,30,WHITE);
+    DrawText("Attention, si une maison n'a pas assez de ressources elle peut revenir à un stade anterieur soyez prudent !",Regles.x+20,Regles.y+260,30,WHITE);
+    DrawText("Chaque centrale électrique / chateau d'eau apporte 5000 unités d'électricité / eau à notre réserve et chaque habitant", Regles.x+20,Regles.y+320,30,WHITE);
+    DrawText("consomme une unité. On alimente en électricité en tout ou rien suivant notre réserve et la demande.",Regles.x+20,Regles.y+380,30,WHITE);
+    DrawText("Quant à l'eau, on alimente les habitations les plus proches.",Regles.x+20,Regles.y+440,30,WHITE);
+    DrawText("Une cabane contient 10 habitants, une maison 50, un immeuble 100 et un gratte-ciel 1000.",Regles.x+20,Regles.y+500,30,WHITE);
 
     EndDrawing();
 }
 
 
 
-void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
+void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2,bool* capitaliste) {
 
+    bool test = false;
     bool mouse_on_Capitalistes = false;
     bool mouse_on_Communistes  = false;
+
 
     Rectangle Capitalistes = {WIDTH/6, HEIGHT/3,426,426  };
     Rectangle Communistes = {(WIDTH/6)+852, HEIGHT/3,426,426  };
@@ -142,6 +158,7 @@ void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
             if(mouse_on_Capitalistes) {
                 DrawTexture(image,Capitalistes.x,Communistes.y,WHITE);
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    *capitaliste = true;
                     *pointeurEtat=100;
                 }
             }
@@ -149,6 +166,7 @@ void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
             if(mouse_on_Communistes) {
                 DrawTexture(image2,Communistes.x,Communistes.y,WHITE);
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    *capitaliste= false;
                     *pointeurEtat=200;
                 }
             }
@@ -158,6 +176,7 @@ void afficher_modes_jeu(int* pointeurEtat,Texture2D image,Texture2D image2) {
 void afficher_menu_accueil(int* pointeurEtat) {
 
     double timer = GetTime();
+    Music music;
 
     Rectangle Jouer = { WIDTH/3, HEIGHT/3,640,110};
     Rectangle Charger = { WIDTH/3, (HEIGHT/3)+160,640,110};
@@ -182,11 +201,14 @@ void afficher_menu_accueil(int* pointeurEtat) {
 
             ClearBackground(RAYWHITE);
 
+
+
             DrawRectangleRec(Jouer,DARKGRAY);
             DrawRectangleRec(Charger,DARKGRAY);
             DrawRectangleRec(Option,DARKGRAY);
             DrawRectangleRec(Quitter,DARKGRAY);
 
+            DrawText("ECE CITY",(WIDTH - MeasureText("ECE CITY",200))/2,50,200,BLUE);
 
             if(mouse_on_Jouer) {
 
@@ -248,7 +270,7 @@ void afficher_menu_accueil(int* pointeurEtat) {
 
             if(mouse_on_Quitter) {
 
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) CloseWindow();
+
 
                 if(clignotte==false) {
                     DrawRectangleLines((int)Jouer.x,(int)Jouer.y,(int)Jouer.width,(int)Jouer.height,BLACK);
@@ -259,11 +281,16 @@ void afficher_menu_accueil(int* pointeurEtat) {
                     DrawRectangleRec(Quitter, RED);
                     DrawText("QUITTER",(int)Quitter.x+179,(int)Quitter.y+30,60,BLACK);
                 }
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+                    *pointeurEtat=-1;
+                }
             }
             else {
                 DrawRectangleLines((int)Quitter.x,(int)Quitter.y,(int)Quitter.width,(int)Quitter.height,BLACK);
                 DrawText("QUITTER",(int)Quitter.x+179,(int)Quitter.y+30,60,WHITE);
             }
+
         EndDrawing();
     }
 

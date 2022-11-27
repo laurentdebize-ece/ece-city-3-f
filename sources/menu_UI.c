@@ -4,38 +4,75 @@
 #include <stdlib.h>
 #include "../includes/menu_UI.h"
 #include "../includes/test.h"
-
+#include "../includes/map/map.h"
+#include "../includes/map/save_map.h"
 
 #define TITLE "ECE City"
 
+void resize_Menu(int width_Window, int height_Window) {
+     if(!IsWindowFullscreen()) {
+         int ecran = GetCurrentMonitor(); //sur quel écran est l'image/nbr d'écran connectés
+         SetWindowSize(GetMonitorWidth(ecran),GetMonitorHeight(ecran));
+     }
+
+     else {
+         ToggleFullscreen(); //bascule l'état de la fenêtre
+         SetWindowSize(WIDTH,HEIGHT);
+     }
+
+}
+
+void ini_Menu(Vector2 position_souris, int screensizeWidth, int screensizeHeight,const char* title) {
+    InitWindow(screensizeWidth,screensizeHeight,title);
+    resize_Menu(WIDTH,HEIGHT);
+}
+
 void menu() {
+
+
+
 
     /// Initialisation des variables utiles à l'affichage des bitmaps
 
     int etat=0;
     int* pointeurEtat= &etat;
     bool pause = false;
+    bool mode2jeu= NULL;
+    bool type2map = false;
 
-    Menu_Bouttons etatA = Accueil;
-    Menu_Bouttons* pointeurEtatA = &etatA; //remplacer les valeurs de etat par les enum de etatA
+    int* population;
+    int* money;
+    char* path;
+    Time_t* time = NULL;
+    Queue_t ** elec = NULL;
+    Queue_t ** house = NULL;
+    Queue_t ** chateau_eau = NULL;
+    Map_t** map = NULL;
+    Queue_t** queue = NULL;
 
-    Texture2D image,image2,image_ecran_accueil,image_mode2jeu,image_option;
+
+
+    Texture2D image,image2,image_ecran_accueil,image_mode2jeu,image_option,image_coeur,image_thinking;
     Music music;
 
     const char* sprite_Capitaliste = "../assets/bitmaps/Menu/PIGGYBANKMODIF.png";
     const char* sprite_Communiste = "../assets/bitmaps/Menu/CommunisteMODIF.png";
     const char* ecran_accueil = "../assets/bitmaps/Menu/campagne.png";
     const char* USA_URSS = "../assets/bitmaps/Menu/COLDWAR2.png";
-    const char* ecran_option = "../assets/bitmaps/Menu/GearModif.png";
-
+    const char* ecran_option = "../assets/bitmaps/Menu/Gear_Modif.png";
+    const char* coeur = "../assets/bitmaps/Menu/Heart.png";
+    const char* think = "../assets/bitmaps/Menu/reflexion.png";
 
     InitWindow(WIDTH,HEIGHT,TITLE);
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+    resize_Menu(WIDTH,HEIGHT);
 
     SetTargetFPS(60);
 
+    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};
 
-    Game_t* game = create_game();
+    Game_t* game = NULL;
+
 
     InitAudioDevice();
 
@@ -46,14 +83,23 @@ void menu() {
     image_ecran_accueil = LoadTexture(ecran_accueil);
     image_mode2jeu = LoadTexture(USA_URSS);
     image_option = LoadTexture(ecran_option);
+    image_coeur = LoadTexture(coeur);
+    image_thinking = LoadTexture(think);
 
     music = LoadMusicStream("../assets/Sound/Music/MUSIC.mp3");
 
     PlayMusicStream(music);
 
-    while(!WindowShouldClose()) {
+    while(!WindowShouldClose()&& *pointeurEtat!=-1) {
 
         UpdateMusicStream(music);
+
+        if (IsWindowResized()){    /// Ca pue la merde
+            screen_size = get_screen_size();
+            if(game) {
+                resize_hud(&game->hud, screen_size);
+            }
+        }
 
         if(IsKeyPressed(KEY_P)) {
             pause = !pause;
@@ -73,11 +119,11 @@ void menu() {
 
             case 1:
                 DrawTexture(image_mode2jeu,0,0,WHITE);
-                afficher_modes_jeu(pointeurEtat,image,image2);
+                afficher_modes_jeu(pointeurEtat,image,image2,&mode2jeu);
                 break;
 
             case 2:
-                //load_saved_map();
+                load_saved_map(map,house,chateau_eau,elec,time,money,population,&mode2jeu,path);
                 break;
 
             case 3:
@@ -85,16 +131,18 @@ void menu() {
                 afficher_options_jeu(pointeurEtat);
                 break;
 
-            case 4 :afficher_regles(pointeurEtat);
+            case 4 :afficher_regles(pointeurEtat,image_thinking);
                 break;
 
-            case 5: afficher_credits(pointeurEtat);
+            case 5:
+                afficher_credits(pointeurEtat,image_coeur);
                 break;
 
             case 100:
             case 200:
+                if(!game) game = create_game(screen_size,mode2jeu,type2map);
                 StopMusicStream(music);
-                loop_jeu(game);
+                loop_jeu(game,mode2jeu);
                 break;
 
             default:
@@ -102,12 +150,17 @@ void menu() {
 
         }
     }
-
-    destroy_game(game);
-
+    if(game) destroy_game(&game);
+    UnloadTexture(image_coeur);
+    UnloadTexture(image_option);
+    UnloadTexture(image_mode2jeu);
+    UnloadTexture(image);
+    UnloadTexture(image2);
+    UnloadTexture(image_ecran_accueil);
     StopMusicStream(music);
     UnloadMusicStream(music);
     CloseAudioDevice();
+    CloseWindow();
 }
 
 

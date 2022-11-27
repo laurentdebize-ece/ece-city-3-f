@@ -7,8 +7,8 @@
 
 #include "../includes/game.h"
 
-void test (void);
+void test (bool capitaliste);
 
-void loop_jeu(Game_t* jeu);
+void loop_jeu(Game_t* jeu,bool capitaliste);
 
 #endif //PROJET_TEST_H

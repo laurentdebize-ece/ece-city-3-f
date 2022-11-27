@@ -4,15 +4,15 @@
 
 #include "../includes/test.h"
 
-void test() {
+void test(bool capitaliste) {
 
-    Game_t *game = create_game();   /// Création et initialisation du jeu
+    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
+
+    Game_t *game = create_game(screen_size,capitaliste,1);   /// Création et initialisation du jeu
 
     Vector2 mouse_pos = {0,0};  /// Création de la position de la souris
 
     SetTargetFPS(FPS);  /// Définition du nombre de FPS
-
-    Vector2 screen_size = {GetScreenWidth(), GetScreenHeight()};    /// Récupération de la taille de l'écran
 
     while (!should_window_be_closed()) {    /// Est-ce qu'on ferme la fenêtre ?
 
@@ -56,7 +56,7 @@ void test() {
 
 }
 
-void loop_jeu(Game_t* game) {
+void loop_jeu(Game_t* game,bool capitaliste) {
 
     Vector2 mouse_pos = {0,0};  /// Création de la position de la souris
 
@@ -70,10 +70,7 @@ void loop_jeu(Game_t* game) {
 
         /*--------------------------------------------------UPDATE----------------------------------------------------*/
 
-        if (IsWindowResized()){    /// Ca pue la merde
-            screen_size = get_screen_size();
-            resize_hud(&game->hud, screen_size);
-        }
+
 
         update_game(game, &mouse_pos, &screen_size);    /// Update du jeu
 

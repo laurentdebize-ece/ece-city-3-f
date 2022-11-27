@@ -38,9 +38,10 @@ typedef struct Game_t {
     int population;
     int pause_counter;
     bool is_on_pause;
+    bool capitaliste;
 } Game_t;
 
-Game_t *create_game(void);
+Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap);
 
 void commands(Game_t *game);
 

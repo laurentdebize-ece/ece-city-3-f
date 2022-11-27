@@ -4,18 +4,20 @@
 
 #include "../includes/game.h"
 
-Game_t *create_game(void) {
+Game_t *create_game(Vector2 screen_size,bool capitaliste,bool loadmap) {
 
     Game_t *game = malloc(sizeof(Game_t));
     game->money = 500000;
+    game->population=0;
     game->time = (Time_t){1,0,0,0,0,3,2069};
     game->houses = NULL;
     game->water_towers = NULL;
     game->power_plants = NULL;
 
-
-    //map = load_map(DEFAULT_MAP_FILE_PATH);
-    load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population, SAVE_1_PATH);
+    if(loadmap) {
+        load_saved_map(&game->map, &game->houses, &game->water_towers, &game->power_plants, &game->time, &game->money, &game->population,&game->capitaliste, SAVE_1_PATH);
+    }
+    else game->map = load_map(DEFAULT_MAP_FILE_PATH);
 
     connexity_init(game->map);
     print_map_console(game->map);
@@ -68,7 +70,7 @@ Game_t *create_game(void) {
 void commands(Game_t *game) {
     if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)){
         if (IsKeyPressed(KEY_S)) {  /// Sauvegarde de la map
-            save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money, SAVE_1_PATH);
+            save_map(game->map, game->houses, game->water_towers, game->power_plants, &game->time, game->money,game->capitaliste, SAVE_1_PATH);
         }
         if (IsKeyPressed(KEY_T)) {   /// Accélération du temps
             change_time_speed(&game->time);
@@ -407,7 +409,7 @@ void destroy_game(Game_t **game) {
     UnloadModel((*game)->house_model[1]);
     UnloadModel((*game)->house_model[2]);
     UnloadModel((*game)->house_model[3]);
-    UnloadModel((*game)->water_tower_model);
+    //UnloadModel((*game)->water_tower_model);
     UnloadModel((*game)->power_plant_model);
     UnloadTexture((*game)->road_texture);
     free(*game);

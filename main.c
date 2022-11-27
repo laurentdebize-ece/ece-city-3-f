@@ -9,7 +9,8 @@
 
 int main (void){
 
-    menu();
+    //ini_Menu(GetMousePosition(),GetScreenWidth(),GetScreenHeight(),"ECE CITY");
+    menu(GetMousePosition(),GetScreenWidth(),GetScreenHeight()); //prendre en para screen size et mouse position
 
     return 0;
 }
