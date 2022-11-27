@@ -114,6 +114,7 @@ void menu() {
             case 2: {
                 game = malloc(sizeof(Game_t ));
                 load_saved_map(&game->map,&game->houses,&game->water_towers,&game->power_plants,&game->time,&game->money,&game->population,&game->capitaliste,SAVE_1_PATH);
+                *pointeurEtat = 200;
                 break;
             }
 
